@@ -15,6 +15,9 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     version="-//W3C//DTD XHTML 1.1//EN" xml:lang="en">
 <head>
+  <!-- Themes -->
+  <link rel="stylesheet" type="text/css"
+      href="chrome://hometab/content/hometab.css" />
   <!-- Libs -->
   <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/jquery.js"></script>
@@ -22,7 +25,32 @@
       src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
 </head>
 <body id="body" dir="&locale.dir;">
- Welcome home! 
+  <!-- This empty div is here to add a line above the first summary. -->
+  <div class="content" />
+  <div class="head">Inbox (1)</div>
+  <div class="content">
+    <div class="date">Today</div>
+    <div class="subject">Subject of the Conversation</div>
+    <div class="participants">Bryan, Andreas, Blake</div>
+  </div>
+  <div class="head">Mozilla Folder (1)</div>
+  <div class="content">
+    <div class="date">Today</div>
+    <div class="subject">Subject of the Conversation</div>
+    <div class="participants">Bryan, Andreas, Blake</div>
+  </div>
+  <div class="head">Personal (1)</div>
+  <div class="content">
+    <div class="date">Today</div>
+    <div class="subject">Subject of the Conversation</div>
+    <div class="participants">Bryan, Andreas, Blake</div>
+  </div>
+  <div class="head">Work (1)</div>
+  <div class="content">
+    <div class="date">Today</div>
+    <div class="subject">Subject of the Conversation</div>
+    <div class="participants">Bryan, Andreas, Blake</div>
+  </div>
 </body>
 </html>
 
