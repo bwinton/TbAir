@@ -1,0 +1,4 @@
+content	hometab	content/
+locale	hometab	en-US	locale/en-US/
+skin	hometab	classic/1.0	skin/
+overlay	chrome://messenger/content/messenger.xul    chrome://hometab/content/thunderbirdOverlay.xul
