@@ -45,7 +45,8 @@ var hometab = {
 
   onMenuItemCommand: function(e) {
     let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("hometab", {"a":"b"});
+    home = tabmail.openTab("hometab", {"a":"b"});
+    home.tabNode.image = "chrome://hometab/content/home.png";
   }
 }
 
