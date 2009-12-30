@@ -74,6 +74,28 @@ var homeTabType = {
       aTab.browser = aTab.panel.contentDocument.getElementById("browser");
       aTab.browser.setAttribute("src",
         "chrome://hometab/content/hometab.xhtml");
+
+      aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
+        let content = [];
+        let liveFolder = gFolderDisplay.displayedFolder;
+        content.push({folder : liveFolder.prettiestName,
+                      count : liveFolder.hasNewMessages? 1 : 0,
+                      date : "Tomorrow", subject : "Live!",
+                      participants : "You, Me, Everyone."});
+        content.push({folder : "Inbox", count : 3, date : "Today",
+                      subject : "Subject of the Conversation",
+                      participants : "Bryan, Andreas, Blake"});
+        content.push({folder : "Mozilla Folder", count : 1, date : "Today",
+                      subject : "Subject of the Conversation",
+                      participants : "Bryan, Andreas, Blake"});
+        content.push({folder : "Personal", count : 4, date : "Today",
+                      subject : "Subject of the Conversation",
+                      participants : "Bryan, Andreas, Blake"});
+        content.push({folder : "Work", count : 1, date : "Today",
+                      subject : "Subject of the Conversation",
+                      participants : "Bryan, Andreas, Blake"});
+        doc.addContent(content);
+      }
     }
 
     aTab.panel.contentWindow.addEventListener("load", xulLoadHandler, false);
