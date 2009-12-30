@@ -37,9 +37,8 @@
 function addContent(data) {
   for (let index in data) {
     let record = data[index];
-    let toAdd = "<div class='head'>" + record.folder +
-        " (" + record.count + ")</div><div class='content'>" +
-        "<div class='date'>" + record.date + "</div>" +
+    let toAdd = "<div class='head'>" + record.folder + "</div>" +
+        "<div class='content'><div class='date'>" + record.date + "</div>" +
         "<div class='subject'>" + record.subject + "</div>" +
         "<div class='participants'>" + record.participants + "</div>" +
         "</div>";

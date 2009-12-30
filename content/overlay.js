@@ -77,23 +77,16 @@ var homeTabType = {
 
       aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
         let content = [];
-        let liveFolder = gFolderDisplay.displayedFolder;
-        content.push({folder : liveFolder.prettiestName,
-                      count : liveFolder.hasNewMessages? 1 : 0,
-                      date : "Tomorrow", subject : "Live!",
-                      participants : "You, Me, Everyone."});
-        content.push({folder : "Inbox", count : 3, date : "Today",
-                      subject : "Subject of the Conversation",
-                      participants : "Bryan, Andreas, Blake"});
-        content.push({folder : "Mozilla Folder", count : 1, date : "Today",
-                      subject : "Subject of the Conversation",
-                      participants : "Bryan, Andreas, Blake"});
-        content.push({folder : "Personal", count : 4, date : "Today",
-                      subject : "Subject of the Conversation",
-                      participants : "Bryan, Andreas, Blake"});
-        content.push({folder : "Work", count : 1, date : "Today",
-                      subject : "Subject of the Conversation",
-                      participants : "Bryan, Andreas, Blake"});
+        let unreadAccounts = gFolderTreeView._mapGenerators["unread"](
+                               gFolderTreeView);
+        for (let index in unreadAccounts) {
+          let account = unreadAccounts[index];
+          name = account.text.replace(/&/g, "&amp;")
+                             .replace(/</g, "&lt;")
+                             .replace(/>/g, "&gt;");
+          content.push({folder : name, date : "Tomorrow", subject : "Live!",
+                        participants : "You, Me, Everyone."});
+        }
         doc.addContent(content);
       }
     }
