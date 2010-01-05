@@ -63,9 +63,24 @@
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab.js"></script>
 </head>
-<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame()">
-  <!-- This empty div is here to add a line above the first summary. -->
-  <div class="content" />
+<body dir="&locale.dir;" onload="reachOutAndTouchFrame()">
+  <div id="search-box">
+    <input type="text" class="search" id="q" value="Search that autocompletes below and opens results in a new tab"/>
+  </div>
+  <div id="results-box">
+    <div id="category-box">
+    <ol id="categories">
+      <li id="overview" class="category">Overview</li>
+      <li id="unread" class="category">Unread</li>
+      <li id="people" class="category">People</li>
+      <li id="folders" class="category">Folders</li>
+      <li id="accounts" class="category">Accounts</li>
+    </ol>
+    </div>
+    <div id="preview-box">
+      <div id="preview"/>
+    </div>
+  </div>
 </body>
 </html>
 

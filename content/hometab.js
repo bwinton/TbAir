@@ -42,7 +42,7 @@ function addContent(data) {
         "<div class='subject'>" + record.subject + "</div>" +
         "<div class='participants'>" + record.participants + "</div>" +
         "</div>";
-    $("body").append(toAdd);
+    $("#preview").append(toAdd);
   }
 }
 
