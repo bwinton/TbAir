@@ -35,15 +35,19 @@
  * ***** END LICENSE BLOCK ***** */
 
 function addContent(data) {
+  let categories = $("#categories").html("");
+  let firstCategory = null;
   for (let index in data) {
     let record = data[index];
-    let toAdd = "<div class='head'>" + record.folder + "</div>" +
-        "<div class='content'><div class='date'>" + record.date + "</div>" +
-        "<div class='subject'>" + record.subject + "</div>" +
-        "<div class='participants'>" + record.participants + "</div>" +
-        "</div>";
-    $("#preview").append(toAdd);
+    let category = $("<li class='category'></li>");
+    category.text(record.folder);
+    category.attr("id", record.id);
+    category.bind("click", function (e) {updateTab($(this))});
+    $("#categories").append(category);
+    if (index == 0)
+      firstCategory = category;
   }
+  updateTab(firstCategory);
 }
 
 const Cc = Components.classes;
@@ -58,6 +62,7 @@ const Cu = Components.utils;
  *  is odd considering it works for the XUL case, but I could see how that might
  *  differ.  Anywho, this works for now and is a delightful reference to boot.
  */
+var aTab;
 function reachOutAndTouchFrame() {
   let us = window.QueryInterface(Ci.nsIInterfaceRequestor)
                  .getInterface(Ci.nsIWebNavigation)
@@ -66,7 +71,13 @@ function reachOutAndTouchFrame() {
   let parentWin = us.parent
                     .QueryInterface(Ci.nsIInterfaceRequestor)
                     .getInterface(Ci.nsIDOMWindow);
-  let aTab = parentWin.tab;
+  aTab = parentWin.tab;
   parentWin.tab = null;
   aTab.htmlLoadHandler(this);
+}
+
+function updateTab(element) {
+  $("#categories > .category[selected='true']").removeAttr("selected");
+  element.attr("selected", "true");
+  $("#preview").html("Clicked on tab "+element.attr("id"));
 }

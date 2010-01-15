@@ -55,22 +55,12 @@
   <!-- Themes -->
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/content/hometab.css" />
-  <!-- Libs -->
-  <script type="application/javascript;version=1.8"
-      src="chrome://messenger/content/jquery.js"></script>
-  <script type="application/javascript;version=1.8"
-      src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
-  <script type="application/javascript;version=1.8"
-      src="chrome://hometab/content/hometab.js"></script>
 </head>
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame()">
-  <div id="search-box">
-    <input type="text" class="search" id="q" value="Search that autocompletes below and opens results in a new tab"/>
-  </div>
   <div id="results-box">
     <div id="category-box">
     <ol id="categories">
-      <li id="overview" class="category">Overview</li>
+      <li id="overview" class="category" selected="true">Overview</li>
       <li id="unread" class="category">Unread</li>
       <li id="people" class="category">People</li>
       <li id="folders" class="category">Folders</li>
@@ -82,5 +72,11 @@
     </div>
   </div>
 </body>
+  <!-- Libs -->
+  <script type="application/javascript;version=1.8"
+      src="chrome://messenger/content/jquery.js"></script>
+  <script type="application/javascript;version=1.8"
+      src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
+  <script type="application/javascript;version=1.8"
+      src="chrome://hometab/content/hometab.js"></script>
 </html>
-

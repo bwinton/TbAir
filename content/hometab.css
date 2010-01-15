@@ -99,8 +99,9 @@ div { border: 1px solid green }
   cursor: pointer;
 }
 
-.category:hover {
-  background-color: #666;
+.category:hover,
+.category[selected="true"] {
+  background-color: #777;
 }
 
 #preview {

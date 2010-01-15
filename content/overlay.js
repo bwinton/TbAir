@@ -34,6 +34,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+const Cu = Components.utils;
+
+Cu.import("resource://app/modules/StringBundle.js");
 
 var hometab = {
   onLoad: function hometab_onLoad(e) {
@@ -77,15 +80,17 @@ var homeTabType = {
 
       aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
         let content = [];
-        let unreadAccounts = gFolderTreeView._mapGenerators["unread"](
-                               gFolderTreeView);
-        for (let index in unreadAccounts) {
-          let account = unreadAccounts[index];
-          name = account.text.replace(/&/g, "&amp;")
-                             .replace(/</g, "&lt;")
-                             .replace(/>/g, "&gt;");
-          content.push({folder : name, date : "Tomorrow", subject : "Live!",
-                        participants : "You, Me, Everyone."});
+        // Handle TB 3.0, which uses _mapGenerators,
+        // and 3.1 which uses _modes.
+        let accounts = gFolderTreeView._mapGenerators ?
+          gFolderTreeView._mapGenerators["all"](gFolderTreeView) :
+          gFolderTreeView._modes["all"].generateMap(gFolderTreeView);
+        // Used to be _modes["unread"].
+        for (let index in accounts) {
+          let account = accounts[index];
+          content.push({folder : account.text,
+                        id : account.id
+                       });
         }
         doc.addContent(content);
       }
