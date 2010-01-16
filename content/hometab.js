@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function addContent(data) {
+function addCategories(data) {
   let categories = $("#categories").html("");
   let firstCategory = null;
   for (let index in data) {
@@ -48,6 +48,27 @@ function addContent(data) {
       firstCategory = category;
   }
   updateTab(firstCategory);
+}
+
+function clearContent() {
+  $("#preview").html("");
+}
+
+function addContent(data) {
+  let content = $("#preview");
+  let entry = $("<b>");
+  if ("subject" in data) {
+    entry.text(data.subject);
+  }
+  else if ("error" in data) {
+    entry.text(data.error);
+  }
+  else {
+    entry.text(data);
+  }
+  entry = $("<div/>").append(entry);
+  content.append(entry);
+  content.append(data.error);
 }
 
 const Cc = Components.classes;
@@ -80,4 +101,5 @@ function updateTab(element) {
   $("#categories > .category[selected='true']").removeAttr("selected");
   element.attr("selected", "true");
   $("#preview").html("Clicked on tab "+element.attr("id"));
+  aTab.showConversations(this, element.attr("id"));
 }

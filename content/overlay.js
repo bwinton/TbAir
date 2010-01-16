@@ -82,17 +82,47 @@ var homeTabType = {
         let content = [];
         // Handle TB 3.0, which uses _mapGenerators,
         // and 3.1 which uses _modes.
-        let accounts = gFolderTreeView._mapGenerators ?
+        let folders = gFolderTreeView._mapGenerators ?
           gFolderTreeView._mapGenerators["all"](gFolderTreeView) :
           gFolderTreeView._modes["all"].generateMap(gFolderTreeView);
         // Used to be _modes["unread"].
-        for (let index in accounts) {
-          let account = accounts[index];
-          content.push({folder : account.text,
-                        id : account.id
+        for (let index in folders) {
+          let folder = folders[index];
+          content.push({folder : folder.text,
+                        id : folder.id
                        });
         }
-        doc.addContent(content);
+        doc.addCategories(content);
+      }
+      aTab.showConversations = function showConversations(doc, id) {
+        let query = Gloda.newQuery(Gloda.NOUN_CONVERSATION);
+        //for (let i in query) dump(i+"\n");
+        //query.subjectMatches("Gloda makes searching easy");
+        //query.folder(id);
+        query.limit(15);
+        query.getCollection({
+          onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+            dump("onItemsAdded:\n");
+          },
+          onItemsModified: function _onItemsModified(aItems, aCollection) {
+          },
+          onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+          },
+          /* called when our database query completes */
+          onQueryCompleted: function _onQueryCompleted(conversation_coll) {
+            dump("onQueryCompleted\n");
+            doc.clearContent();
+            try {
+              for (var i in conversation_coll.items) {
+                conv = conversation_coll.items[i];
+                //do something with the Conversation here
+                doc.addContent({"subject":conv.subject});
+              }
+            } catch (e) {
+              dump("e="+e+"\n");
+              doc.addContent({"error":e});
+            }
+          }});
       }
     }
 
