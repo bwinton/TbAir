@@ -43,7 +43,7 @@ function addCategories(data) {
     category.text(record.folder);
     category.attr("id", record.id);
     category.bind("click", function (e) {updateTab($(this))});
-    $("#categories").append(category);
+    categories.append(category);
     if (index == 0)
       firstCategory = category;
   }
@@ -54,19 +54,36 @@ function clearContent() {
   $("#preview").html("");
 }
 
+function getSpan(id, data) {
+  let retval = $("<span id='"+id+"'/>");
+  retval.text(id+": "+data[id]);
+  return retval;
+}
+
 function addContent(data) {
   let content = $("#preview");
-  let entry = $("<b>");
+  let entry = $("<div/>");
   if ("subject" in data) {
-    entry.text(data.subject);
-  }
-  else if ("error" in data) {
-    entry.text(data.error);
+    entry.attr("id", data.id);
+    entry.attr("conversation", data.conversation);
+    entry.append(getSpan("subject", data));
+    entry.append("<br/>");
+    if (data.from) {
+      entry.append(getSpan("date", data));
+      entry.append("<br/>");
+      entry.append(getSpan("from", data));
+      entry.append("<br/>");
+      entry.append(getSpan("to", data));
+      entry.append("<br/>");
+    }
+    entry.append("<br/>");
+    entry.bind("click", function (e) {updatePreview($(this))});
   }
   else {
-    entry.text(data);
+    let error = $("<b>");
+    error.text(data);
+    entry.append(error);
   }
-  entry = $("<div/>").append(entry);
   content.append(entry);
   content.append(data.error);
 }
@@ -102,4 +119,8 @@ function updateTab(element) {
   element.attr("selected", "true");
   $("#preview").html("Clicked on tab "+element.attr("id"));
   aTab.showConversations(this, element.attr("id"));
+}
+
+function updatePreview(element) {
+  aTab.showMessages(this, element.attr("conversation"));
 }

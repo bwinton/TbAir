@@ -37,6 +37,8 @@
 const Cu = Components.utils;
 
 Cu.import("resource://app/modules/StringBundle.js");
+Cu.import("resource://app/modules/virtualFolderWrapper.js");
+
 
 var hometab = {
   onLoad: function hometab_onLoad(e) {
@@ -70,6 +72,89 @@ var homeTabType = {
 
     aTab.title = this.strings.get("hometab.title");
 
+    aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
+      let content = [];
+      // Handle TB 3.0, which uses _mapGenerators,
+      // and 3.1 which uses _modes.
+      let folders = gFolderTreeView._mapGenerators ?
+        gFolderTreeView._mapGenerators["smart"](gFolderTreeView) :
+        gFolderTreeView._modes["smart"].generateMap(gFolderTreeView);
+      // Used to be _modes["unread"].
+      for (let index in folders) {
+        let folder = folders[index];
+        content.push({folder : folder.text,
+                      id : folder.id
+                     });
+      }
+      doc.addCategories(content);
+    }
+
+    aTab.showConversations = function showConversations(doc, id) {
+      let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+      let folder = MailUtils.getFolderForURI(id, true);
+      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+      query.folder.apply(query, vFolder.searchFolders);
+      query.limit(100);
+      query.getCollection({
+        onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+          dump("onItemsAdded:\n");
+        },
+        onItemsModified: function _onItemsModified(aItems, aCollection) {
+        },
+        onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+        },
+        /* called when our database query completes */
+        onQueryCompleted: function _onQueryCompleted(messages) {
+          dump("onQueryCompleted\n");
+          doc.clearContent();
+          try {
+            for (var i in messages.items) {
+              message = messages.items[i];
+              doc.addContent({"subject" : message.subject,
+                              "id" : message.id,
+                              "conversation" : message.conversation.id});
+            }
+          } catch (e) {
+            dump("e="+e+"\n");
+            doc.addContent({"error":e});
+          }
+        }});
+    }
+
+    aTab.showMessages = function showMessages(doc, id) {
+      let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+      query.conversation(id)
+      //query.limit(100);
+      query.getCollection({
+        onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+          dump("onItemsAdded:\n");
+        },
+        onItemsModified: function _onItemsModified(aItems, aCollection) {
+        },
+        onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+        },
+        /* called when our database query completes */
+        onQueryCompleted: function _onQueryCompleted(messages) {
+          dump("onQueryCompleted\n");
+          doc.clearContent();
+          try {
+            for (var i in messages.items) {
+              message = messages.items[i];
+              doc.addContent({"subject" : message.subject,
+                              "id" : message.id,
+                              "date" : message.date,
+                              "from" : message.from.value,
+                              "to" : message.to.map(
+                                function (x) {return x.value;}).join(", ")
+                              });
+            }
+          } catch (e) {
+            dump("e="+e+"\n");
+            doc.addContent({"error":e});
+          }
+        }});
+    }
+
     function xulLoadHandler() {
       aTab.panel.contentWindow.removeEventListener("load", xulLoadHandler,
                                                    false);
@@ -77,53 +162,6 @@ var homeTabType = {
       aTab.browser = aTab.panel.contentDocument.getElementById("browser");
       aTab.browser.setAttribute("src",
         "chrome://hometab/content/hometab.xhtml");
-
-      aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
-        let content = [];
-        // Handle TB 3.0, which uses _mapGenerators,
-        // and 3.1 which uses _modes.
-        let folders = gFolderTreeView._mapGenerators ?
-          gFolderTreeView._mapGenerators["all"](gFolderTreeView) :
-          gFolderTreeView._modes["all"].generateMap(gFolderTreeView);
-        // Used to be _modes["unread"].
-        for (let index in folders) {
-          let folder = folders[index];
-          content.push({folder : folder.text,
-                        id : folder.id
-                       });
-        }
-        doc.addCategories(content);
-      }
-      aTab.showConversations = function showConversations(doc, id) {
-        let query = Gloda.newQuery(Gloda.NOUN_CONVERSATION);
-        //for (let i in query) dump(i+"\n");
-        //query.subjectMatches("Gloda makes searching easy");
-        //query.folder(id);
-        query.limit(15);
-        query.getCollection({
-          onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-            dump("onItemsAdded:\n");
-          },
-          onItemsModified: function _onItemsModified(aItems, aCollection) {
-          },
-          onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-          },
-          /* called when our database query completes */
-          onQueryCompleted: function _onQueryCompleted(conversation_coll) {
-            dump("onQueryCompleted\n");
-            doc.clearContent();
-            try {
-              for (var i in conversation_coll.items) {
-                conv = conversation_coll.items[i];
-                //do something with the Conversation here
-                doc.addContent({"subject":conv.subject});
-              }
-            } catch (e) {
-              dump("e="+e+"\n");
-              doc.addContent({"error":e});
-            }
-          }});
-      }
     }
 
     aTab.panel.contentWindow.addEventListener("load", xulLoadHandler, false);
