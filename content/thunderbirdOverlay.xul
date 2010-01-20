@@ -40,6 +40,8 @@
 <!DOCTYPE overlay SYSTEM "chrome://hometab/locale/hometab.dtd">
 <overlay id="hometab-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/javascript"
+          src="chrome://messenger/content/glodaFacetView.js"/>
   <script type="application/javascript" src="overlay.js;version=1.8"/>
   <stringbundleset id="stringbundleset">
     <stringbundle id="hometab-strings" src="chrome://hometab/locale/hometab.properties"/>

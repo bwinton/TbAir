@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cu = Components.utils;
+//const Cu = Components.utils;
 
 Cu.import("resource://app/modules/StringBundle.js");
 Cu.import("resource://app/modules/virtualFolderWrapper.js");
@@ -158,8 +158,8 @@ var homeTabType = {
     aTab.showMessages = function showMessages(doc, id) {
       let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
       query.conversation(id)
-      query.orderBy("-date");
-      query.limit(100);
+      query.orderBy("date");
+      query.limit(1);
       query.getCollection({
         onItemsAdded: function _onItemsAdded(aItems, aCollection) {
           dump("onItemsAdded:\n");
@@ -171,21 +171,17 @@ var homeTabType = {
         /* called when our database query completes */
         onQueryCompleted: function _onQueryCompleted(messages) {
           dump("onQueryCompleted\n");
-          doc.clearContent();
           try {
-            for (var i in messages.items) {
-              message = messages.items[i];
-              doc.addContent({"subject" : message.subject,
-                              "id" : message.id,
-                              "date" : message.date,
-                              "from" : message.from.value,
-                              "to" : message.to.map(
-                                function (x) {return x.value;}).join(", ")
-                              });
-            }
+            message = messages.items[0];
+            let tabmail = document.getElementById('tabmail');
+            tabmail.openTab("glodaList", {
+              conversation: message.conversation,
+              message: message,
+              title: message.conversation.subject,
+              background: false,
+            });
           } catch (e) {
             dump("e="+e+"\n");
-            doc.addContent({"error":e});
           }
         }});
     }
