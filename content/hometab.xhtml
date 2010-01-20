@@ -59,13 +59,7 @@
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame()">
   <div id="results-box">
     <div id="category-box">
-    <ol id="categories">
-      <li id="overview" class="category" selected="true">Overview</li>
-      <li id="unread" class="category">Unread</li>
-      <li id="people" class="category">People</li>
-      <li id="folders" class="category">Folders</li>
-      <li id="accounts" class="category">Accounts</li>
-    </ol>
+      <ol id="categories" onclick="updateTab(event)"/>
     </div>
     <div id="preview-box">
       <div id="preview"/>

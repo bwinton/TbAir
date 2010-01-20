@@ -42,12 +42,11 @@ function addCategories(data) {
     let category = $("<li class='category'></li>");
     category.text(record.folder);
     category.attr("id", record.id);
-    category.bind("click", function (e) {updateTab($(this))});
     categories.append(category);
     if (index == 0)
       firstCategory = category;
   }
-  updateTab(firstCategory);
+  updateTab({"target":firstCategory});
 }
 
 function clearContent() {
@@ -55,7 +54,7 @@ function clearContent() {
 }
 
 function getSpan(id, data) {
-  let retval = $("<span id='"+id+"'/>");
+  let retval = $("<span class='"+id+"'/>");
   retval.text(id+": "+data[id]);
   return retval;
 }
@@ -65,8 +64,11 @@ function addContent(data) {
   let entry = $("<div/>");
   if ("subject" in data) {
     entry.attr("id", data.id);
-    entry.attr("conversation", data.conversation);
-    entry.append(getSpan("subject", data));
+    let subject = getSpan("subject", data);
+    if (data.count) {
+      subject.text(subject.text() + " ("+data.count+")");
+    }
+    entry.append(subject);
     entry.append("<br/>");
     if (data.from) {
       entry.append(getSpan("date", data));
@@ -114,7 +116,8 @@ function reachOutAndTouchFrame() {
   aTab.htmlLoadHandler(this);
 }
 
-function updateTab(element) {
+function updateTab(e) {
+  let element = $(e.target);
   $("#categories > .category[selected='true']").removeAttr("selected");
   element.attr("selected", "true");
   $("#preview").html("Clicked on tab "+element.attr("id"));
@@ -122,5 +125,5 @@ function updateTab(element) {
 }
 
 function updatePreview(element) {
-  aTab.showMessages(this, element.attr("conversation"));
+  aTab.showMessages(this, element.attr("id"));
 }

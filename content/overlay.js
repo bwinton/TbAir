@@ -94,6 +94,7 @@ var homeTabType = {
       let folder = MailUtils.getFolderForURI(id, true);
       let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
       query.folder.apply(query, vFolder.searchFolders);
+      query.orderBy("-date");
       query.limit(100);
       query.getCollection({
         onItemsAdded: function _onItemsAdded(aItems, aCollection) {
@@ -108,11 +109,22 @@ var homeTabType = {
           dump("onQueryCompleted\n");
           doc.clearContent();
           try {
+            seenConversations = {};
             for (var i in messages.items) {
               message = messages.items[i];
-              doc.addContent({"subject" : message.subject,
-                              "id" : message.id,
-                              "conversation" : message.conversation.id});
+              if (message.conversation.id in seenConversations) {
+                seenConversations[message.conversation.id].push(message.id);
+              }
+              else {
+                seenConversations[message.conversation.id] = [message.subject,
+                                                              message.id];
+              }
+            }
+            for (var id in seenConversations) {
+              let count = seenConversations[id].length - 1;
+              doc.addContent({"subject" : seenConversations[id][0],
+                              "count" : count,
+                              "id" : id});
             }
           } catch (e) {
             dump("e="+e+"\n");
@@ -124,7 +136,8 @@ var homeTabType = {
     aTab.showMessages = function showMessages(doc, id) {
       let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
       query.conversation(id)
-      //query.limit(100);
+      query.orderBy("-date");
+      query.limit(100);
       query.getCollection({
         onItemsAdded: function _onItemsAdded(aItems, aCollection) {
           dump("onItemsAdded:\n");
