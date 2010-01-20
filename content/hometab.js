@@ -59,6 +59,19 @@ function getSpan(id, data) {
   return retval;
 }
 
+function setFolders(folders) {
+  clearContent();
+  let content = $("#preview");
+  for (let index in folders) {
+    let folder = folders[index];
+    let entry = $("<div/>");
+    entry.attr("id", folder.id);
+    entry.text(folder.name);
+    content.append(entry);
+    entry.bind("click", function (e) {showConversations($(this))});
+  }
+}
+
 function addContent(data) {
   let content = $("#preview");
   let entry = $("<div/>");
@@ -79,7 +92,7 @@ function addContent(data) {
       entry.append("<br/>");
     }
     entry.append("<br/>");
-    entry.bind("click", function (e) {updatePreview($(this))});
+    entry.bind("click", function (e) {showMessages($(this))});
   }
   else {
     let error = $("<b>");
@@ -87,7 +100,6 @@ function addContent(data) {
     entry.append(error);
   }
   content.append(entry);
-  content.append(data.error);
 }
 
 const Cc = Components.classes;
@@ -121,9 +133,13 @@ function updateTab(e) {
   $("#categories > .category[selected='true']").removeAttr("selected");
   element.attr("selected", "true");
   $("#preview").html("Clicked on tab "+element.attr("id"));
+  aTab.showFolders(this, element.attr("id"));
+}
+
+function showConversations(element) {
   aTab.showConversations(this, element.attr("id"));
 }
 
-function updatePreview(element) {
+function showMessages(element) {
   aTab.showMessages(this, element.attr("id"));
 }

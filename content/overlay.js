@@ -76,17 +76,39 @@ var homeTabType = {
       let content = [];
       // Handle TB 3.0, which uses _mapGenerators,
       // and 3.1 which uses _modes.
-      let folders = gFolderTreeView._mapGenerators ?
-        gFolderTreeView._mapGenerators["smart"](gFolderTreeView) :
-        gFolderTreeView._modes["smart"].generateMap(gFolderTreeView);
+      let modes = gFolderTreeView._mapGenerators ?
+        gFolderTreeView._mapGenerators :
+        gFolderTreeView._modes;
       // Used to be _modes["unread"].
-      for (let index in folders) {
-        let folder = folders[index];
-        content.push({folder : folder.text,
-                      id : folder.id
+      for (let mode in modes) {
+        let displayName;
+        if (mode in gFolderTreeView._modeDisplayNames) {
+          displayName = gFolderTreeView._modeDisplayNames[mode];
+        }
+        else {
+          let key = "folderPaneHeader_" + mode;
+          displayName = document.getElementById("bundle_messenger")
+                                .getString(key);
+        }
+        content.push({folder : displayName,
+                      id : mode,
                      });
       }
       doc.addCategories(content);
+    }
+
+    aTab.showFolders = function showFolders(doc, id) {
+      let content = [];
+      let folders = gFolderTreeView._mapGenerators ?
+        gFolderTreeView._mapGenerators[id](gFolderTreeView) :
+        gFolderTreeView._modes[id].generateMap(gFolderTreeView);
+      for (let index in folders) {
+        let folder = folders[index];
+        content.push({name : folder.text,
+                      id : folder.id
+                     });
+      }
+      doc.setFolders(content);
     }
 
     aTab.showConversations = function showConversations(doc, id) {
