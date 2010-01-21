@@ -139,12 +139,14 @@ var homeTabType = {
               }
               else {
                 seenConversations[message.conversation.id] = [message.subject,
+                                                              message.date,
                                                               message.id];
               }
             }
             for (var id in seenConversations) {
-              let count = seenConversations[id].length - 1;
+              let count = seenConversations[id].length - 2;
               doc.addContent({"subject" : seenConversations[id][0],
+                              "date" : seenConversations[id][1],
                               "count" : count,
                               "id" : id});
             }

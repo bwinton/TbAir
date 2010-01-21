@@ -1,0 +1,71 @@
+There are three kinds of thing that we probably want to style: Categories,
+Folders, and Conversations.
+
+
+Categories:
+
+The categories (Smart, All, Unread, etc…) live in the #categories <ol>.
+Each category has its own <li>, with a class of "category".
+
+  example:
+  <div id="category-box">
+    <ol id="categories">
+      <li class="category">Smart</li>
+      <li class="category">All</li>
+      <li class="category">Etc…</li>
+    </ol>
+  </div>
+
+
+Folders:
+
+The folders (Inbox, Sent, Drafts, etc…) live in the #preview div.
+Each folder has its own div, with a class of "folder", and an id of
+whatever the folder’s id is.
+
+  example:
+  <div id="preview-box">
+    <div id="preview">
+      <div class="folder"
+           id="imap://bwinton@latte.ca">Home</div>
+      <div class="folder"
+           id="imap://blakewinton@gmail.com">GMail</div>
+      <div class="folder"
+           id="mailbox://nobody@Feeds">Blogs &amp; News Feeds</div>
+      <div class="folder"
+           id="mailbox://nobody@Local%20Folders">Local Folders</div>
+    </ol>
+  </div>
+
+
+Conversations:
+
+The conversations also live in the #preview div.
+Each conversation has its own div, with a class of, you guessed it,
+"conversation", and an id of whatever the conversation’s id is.  There are
+spans within the conversation for subject, number of messages in that
+conversation, and the date of the most recent message.
+
+  example:
+  <div id="preview-box">
+    <div id="preview">
+      <div class="conversation" id="20085">
+        <span class="subject">[Bug 537649] Thunderbird 3 autodetects wrong server information for Australian ISP Internode.</span>
+        <span class="count">2</span>
+        <span class="date">Thu Jan 21 2010 10:43:38 GMT-0500 (EST)</span>
+        <br/>
+      </div>
+      <div class="conversation" id="25446">
+        <span class="subject">BumpTop Mac 1.0 and a BumpTop Pro discount!</span>
+        <span class="count">1</span>
+        <span class="date">Thu Jan 21 2010 04:12:09 GMT-0500 (EST)</span>
+        <br/>
+      </div>
+      <div class="conversation" id="21116">
+        <span class="subject">Use of SRV records for locating email services.</span>
+        <span class="count">2</span>
+        <span class="date">Tue Jan 19 2010 20:30:11 GMT-0500 (EST)</span>
+        <br/>
+      </div>
+    </div>
+  </div>

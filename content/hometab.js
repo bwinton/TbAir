@@ -55,7 +55,7 @@ function clearContent() {
 
 function getSpan(id, data) {
   let retval = $("<span class='"+id+"'/>");
-  retval.text(id+": "+data[id]);
+  retval.text(""+data[id]);
   return retval;
 }
 
@@ -64,7 +64,7 @@ function setFolders(folders) {
   let content = $("#preview");
   for (let index in folders) {
     let folder = folders[index];
-    let entry = $("<div/>");
+    let entry = $("<div class='folder'/>");
     entry.attr("id", folder.id);
     entry.text(folder.name);
     content.append(entry);
@@ -74,23 +74,12 @@ function setFolders(folders) {
 
 function addContent(data) {
   let content = $("#preview");
-  let entry = $("<div/>");
+  let entry = $("<div class='conversation'/>");
   if ("subject" in data) {
     entry.attr("id", data.id);
-    let subject = getSpan("subject", data);
-    if (data.count) {
-      subject.text(subject.text() + " ("+data.count+")");
-    }
-    entry.append(subject);
-    entry.append("<br/>");
-    if (data.from) {
-      entry.append(getSpan("date", data));
-      entry.append("<br/>");
-      entry.append(getSpan("from", data));
-      entry.append("<br/>");
-      entry.append(getSpan("to", data));
-      entry.append("<br/>");
-    }
+    entry.append(getSpan("subject", data));
+    entry.append(getSpan("count", data));
+    entry.append(getSpan("date", data));
     entry.append("<br/>");
     entry.bind("click", function (e) {showMessages($(this))});
   }
