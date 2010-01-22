@@ -114,8 +114,13 @@ var homeTabType = {
     aTab.showConversations = function showConversations(doc, id) {
       let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
       let folder = MailUtils.getFolderForURI(id, true);
-      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
-      query.folder.apply(query, vFolder.searchFolders);
+      if (folder.flags & nsMsgFolderFlags.Virtual) {
+        let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+        query.folder.apply(query, vFolder.searchFolders);
+      }
+      else {
+        query.folder(folder);
+      }
       query.orderBy("-date");
       query.limit(100);
       query.getCollection({
