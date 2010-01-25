@@ -78,9 +78,17 @@ function addContent(data) {
   if ("subject" in data) {
     entry.attr("id", data.id);
     entry.append(getSpan("subject", data));
-    entry.append(getSpan("count", data));
-    entry.append(getSpan("date", data));
+
+    entry.append(" ");
+    entry.append(getSpan("unread", data));
+    if (data.unread != "0") {
+      entry.addClass("unread");
+    }
     entry.append("<br/>");
+    entry.append(getSpan("from", data));
+    entry.append("<br/>");
+    entry.append(getSpan("date", data));
+    entry.append("<p/>");
     entry.bind("click", function (e) {showMessages($(this))});
   }
   else {

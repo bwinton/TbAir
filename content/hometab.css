@@ -111,8 +111,20 @@ div { border: 1px solid green }
 .content {
 }
 
-.subject {
+.conversation.unread > .subject {
   font-weight: bold;
+}
+
+.conversation.unread > .count {
+  font-weight: bold;
+}
+
+.count:before {
+  content: "(";
+}
+
+.count:after {
+  content: ")";
 }
 
 .date {
