@@ -138,12 +138,37 @@ li.folder.unread {
 .content {
 }
 
+.conversations {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conversation {
+  margin-bottom: 7px;
+  padding: 3px;
+  background-color: #fafafa;
+  border: 1px solid #aaa;
+  -moz-border-radius: 3px;
+  cursor: pointer;
+}
+
+.conversation:hover {
+  background-color: #fff;
+}
+
 .conversation.unread > .subject {
   font-weight: bold;
 }
 
 .conversation.unread > .count {
   font-weight: bold;
+}
+
+.messages {
+  margin: 7px 0 0 21px;
+  padding: 0;
+  list-style: none;
 }
 
 .count:before {
@@ -154,6 +179,16 @@ li.folder.unread {
   content: ")";
 }
 
-.date {
-  font-size: smaller;
+.message {
+  margin-bottom: 7px;
+  font-size: small;
+}
+
+.message .from:after {
+  content: " - ";
+}
+
+.message .body {
+  margin-top: 3px;
+  color: #666;
 }

@@ -138,31 +138,23 @@ var homeTabType = {
             seenConversations = {};
             for (var i in messages.items) {
               message = messages.items[i];
-              let id = message.conversation.id;
+              let id = message.conversationID;
               if (id in seenConversations) {
-                seenConversations[id].messages.push(message.id);
+                seenConversations[id].messages.push(message);
               }
               else {
                 seenConversations[id] = {
+                    "id" : id,
                     "subject" : message.subject,
-                    "date" : message.date,
-                    "from" : message.from.value,
-                    "messages" : [message.id],
-                    "unread" : [],
+                    "messages" : [message],
+                    "unread" : []
                     };
               }
               if (! message.read)
-                seenConversations[id].unread.push(message.id);
+                seenConversations[id].unread.push(message);
             }
             for (var id in seenConversations) {
-              let count = seenConversations[id].messages.length;
-              let unread = seenConversations[id].unread.length;
-              doc.addContent({"subject" : seenConversations[id].subject,
-                              "date" : seenConversations[id].date,
-                              "from" : seenConversations[id].from,
-                              "unread" : unread,
-                              "count" : count,
-                              "id" : id});
+              doc.addContent(seenConversations[id]);
             }
           } catch (e) {
             dump("e="+e+"\n");
