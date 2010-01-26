@@ -34,10 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-//const Cu = Components.utils;
-
-Cu.import("resource://app/modules/StringBundle.js");
-Cu.import("resource://app/modules/virtualFolderWrapper.js");
+Components.utils.import("resource://app/modules/StringBundle.js");
+Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
 
 
 var hometab = {
@@ -91,7 +89,7 @@ var homeTabType = {
                                 .getString(key);
         }
         content.push({folder : displayName,
-                      id : mode,
+                      id : mode
                      });
       }
       doc.addCategories(content);
@@ -104,7 +102,8 @@ var homeTabType = {
         gFolderTreeView._modes[id].generateMap(gFolderTreeView);
       for (let index in folders) {
         let folder = folders[index];
-        content.push({name : folder.text,
+        content.push({name : folder._folder.abbreviatedName,
+                      unread: folder._folder.getNumUnread(false),
                       id : folder.id
                      });
       }
@@ -195,7 +194,7 @@ var homeTabType = {
               conversation: message.conversation,
               message: message,
               title: message.conversation.subject,
-              background: false,
+              background: false
             });
           } catch (e) {
             dump("e="+e+"\n");

@@ -61,14 +61,18 @@ function getSpan(id, data) {
 
 function setFolders(folders) {
   clearContent();
-  let content = $("#preview");
+  let content = $("<ol class='folders'/>").appendTo($("#preview"));
   for (let index in folders) {
     let folder = folders[index];
-    let entry = $("<div class='folder'/>");
-    entry.attr("id", folder.id);
-    entry.text(folder.name);
-    content.append(entry);
-    entry.bind("click", function (e) {showConversations($(this))});
+    let li = $("<li class='folder'/>");
+    li.addClass((folder.unread > 0) ? "unread" : "read");
+    li.attr("id", folder.id);
+    li.append($("<span class='name'/>").text(folder.name + " "));
+    if (folder.unread > 0) {
+      li.append($("<span class='count'/>").text(folder.unread));
+    }
+    content.append(li);
+    li.bind("click", function (e) {showConversations($(this))});
   }
 }
 

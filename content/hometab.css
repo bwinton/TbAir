@@ -108,6 +108,33 @@ div { border: 1px solid green }
   margin: 0 7px;
 }
 
+ol.folders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li.folder {
+  min-height: 32px;
+  min-width: 200px;
+  margin: 3px;
+  padding: 3px;
+  border: 1px solid rgba(147, 179, 206, 100);
+  -moz-border-radius: 3px;
+  /*92b4d2*/
+  background-color: #c0d3e2;
+  background-image: -moz-linear-gradient(top bottom, #c0d3e2, #92b4d2);
+  color: #141414;
+  cursor: pointer;
+}
+
+li.folder:hover {
+  background-color: #92b4d2;
+}
+li.folder.unread {
+  font-weight: bold;
+}
+
 .content {
 }
 
