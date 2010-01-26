@@ -79,10 +79,12 @@ function addContent(data) {
     entry.attr("id", data.id);
     entry.append(getSpan("subject", data));
 
-    entry.append(" ");
-    entry.append(getSpan("unread", data));
     if (data.unread != "0") {
       entry.addClass("unread");
+      entry.append(" ");
+      let unread = $("<span class='count'/>");
+      unread.text(""+data.unread);
+      entry.append(unread);
     }
     entry.append("<br/>");
     entry.append(getSpan("from", data));

@@ -139,24 +139,28 @@ var homeTabType = {
             seenConversations = {};
             for (var i in messages.items) {
               message = messages.items[i];
-              if (message.conversation.id in seenConversations) {
-                seenConversations[message.conversation.id][3].push(message.id);
+              let id = message.conversation.id;
+              if (id in seenConversations) {
+                seenConversations[id].messages.push(message.id);
               }
               else {
-                seenConversations[message.conversation.id] = [message.subject,
-                                                              message.date,
-                                                              message.from.value,
-                                                              [message.id],[]];
+                seenConversations[id] = {
+                    "subject" : message.subject,
+                    "date" : message.date,
+                    "from" : message.from.value,
+                    "messages" : [message.id],
+                    "unread" : [],
+                    };
               }
               if (! message.read)
-                seenConversations[message.conversation.id][4].push(message.id);
+                seenConversations[id].unread.push(message.id);
             }
             for (var id in seenConversations) {
-              let count = seenConversations[id][3].length;
-              let unread = seenConversations[id][4].length;
-              doc.addContent({"subject" : seenConversations[id][0],
-                              "date" : seenConversations[id][1],
-                              "from" : seenConversations[id][2],
+              let count = seenConversations[id].messages.length;
+              let unread = seenConversations[id].unread.length;
+              doc.addContent({"subject" : seenConversations[id].subject,
+                              "date" : seenConversations[id].date,
+                              "from" : seenConversations[id].from,
                               "unread" : unread,
                               "count" : count,
                               "id" : id});
