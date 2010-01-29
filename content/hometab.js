@@ -77,39 +77,40 @@ function setFolders(folders) {
   }
 }
 
- //XXX I'm sorry for ever writing this function
-function htmlEscape(text) {
-  return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-}
-
 function addContent(data) {
   let conversations = $("ol.conversations");
   if (conversations.length == 0) {
-    conversations = $('<ol class="conversations"></ol>').appendTo($("#preview"))
+    conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
   }
 
-  let entry = $('<li class="conversation"></li>').appendTo(conversations);
+  let entry = $('<li class="conversation"/>').appendTo(conversations);
   entry.addClass(("unread" in data && data["unread"].length > 0) ? "unread" : "read");
   entry.attr("id", data["id"]);
 
   if ("subject" in data) {
-    entry.append($('<div class="subject">' + htmlEscape(data["subject"]) + '</div>'));
+    $('<div class="subject"/>').text(data["subject"]).appendTo(entry);
   }
 
   let messages = $('<ol class="messages"></ol>').appendTo(entry);
 
+  let addMessage = function(messages, message) {
+    let msg = $('<li class="message"/>').appendTo(messages);
+    $('<span class="from"/>').text(message.from.value).appendTo(msg);
+    $('<span class="date"/>').text(""+message.date).appendTo(msg);
+    let body = $('<span class="body"/>').appendTo(msg);
+    // Sometimes a message has no text.
+    if (message.indexedBodyText) {
+      body.text(message.indexedBodyText.substr(0, 140));
+    }
+    return msg;
+  };
+
   for (let unread in data["unread"]) {
-    let msg = $('<li class="message unread"></li>').appendTo(messages);
-    msg.append($('<span class="from">' + data["unread"][unread].from.value + '</span>'));
-    msg.append($('<span class="date">' + data["unread"][unread].date + '</span>'));
-    msg.append($('<div class="body">' + htmlEscape(data["unread"][unread].indexedBodyText.substr(0, 140)) + '</div>'));
+    addMessage(messages, data["unread"][unread]).addClass("unread");
   }
 
   for (let read in data["messages"]) {
-    let msg = $('<li class="message read"></li>').appendTo(messages);
-    msg.append($('<span class="from">' + data["messages"][read].from.value + '</span>'));
-    msg.append($('<span class="date">' + data["messages"][read].date + '</span>'));
-    msg.append($('<span class="body">' + htmlEscape(data["messages"][read].indexedBodyText.substr(0, 140)) + '</span>'));
+    addMessage(messages, data["messages"][read]).addClass("read");
   }
   entry.bind("click", function (e) {showMessages($(this))});
 }

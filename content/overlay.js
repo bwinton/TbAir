@@ -42,14 +42,6 @@ Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
 Components.utils.import("resource://app/modules/gloda/public.js");
 Components.utils.import("resource://app/modules/MailUtils.js");
 
-//Components.utils.import("resource://app/modules/gloda/indexer.js");
-//Components.utils.import("resource://app/modules/gloda/index_msg.js");
-//Components.utils.import("resource://app/modules/gloda/datastore.js");
-//Components.utils.import("resource://app/modules/gloda/collection.js");
-//Components.utils.import("resource://app/modules/gloda/datamodel.js");
-//Components.utils.import("resource://app/modules/gloda/noun_tag.js");
-//Components.utils.import("resource://app/modules/gloda/mimemsg.js");
-
 var hometab = {
   onMenuItemCommand: function(e) {
     let windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
@@ -66,6 +58,7 @@ var hometab = {
     window.gFolderTreeView = gFolderTreeView;
     window.msgBundle = document.getElementById("bundle_messenger");
     window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
+    window.tabmail = document.getElementById("tabmail");
   },
 
   htmlLoadHandler: function htmlLoadHandler(doc) {
@@ -76,7 +69,6 @@ var hometab = {
       gFolderTreeView._mapGenerators :
       gFolderTreeView._modes;
     for (let mode in modes) {
-      dump("mode="+mode+"\n");
       let displayName;
       if (mode in gFolderTreeView._modeDisplayNames) {
         displayName = gFolderTreeView._modeDisplayNames[mode];
@@ -179,7 +171,6 @@ var hometab = {
         dump("onQueryCompleted\n");
         try {
           message = messages.items[0];
-          let tabmail = document.getElementById('tabmail');
           tabmail.openTab("glodaList", {
             conversation: message.conversation,
             message: message,
