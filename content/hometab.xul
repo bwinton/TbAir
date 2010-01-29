@@ -37,7 +37,8 @@
   - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<window id="window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="window">
   <script type="application/javascript" src="overlay.js;version=1.8"/>
   <textbox id="searchInput"
            searchCriteria="true"
@@ -46,5 +47,6 @@
            autocompletesearch="gloda"
            autocompletepopup="PopupGlodaAutocomplete"
            />
-  <browser id="browser" flex="1" disablehistory="true"/>
+  <browser id="browser" flex="1" disablehistory="true"
+           src="chrome://hometab/content/hometab.xhtml"/>
 </window>

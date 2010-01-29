@@ -14,11 +14,12 @@
  * The Original Code is Home Tab.
  *
  * The Initial Developer of the Original Code is
- * Blake Winton.
+ * Mozilla Messaging
  * Portions created by the Initial Developer are Copyright (C) 2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Blake Winton <bwinton@latte.ca>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -37,188 +38,157 @@
 Components.utils.import("resource://app/modules/StringBundle.js");
 Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
 
+// -- Import modules we need.
+Components.utils.import("resource://app/modules/gloda/public.js");
+Components.utils.import("resource://app/modules/MailUtils.js");
+
+//Components.utils.import("resource://app/modules/gloda/indexer.js");
+//Components.utils.import("resource://app/modules/gloda/index_msg.js");
+//Components.utils.import("resource://app/modules/gloda/datastore.js");
+//Components.utils.import("resource://app/modules/gloda/collection.js");
+//Components.utils.import("resource://app/modules/gloda/datamodel.js");
+//Components.utils.import("resource://app/modules/gloda/noun_tag.js");
+//Components.utils.import("resource://app/modules/gloda/mimemsg.js");
 
 var hometab = {
-  onLoad: function hometab_onLoad(e) {
-    // initialization code
-    let tabmail = document.getElementById('tabmail');
-    if (tabmail)
-      tabmail.registerTabType(homeTabType);
-  },
-
   onMenuItemCommand: function(e) {
-    let tabmail = document.getElementById("tabmail");
-    home = tabmail.openTab("hometab", {"a":"b"});
-    home.tabNode.image = "chrome://hometab/content/home.png";
-  }
-}
+    let windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                          .getService(Ci.nsIWindowWatcher);
+    let messageURI = Cc["@mozilla.org/supports-string;1"]
+                       .createInstance(Ci.nsISupportsString);
 
-var homeTabType = {
-  name: "hometab",
-  perTabPanel: "iframe",
-  strings: new StringBundle("chrome://hometab/locale/hometab.properties"),
-  modes: {
-    hometab: {
-      // this is what get exposed on the tab for icon purposes
-      type: "hometab"
-    }
+    let strings = new StringBundle("chrome://hometab/locale/hometab.properties");
+    let window = windowWatcher.openWindow(null,
+        "chrome://hometab/content/hometab.xul", strings.get("hometab.title"),
+        "all,chrome,dialog=no,status,toolbar=no,resizable,width=1024,height=527",
+        null);
+    window.hometab = this;
+    window.gFolderTreeView = gFolderTreeView;
+    window.msgBundle = document.getElementById("bundle_messenger");
+    window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
   },
 
-  openTab: function homeTabType_openTab(aTab, aArgs) {
-    // we have no browser until our XUL document loads
-    aTab.browser = null;
-
-    aTab.title = this.strings.get("hometab.title");
-
-    aTab.htmlLoadHandler = function htmlLoadHandler(doc) {
-      let content = [];
-      // Handle TB 3.0, which uses _mapGenerators,
-      // and 3.1 which uses _modes.
-      let modes = gFolderTreeView._mapGenerators ?
-        gFolderTreeView._mapGenerators :
-        gFolderTreeView._modes;
-      // Used to be _modes["unread"].
-      for (let mode in modes) {
-        let displayName;
-        if (mode in gFolderTreeView._modeDisplayNames) {
-          displayName = gFolderTreeView._modeDisplayNames[mode];
-        }
-        else {
-          let key = "folderPaneHeader_" + mode;
-          displayName = document.getElementById("bundle_messenger")
-                                .getString(key);
-        }
-        content.push({folder : displayName,
-                      id : mode
-                     });
-      }
-      doc.addCategories(content);
-    }
-
-    aTab.showFolders = function showFolders(doc, id) {
-      let content = [];
-      let folders = gFolderTreeView._mapGenerators ?
-        gFolderTreeView._mapGenerators[id](gFolderTreeView) :
-        gFolderTreeView._modes[id].generateMap(gFolderTreeView);
-      for (let index in folders) {
-        let folder = folders[index];
-        content.push({name : folder._folder.abbreviatedName,
-                      unread: folder._folder.getNumUnread(false),
-                      id : folder.id
-                     });
-      }
-      doc.setFolders(content);
-    }
-
-    aTab.showConversations = function showConversations(doc, id) {
-      let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-      let folder = MailUtils.getFolderForURI(id, true);
-      if (folder.flags & nsMsgFolderFlags.Virtual) {
-        let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
-        query.folder.apply(query, vFolder.searchFolders);
+  htmlLoadHandler: function htmlLoadHandler(doc) {
+    let content = [];
+    // Handle TB 3.0, which uses _mapGenerators,
+    // and 3.1 which uses _modes.
+    let modes = gFolderTreeView._mapGenerators ?
+      gFolderTreeView._mapGenerators :
+      gFolderTreeView._modes;
+    for (let mode in modes) {
+      dump("mode="+mode+"\n");
+      let displayName;
+      if (mode in gFolderTreeView._modeDisplayNames) {
+        displayName = gFolderTreeView._modeDisplayNames[mode];
       }
       else {
-        query.folder(folder);
+        let key = "folderPaneHeader_" + mode;
+        displayName = msgBundle.getString(key);
       }
-      query.orderBy("-date");
-      query.limit(100);
-      query.getCollection({
-        onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-          dump("onItemsAdded:\n");
-        },
-        onItemsModified: function _onItemsModified(aItems, aCollection) {
-        },
-        onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-        },
-        /* called when our database query completes */
-        onQueryCompleted: function _onQueryCompleted(messages) {
-          dump("onQueryCompleted\n");
-          doc.clearContent();
-          try {
-            seenConversations = {};
-            for (var i in messages.items) {
-              message = messages.items[i];
-              let id = message.conversationID;
-              if (id in seenConversations) {
-                seenConversations[id].messages.push(message);
-              }
-              else {
-                seenConversations[id] = {
-                    "id" : id,
-                    "subject" : message.subject,
-                    "messages" : [message],
-                    "unread" : []
-                    };
-              }
-              if (! message.read)
-                seenConversations[id].unread.push(message);
+      content.push({folder : displayName,
+                    id : mode
+                   });
+    }
+    doc.addCategories(content);
+  },
+
+  showFolders: function showFolders(doc, id) {
+    let content = [];
+    let folders = gFolderTreeView._mapGenerators ?
+      gFolderTreeView._mapGenerators[id](gFolderTreeView) :
+      gFolderTreeView._modes[id].generateMap(gFolderTreeView);
+    for (let index in folders) {
+      let folder = folders[index];
+      content.push({name : folder._folder.abbreviatedName,
+                    unread: folder._folder.getNumUnread(false),
+                    id : folder.id
+                   });
+    }
+    doc.setFolders(content);
+  },
+
+  showConversations: function showConversations(doc, id) {
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+    let folder = MailUtils.getFolderForURI(id, true);
+
+    if (folder.flags & nsMsgFolderFlags.Virtual) {
+      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+      query.folder.apply(query, vFolder.searchFolders);
+    }
+    else {
+      query.folder(folder);
+    }
+    query.orderBy("-date");
+    query.limit(100);
+    query.getCollection({
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+        dump("onItemsAdded:\n");
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      /* called when our database query completes */
+      onQueryCompleted: function _onQueryCompleted(messages) {
+        dump("onQueryCompleted\n");
+        doc.clearContent();
+        try {
+          seenConversations = {};
+          for (var i in messages.items) {
+            message = messages.items[i];
+            let id = message.conversationID;
+            if (id in seenConversations) {
+              seenConversations[id].messages.push(message);
             }
-            for (var id in seenConversations) {
-              doc.addContent(seenConversations[id]);
+            else {
+              seenConversations[id] = {
+                  "id" : id,
+                  "subject" : message.subject,
+                  "messages" : [message],
+                  "unread" : []
+                  };
             }
-          } catch (e) {
-            dump("e="+e+"\n");
-            doc.addContent({"error":e});
+            if (! message.read)
+              seenConversations[id].unread.push(message);
           }
-        }});
-    }
-
-    aTab.showMessages = function showMessages(doc, id) {
-      let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-      query.conversation(id)
-      query.orderBy("date");
-      query.limit(1);
-      query.getCollection({
-        onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-          dump("onItemsAdded:\n");
-        },
-        onItemsModified: function _onItemsModified(aItems, aCollection) {
-        },
-        onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-        },
-        /* called when our database query completes */
-        onQueryCompleted: function _onQueryCompleted(messages) {
-          dump("onQueryCompleted\n");
-          try {
-            message = messages.items[0];
-            let tabmail = document.getElementById('tabmail');
-            tabmail.openTab("glodaList", {
-              conversation: message.conversation,
-              message: message,
-              title: message.conversation.subject,
-              background: false
-            });
-          } catch (e) {
-            dump("e="+e+"\n");
+          for (var id in seenConversations) {
+            doc.addContent(seenConversations[id]);
           }
-        }});
-    }
+        } catch (e) {
+          dump("e="+e+"\n");
+          doc.addContent({"error":e});
+        }
+      }});
+  },
 
-    function xulLoadHandler() {
-      aTab.panel.contentWindow.removeEventListener("load", xulLoadHandler,
-                                                   false);
-      aTab.panel.contentWindow.tab = aTab;
-      aTab.browser = aTab.panel.contentDocument.getElementById("browser");
-      aTab.browser.setAttribute("src",
-        "chrome://hometab/content/hometab.xhtml");
-    }
-
-    aTab.panel.contentWindow.addEventListener("load", xulLoadHandler, false);
-    aTab.panel.setAttribute("src", "chrome://hometab/content/hometab.xul");
+  showMessages: function showMessages(doc, id) {
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+    query.conversation(id)
+    query.orderBy("date");
+    query.limit(1);
+    query.getCollection({
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+        dump("onItemsAdded:\n");
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      /* called when our database query completes */
+      onQueryCompleted: function _onQueryCompleted(messages) {
+        dump("onQueryCompleted\n");
+        try {
+          message = messages.items[0];
+          let tabmail = document.getElementById('tabmail');
+          tabmail.openTab("glodaList", {
+            conversation: message.conversation,
+            message: message,
+            title: message.conversation.subject,
+            background: false
+          });
+        } catch (e) {
+          dump("e="+e+"\n");
+        }
+      }});
   },
-  closeTab: function homeTabType_closeTab(aTab) {
-  },
-  saveTabState: function homeTabType_saveTabState(aTab) {
-    // nothing to do; we are not multiplexed
-  },
-  showTab: function homeTabType_showTab(aTab) {
-    // nothing to do; we are not multiplexed
-  },
-  getBrowser: function(aTab) {
-    return aTab.browser;
-  }
 }
-
-window.addEventListener("load",
-                        function(e) { hometab.onLoad(e); },
-                        false);

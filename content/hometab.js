@@ -14,11 +14,12 @@
  * The Original Code is Home Tab.
  *
  * The Initial Developer of the Original Code is
- * Blake Winton.
+ * Mozilla Messaging
  * Portions created by the Initial Developer are Copyright (C) 2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Blake Winton <bwinton@latte.ca>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -78,7 +79,7 @@ function setFolders(folders) {
 
  //XXX I'm sorry for ever writing this function
 function htmlEscape(text) {
-  return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&rt;");
+  return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 }
 
 function addContent(data) {
@@ -125,7 +126,9 @@ const Cu = Components.utils;
  *  is odd considering it works for the XUL case, but I could see how that might
  *  differ.  Anywho, this works for now and is a delightful reference to boot.
  */
-var aTab;
+
+var hometab;
+
 function reachOutAndTouchFrame() {
   let us = window.QueryInterface(Ci.nsIInterfaceRequestor)
                  .getInterface(Ci.nsIWebNavigation)
@@ -134,9 +137,9 @@ function reachOutAndTouchFrame() {
   let parentWin = us.parent
                     .QueryInterface(Ci.nsIInterfaceRequestor)
                     .getInterface(Ci.nsIDOMWindow);
-  aTab = parentWin.tab;
-  parentWin.tab = null;
-  aTab.htmlLoadHandler(this);
+
+  hometab = parentWin.hometab;
+  hometab.htmlLoadHandler(this);
 }
 
 function updateTab(e) {
@@ -144,13 +147,13 @@ function updateTab(e) {
   $("#categories > .category[selected='true']").removeAttr("selected");
   element.attr("selected", "true");
   $("#preview").html("Clicked on tab "+element.attr("id"));
-  aTab.showFolders(this, element.attr("id"));
+  hometab.showFolders(this, element.attr("id"));
 }
 
 function showConversations(element) {
-  aTab.showConversations(this, element.attr("id"));
+  hometab.showConversations(this, element.attr("id"));
 }
 
 function showMessages(element) {
-  aTab.showMessages(this, element.attr("id"));
+  hometab.showMessages(this, element.attr("id"));
 }
