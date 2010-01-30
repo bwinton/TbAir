@@ -58,7 +58,6 @@ var hometab = {
     window.gFolderTreeView = gFolderTreeView;
     window.msgBundle = document.getElementById("bundle_messenger");
     window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
-    window.tabmail = document.getElementById("tabmail");
   },
 
   htmlLoadHandler: function htmlLoadHandler(doc) {
@@ -171,6 +170,7 @@ var hometab = {
         dump("onQueryCompleted\n");
         try {
           message = messages.items[0];
+          let tabmail = document.getElementById("tabmail");
           tabmail.openTab("glodaList", {
             conversation: message.conversation,
             message: message,
