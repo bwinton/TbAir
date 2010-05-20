@@ -60,24 +60,34 @@ var hometab = {
     window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
   },
 
+  modes: {"Unread": function ht_unread() {
+            let map = [];
+            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
+            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
+              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
+              nsMsgFolderFlags.Templates;
+            for each (let folder in gFolderTreeView._enumerateFolders) {
+              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
+                  (!folder.isServer && folder.getNumUnread(false) > 0) ||
+                  (folder == currentFolder))
+                map.push({name: folder.abbreviatedName,
+                          unread: folder.getNumUnread(false),
+                          id: folder.URI});
+            }
+            //sortFolderItems(map);
+            return map;
+          },
+          "Tags": null,
+          "Folders": null,
+          "People": null,
+          "Accounts": null,
+         },
+
   htmlLoadHandler: function htmlLoadHandler(doc) {
     let content = [];
-    // Handle TB 3.0, which uses _mapGenerators,
-    // and 3.1 which uses _modes.
-    let modes = gFolderTreeView._mapGenerators ?
-      gFolderTreeView._mapGenerators :
-      gFolderTreeView._modes;
-    for (let mode in modes) {
-      let displayName;
-      if (mode in gFolderTreeView._modeDisplayNames) {
-        displayName = gFolderTreeView._modeDisplayNames[mode];
-      }
-      else {
-        let key = "folderPaneHeader_" + mode;
-        displayName = msgBundle.getString(key);
-      }
-      content.push({folder : displayName,
-                    id : mode
+    for (let mode in this.modes) {
+      content.push({folder : mode,
+                    id : mode,
                    });
     }
     doc.addCategories(content);
@@ -85,13 +95,12 @@ var hometab = {
 
   showFolders: function showFolders(doc, id) {
     let content = [];
-    let folders = gFolderTreeView._mapGenerators ?
-      gFolderTreeView._mapGenerators[id](gFolderTreeView) :
-      gFolderTreeView._modes[id].generateMap(gFolderTreeView);
+    let func = this.modes[id] || function ht_null() { return []; };
+    let folders = func();
     for (let index in folders) {
       let folder = folders[index];
-      content.push({name : folder._folder.abbreviatedName,
-                    unread: folder._folder.getNumUnread(false),
+      content.push({name : folder.name,
+                    unread: folder.unread,
                     id : folder.id
                    });
     }
@@ -146,7 +155,7 @@ var hometab = {
             doc.addContent(seenConversations[id]);
           }
         } catch (e) {
-          dump("e="+e+"\n");
+          dump("Caught error in Conversations Query.  e="+e+"\n");
           doc.addContent({"error":e});
         }
       }});
@@ -178,7 +187,7 @@ var hometab = {
             background: false
           });
         } catch (e) {
-          dump("e="+e+"\n");
+          dump("Caught error in Messages Query.  e="+e+"\n");
         }
       }});
   },
