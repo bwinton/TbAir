@@ -35,126 +35,266 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function addCategories(data) {
-  let categories = $("#categories").html("");
-  let firstCategory = null;
-  for (let index in data) {
-    let record = data[index];
-    let category = $("<li class='category'></li>");
-    category.text(record.folder);
-    category.attr("id", record.id);
-    categories.append(category);
-    if (index == 0)
-      firstCategory = category;
-  }
-  updateTab({"target":firstCategory});
-}
+Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
 
-function clearContent() {
-  $("#preview").html("");
-}
+// -- Import modules we need.
+Components.utils.import("resource://app/modules/gloda/public.js");
+Components.utils.import("resource://app/modules/MailUtils.js");
+Components.utils.import("resource://app/modules/errUtils.js");
 
-function getSpan(id, data) {
-  let retval = $("<span class='"+id+"'/>");
-  retval.text(""+data[id]);
-  return retval;
-}
+var hometab = {
 
-function setFolders(folders) {
-  clearContent();
-  let content = $("<ol class='folders'/>").appendTo($("#preview"));
-  for (let index in folders) {
-    let folder = folders[index];
-    let li = $("<li class='folder'/>");
-    li.addClass((folder.unread > 0) ? "unread" : "read");
-    li.attr("id", folder.id);
-    li.append($("<span class='name'/>").text(folder.name + " "));
-    if (folder.unread > 0) {
-      li.append($("<span class='count'/>").text(folder.unread));
+  _modes: {"Unread": function ht_unread() {
+            let map = [];
+            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
+            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
+              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
+              nsMsgFolderFlags.Templates;
+            for each (let folder in gFolderTreeView._enumerateFolders) {
+              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
+                  (!folder.isServer && folder.getNumUnread(false) > 0) ||
+                  (folder == currentFolder))
+                map.push({name: folder.abbreviatedName,
+                          unread: folder.getNumUnread(false),
+                          id: folder.URI});
+            }
+            //sortFolderItems(map);
+            return map;
+          },
+          "Tags": null,
+          "Folders": null,
+          "People": null,
+          "Accounts": null,
+         },
+
+  htmlLoadHandler: function htmlLoadHandler(doc) {
+    let content = [];
+    for (let mode in this._modes) {
+      content.push({folder : mode,
+                    id : mode,
+                   });
     }
-    content.append(li);
-    li.bind("click", function (e) {showConversations($(this))});
-  }
-}
+    doc.addCategories(content);
+  },
 
-function addContent(data) {
-  let conversations = $("ol.conversations");
-  if (conversations.length == 0) {
-    conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
-  }
-
-  let entry = $('<li class="conversation"/>').appendTo(conversations);
-  entry.addClass(("unread" in data && data["unread"].length > 0) ? "unread" : "read");
-  entry.attr("id", data["id"]);
-
-  if ("subject" in data) {
-    $('<div class="subject"/>').text(data["subject"]).appendTo(entry);
-  }
-
-  let messages = $('<ol class="messages"></ol>').appendTo(entry);
-
-  let addMessage = function(messages, message) {
-    let msg = $('<li class="message"/>').appendTo(messages);
-    $('<span class="from"/>').text(message.from.value).appendTo(msg);
-    $('<span class="date"/>').text(""+message.date).appendTo(msg);
-    let body = $('<span class="body"/>').appendTo(msg);
-    // Sometimes a message has no text.
-    if (message.indexedBodyText) {
-      body.text(message.indexedBodyText.substr(0, 140));
+  showFolders: function showFolders(doc, id) {
+    let content = [];
+    let func = this._modes[id] || function ht_null() { return []; };
+    let folders = func();
+    for (let index in folders) {
+      let folder = folders[index];
+      content.push({name : folder.name,
+                    unread: folder.unread,
+                    id : folder.id
+                   });
     }
-    return msg;
-  };
+    doc.setFolders(content);
+  },
 
-  for (let unread in data["unread"]) {
-    addMessage(messages, data["unread"][unread]).addClass("unread");
-  }
+  showConversations: function showConversations(doc, id) {
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+    let folder = MailUtils.getFolderForURI(id, true);
 
-  for (let read in data["messages"]) {
-    addMessage(messages, data["messages"][read]).addClass("read");
-  }
-  entry.bind("click", function (e) {showMessages($(this))});
+    if (folder.flags & nsMsgFolderFlags.Virtual) {
+      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+      query.folder.apply(query, vFolder.searchFolders);
+    }
+    else {
+      query.folder(folder);
+    }
+    query.orderBy("-date");
+    query.limit(100);
+    query.getCollection({
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+        dump("onItemsAdded:\n");
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      /* called when our database query completes */
+      onQueryCompleted: function _onQueryCompleted(messages) {
+        dump("onQueryCompleted\n");
+        doc.clearContent();
+        try {
+          seenConversations = {};
+          for (var i in messages.items) {
+            message = messages.items[i];
+            let id = message.conversationID;
+            if (id in seenConversations) {
+              seenConversations[id].messages.push(message);
+            }
+            else {
+              seenConversations[id] = {
+                  "id" : id,
+                  "subject" : message.subject,
+                  "messages" : [message],
+                  "unread" : []
+                  };
+            }
+            if (! message.read)
+              seenConversations[id].unread.push(message);
+          }
+          for (var id in seenConversations) {
+            doc.addContent(seenConversations[id]);
+          }
+        } catch (e) {
+          dump("Caught error in Conversations Query.  e="+e+"\n");
+          doc.addContent({"error":e});
+        }
+      }});
+  },
+
+  showMessages: function showMessages(doc, id) {
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+    query.conversation(id)
+    dump("Asking for conversation for "+id+"\n");
+    query.orderBy("date");
+    query.limit(1);
+    query.getCollection({
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+        dump("onItemsAdded:\n");
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      /* called when our database query completes */
+      onQueryCompleted: function _onQueryCompleted(messages) {
+        dump("onQueryCompleted\n");
+        try {
+          message = messages.items[0];
+          let tabmail = document.getElementById("tabmail");
+          dump("currentTabInfo="+tabmail.currentTabInfo+"\n");
+          // The following call fails because glodaList isn't a recognized
+          // tab mode for some reason.
+          tabmail.openTab("messageList", {
+            conversation: message.conversation,
+            message: message,
+            title: message.conversation.subject,
+          });
+        } catch (e) {
+          dump("Caught error in Messages Query.  e="+e+"\n");
+        }
+      }});
+  },
+};
+
+var homeTabType = {
+  // TabType attributes
+  name: "HomeTab",
+  panelId: "mailContent",
+  modes: {
+    // "home" tab type.
+    home: {
+      type: "home",
+      isDefault: true,
+      openFirstTab: function ht_openTab(aTab, aArgs) {
+        dump("Args="+aArgs+"\n");
+        aTab.title = "HomeTab";
+        aTab.image = "chrome://hometab/content/hometab.png";
+      },
+      openTab: function ht_openTab(aTab, aArgs) {
+      },
+      closeTab: function ht_closeTab(aTab) {
+      },
+      saveTabState: function ht_saveTabState(aTab) {
+      },
+      showTab: function ht_showTab(aTab) {
+        dump("Setting window.title to "+aTab.title+"\n");
+        window.title = aTab.title;
+      },
+      persistTab: function ht_persistTab(aTab) {
+      },
+      restoreTab: function ht_restoreTab(aTabmail, aPersistedState) {
+      },
+      onTitleChanged: function ht_onTitleChanged(aTab) {
+        dump("Setting 2 window.title to "+aTab.title+"\n");
+        window.title = aTab.title;
+      },
+      supportsCommand: function ht_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function ht_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function ht_doCommand(aCommand, aTab) {
+      },
+      onEvent: function ht_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function ht_getBrowser(aCommand, aTab) {
+        return null;
+      },
+    },
+
+    // "messageList" tab type.
+    messageList: {
+      type: "messageList",
+      isDefault: false,
+      openTab: function ml_openTab(aTab, aArgs) {
+        dump("aArgs="+aArgs+"\n");
+        for (let x in aArgs)
+          dump("  ."+x+"\n");
+        dump("aTab="+aTab+"\n");
+        for (let x in aTab)
+          dump("  ."+x+"\n");
+        aTab.title = aArgs.title;
+        let browser = document.getElementById("browser");
+        browser.src = "chrome://hometab/content/conversationView.xhtml";
+      },
+      closeTab: function ml_closeTab(aTab) {
+      },
+      saveTabState: function ml_saveTabState(aTab) {
+      },
+      showTab: function ml_showTab(aTab) {
+        dump("Setting window.title to "+aTab.title+"\n");
+        window.title = aTab.title;
+      },
+      persistTab: function ml_persistTab(aTab) {
+      },
+      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      },
+      onTitleChanged: function ml_onTitleChanged(aTab) {
+        dump("Setting 2 window.title to "+aTab.title+"\n");
+        window.title = aTab.title;
+      },
+      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function ml_doCommand(aCommand, aTab) {
+      },
+      onEvent: function ml_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function ml_getBrowser(aCommand, aTab) {
+        return null;
+      },
+    },
+  },
+};
+
+function UpdateMailToolbar() {
+  // Stub this out so that tabmail.xml is happy.
+  dump("Updating Mail Toolbar.  Not.\n");
 }
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-
-/**
- * addEventListener betrayals compel us to establish our link with the
- *  outside world from inside.  NeilAway suggests the problem might have
- *  been the registration of the listener prior to initiating the load.  Which
- *  is odd considering it works for the XUL case, but I could see how that might
- *  differ.  Anywho, this works for now and is a delightful reference to boot.
- */
-
-var hometab;
-
-function reachOutAndTouchFrame() {
-  let us = window.QueryInterface(Ci.nsIInterfaceRequestor)
-                 .getInterface(Ci.nsIWebNavigation)
-                 .QueryInterface(Ci.nsIDocShellTreeItem);
-
-  let parentWin = us.parent
-                    .QueryInterface(Ci.nsIInterfaceRequestor)
-                    .getInterface(Ci.nsIDOMWindow);
-
-  hometab = parentWin.hometab;
-  hometab.htmlLoadHandler(this);
+function SetBusyCursor() {
+  // Stub this out so that tabmail.xml is happy.
+  dump("Setting Busy Cursor.  Not.\n");
 }
 
-function updateTab(e) {
-  let element = $(e.target);
-  $("#categories > .category[selected='true']").removeAttr("selected");
-  element.attr("selected", "true");
-  $("#preview").html("Clicked on tab "+element.attr("id"));
-  hometab.showFolders(this, element.attr("id"));
+
+statusFeedback = {
+  showProgress: function sf_showProgress(aProgress) {
+    // Stub this out so that tabmail.xml is happy.
+    dump("statusFeedback.showProgress("+aProgress+").  Not.\n");
+  },
 }
 
-function showConversations(element) {
-  hometab.showConversations(this, element.attr("id"));
-}
+var gStatusBar = document.getElementById("statusbar-icon");
 
-function showMessages(element) {
-  hometab.showMessages(this, element.attr("id"));
-}
+var tabmail = document.getElementById("tabmail");
+tabmail.registerTabType(homeTabType);
+tabmail.openFirstTab("home", {});

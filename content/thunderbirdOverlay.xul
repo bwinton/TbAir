@@ -50,7 +50,7 @@
   <menupopup id="menu_GoPopup">
     <menuitem id="menu_goHome" label="&gohome.label;"
               accesskey="&gohome.accesskey;"
-              oncommand="hometab.onMenuItemCommand(event);"/>
+              oncommand="onHometabMenuItemCommand(event);"/>
   </menupopup>
 
 </overlay>

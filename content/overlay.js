@@ -35,160 +35,20 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://app/modules/StringBundle.js");
-Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
+Cu.import("resource://app/modules/StringBundle.js");
 
-// -- Import modules we need.
-Components.utils.import("resource://app/modules/gloda/public.js");
-Components.utils.import("resource://app/modules/MailUtils.js");
+function onHometabMenuItemCommand(e) {
+  let windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                        .getService(Ci.nsIWindowWatcher);
+  let messageURI = Cc["@mozilla.org/supports-string;1"]
+                     .createInstance(Ci.nsISupportsString);
 
-var hometab = {
-  onMenuItemCommand: function(e) {
-    let windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                          .getService(Ci.nsIWindowWatcher);
-    let messageURI = Cc["@mozilla.org/supports-string;1"]
-                       .createInstance(Ci.nsISupportsString);
-
-    let strings = new StringBundle("chrome://hometab/locale/hometab.properties");
-    let window = windowWatcher.openWindow(null,
-        "chrome://hometab/content/hometab.xul", strings.get("hometab.title"),
-        "all,chrome,dialog=no,status,toolbar=no,resizable,width=1024,height=527",
-        null);
-    window.hometab = this;
-    window.gFolderTreeView = gFolderTreeView;
-    window.msgBundle = document.getElementById("bundle_messenger");
-    window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
-  },
-
-  modes: {"Unread": function ht_unread() {
-            let map = [];
-            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
-            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
-              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
-              nsMsgFolderFlags.Templates;
-            for each (let folder in gFolderTreeView._enumerateFolders) {
-              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
-                  (!folder.isServer && folder.getNumUnread(false) > 0) ||
-                  (folder == currentFolder))
-                map.push({name: folder.abbreviatedName,
-                          unread: folder.getNumUnread(false),
-                          id: folder.URI});
-            }
-            //sortFolderItems(map);
-            return map;
-          },
-          "Tags": null,
-          "Folders": null,
-          "People": null,
-          "Accounts": null,
-         },
-
-  htmlLoadHandler: function htmlLoadHandler(doc) {
-    let content = [];
-    for (let mode in this.modes) {
-      content.push({folder : mode,
-                    id : mode,
-                   });
-    }
-    doc.addCategories(content);
-  },
-
-  showFolders: function showFolders(doc, id) {
-    let content = [];
-    let func = this.modes[id] || function ht_null() { return []; };
-    let folders = func();
-    for (let index in folders) {
-      let folder = folders[index];
-      content.push({name : folder.name,
-                    unread: folder.unread,
-                    id : folder.id
-                   });
-    }
-    doc.setFolders(content);
-  },
-
-  showConversations: function showConversations(doc, id) {
-    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-    let folder = MailUtils.getFolderForURI(id, true);
-
-    if (folder.flags & nsMsgFolderFlags.Virtual) {
-      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
-      query.folder.apply(query, vFolder.searchFolders);
-    }
-    else {
-      query.folder(folder);
-    }
-    query.orderBy("-date");
-    query.limit(100);
-    query.getCollection({
-      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-        dump("onItemsAdded:\n");
-      },
-      onItemsModified: function _onItemsModified(aItems, aCollection) {
-      },
-      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-      },
-      /* called when our database query completes */
-      onQueryCompleted: function _onQueryCompleted(messages) {
-        dump("onQueryCompleted\n");
-        doc.clearContent();
-        try {
-          seenConversations = {};
-          for (var i in messages.items) {
-            message = messages.items[i];
-            let id = message.conversationID;
-            if (id in seenConversations) {
-              seenConversations[id].messages.push(message);
-            }
-            else {
-              seenConversations[id] = {
-                  "id" : id,
-                  "subject" : message.subject,
-                  "messages" : [message],
-                  "unread" : []
-                  };
-            }
-            if (! message.read)
-              seenConversations[id].unread.push(message);
-          }
-          for (var id in seenConversations) {
-            doc.addContent(seenConversations[id]);
-          }
-        } catch (e) {
-          dump("Caught error in Conversations Query.  e="+e+"\n");
-          doc.addContent({"error":e});
-        }
-      }});
-  },
-
-  showMessages: function showMessages(doc, id) {
-    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-    query.conversation(id)
-    query.orderBy("date");
-    query.limit(1);
-    query.getCollection({
-      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-        dump("onItemsAdded:\n");
-      },
-      onItemsModified: function _onItemsModified(aItems, aCollection) {
-      },
-      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-      },
-      /* called when our database query completes */
-      onQueryCompleted: function _onQueryCompleted(messages) {
-        dump("onQueryCompleted\n");
-        try {
-          message = messages.items[0];
-          let tabmail = document.getElementById("tabmail");
-          tabmail.openTab("glodaList", {
-            conversation: message.conversation,
-            message: message,
-            title: message.conversation.subject,
-            background: false
-          });
-        } catch (e) {
-          dump("Caught error in Messages Query.  e="+e+"\n");
-        }
-      }});
-  },
-}
+  let strings = new StringBundle("chrome://hometab/locale/hometab.properties");
+  let window = windowWatcher.openWindow(null,
+      "chrome://hometab/content/hometab.xul", strings.get("hometab.title"),
+      "all,chrome,dialog=no,status,toolbar=no,resizable,width=1024,height=527",
+      null);
+  window.gFolderTreeView = gFolderTreeView;
+  window.msgBundle = document.getElementById("bundle_messenger");
+  window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
+};

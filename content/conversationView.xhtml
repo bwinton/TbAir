@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
   -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
   -
@@ -36,31 +36,36 @@
   -
   - ***** END LICENSE BLOCK ***** -->
 
-<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://hometab/skin/overlay.css" type="text/css"?>
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        id="window">
-  <tabbrowser id="tabmail" flex="1" panelcontainer="tabpanelcontainer">
-    <box id="tabmail-buttons" orientation="horizontal"/>
-    <tabpanels id="tabpanelcontainer" flex="1" class="plain" selectedIndex="0">
-      <box id="mailContent" orient="vertical" flex="1">
-        <textbox id="searchInput"
-                 searchCriteria="true"
-                 type="search"
-                 searchbutton="true"
-                 autocompletesearch="gloda"
-                 autocompletepopup="PopupGlodaAutocomplete"
-                 />
-        <progressmeter class="progressmeter-statusbar"
-                       id="statusbar-icon"
-                       mode="normal"
-                       value="0"/>
-        <browser id="browser" flex="1" disablehistory="true"
-                 src="chrome://hometab/content/hometab.xhtml"/>
-      </box>
-    </tabpanels>
-  </tabbrowser>
-  <script type="application/javascript"
-          src="chrome://messenger/content/mailTabs.js;version=1.8"/>
-  <script type="application/javascript" src="hometab.js;version=1.8"/>
-</window>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+%brandDTD;
+<!ENTITY % aboutDTD SYSTEM "chrome://global/locale/about.dtd">
+%aboutDTD;
+<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+%globalDTD;
+<!ENTITY % hometabDTD SYSTEM "chrome://hometab/locale/hometab.dtd">
+%hometabDTD;
+]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    version="-//W3C//DTD XHTML 1.1//EN" xml:lang="en">
+<head>
+  <!-- Themes -->
+  <link rel="stylesheet" type="text/css"
+      href="chrome://hometab/content/hometab.css" />
+</head>
+<body dir="&locale.dir;" onload="reachOutAndTouchFrame()">
+  <div id="results-box">
+    Ahhhh!  Conversation goes here!!!
+  </div>
+</body>
+  <!-- Libs -->
+  <script type="application/javascript;version=1.8"
+      src="chrome://messenger/content/jquery.js"></script>
+  <script type="application/javascript;version=1.8"
+      src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
+  <script type="application/javascript;version=1.8"
+      src="chrome://hometab/content/hometab-browser.js"></script>
+</html>
