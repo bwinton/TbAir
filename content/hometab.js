@@ -195,21 +195,25 @@ var homeTabType = {
         aTab.image = "chrome://hometab/content/hometab.png";
       },
       openTab: function ht_openTab(aTab, aArgs) {
+        aTab.title = aArgs.title;
+        window.title = aTab.title;
+        document.getElementById("browser").hidden = false;
+        document.getElementById("conversation").hidden = true;
       },
       closeTab: function ht_closeTab(aTab) {
       },
       saveTabState: function ht_saveTabState(aTab) {
       },
       showTab: function ht_showTab(aTab) {
-        dump("Setting window.title to "+aTab.title+"\n");
         window.title = aTab.title;
+        document.getElementById("browser").hidden = false;
+        document.getElementById("conversation").hidden = true;
       },
       persistTab: function ht_persistTab(aTab) {
       },
       restoreTab: function ht_restoreTab(aTabmail, aPersistedState) {
       },
       onTitleChanged: function ht_onTitleChanged(aTab) {
-        dump("Setting 2 window.title to "+aTab.title+"\n");
         window.title = aTab.title;
       },
       supportsCommand: function ht_supportsCommand(aCommand, aTab) {
@@ -239,23 +243,24 @@ var homeTabType = {
         for (let x in aTab)
           dump("  ."+x+"\n");
         aTab.title = aArgs.title;
-        let browser = document.getElementById("browser");
-        browser.src = "chrome://hometab/content/conversationView.xhtml";
+        window.title = aTab.title;
+        document.getElementById("browser").hidden = true;
+        document.getElementById("conversation").hidden = false;
       },
       closeTab: function ml_closeTab(aTab) {
       },
       saveTabState: function ml_saveTabState(aTab) {
       },
       showTab: function ml_showTab(aTab) {
-        dump("Setting window.title to "+aTab.title+"\n");
         window.title = aTab.title;
+        document.getElementById("browser").hidden = true;
+        document.getElementById("conversation").hidden = false;
       },
       persistTab: function ml_persistTab(aTab) {
       },
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
       },
       onTitleChanged: function ml_onTitleChanged(aTab) {
-        dump("Setting 2 window.title to "+aTab.title+"\n");
         window.title = aTab.title;
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {
@@ -277,19 +282,16 @@ var homeTabType = {
 
 function UpdateMailToolbar() {
   // Stub this out so that tabmail.xml is happy.
-  dump("Updating Mail Toolbar.  Not.\n");
 }
 
 function SetBusyCursor() {
   // Stub this out so that tabmail.xml is happy.
-  dump("Setting Busy Cursor.  Not.\n");
 }
 
 
-statusFeedback = {
+var statusFeedback = {
   showProgress: function sf_showProgress(aProgress) {
     // Stub this out so that tabmail.xml is happy.
-    dump("statusFeedback.showProgress("+aProgress+").  Not.\n");
   },
 }
 
