@@ -109,6 +109,29 @@ function addContent(data) {
   entry.bind("click", function (e) {showMessages($(this))});
 }
 
+function getMessageBody(aMessageHeader) {
+  try {
+  let messenger = Components.classes["@mozilla.org/messenger;1"]
+                            .createInstance(Components.interfaces.nsIMessenger);
+  let listener = Components.classes["@mozilla.org/network/sync-stream-listener;1"]
+                           .createInstance(Components.interfaces.nsISyncStreamListener);
+  let uri = aMessageHeader.folder.getUriForMsg(aMessageHeader);
+  messenger.messageServiceFromURI(uri)
+           .streamMessage(uri, listener, null, null, false, "");
+  let folder = aMessageHeader.folder;
+  return folder.getMsgTextFromStream(listener.inputStream,
+                                     aMessageHeader.Charset,
+                                     65536,
+                                     32768,
+                                     false,
+                                     true,
+                                     { });
+  } catch (e) {
+    dump("Caught error in getMessageBody.  e="+e+"\n");
+    return "";
+  }
+}
+
 function addMessage(message) {
   let conversations = $("ol.conversations");
   if (conversations.length == 0)
@@ -122,11 +145,15 @@ function addMessage(message) {
   let msg = $('<li class="message"/>').appendTo(entry);
   $('<span class="from"/>').text(message.from.value).appendTo(msg);
   $('<span class="date"/>').text(""+message.date).appendTo(msg);
-  let body = $('<span class="fullbody"/>').appendTo(msg);
-  // Sometimes a message has no text.
-  if (message.indexedBodyText) {
-    body.text(message.indexedBodyText);
-  }
+
+  let body = getMessageBody(message.folderMessage);
+  $('<div class="fullbody"/>').appendTo(msg).text(body).css("display", "none");
+  let synopsis = body;
+  if (message.indexedBodyText)
+    synopsis = message.indexedBodyText;
+  $('<div class="synopsis">').appendTo(msg).text(synopsis.substr(0, 140));
+
+  msg.bind("click", function (e) {showMessage($(this))});
 }
 
 const Cc = Components.classes;
@@ -173,4 +200,9 @@ function showConversations(element) {
 function showMessages(element) {
   hometab.showMessages(this, element.attr("id"),
                        element.children(".subject").text());
+}
+
+function showMessage(element) {
+  element.children(".synopsis").toggle("fast");
+  element.children(".fullbody").slideToggle("fast");
 }

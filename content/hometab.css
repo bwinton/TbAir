@@ -188,13 +188,9 @@ li.folder.unread {
   content: " - ";
 }
 
-.message .body {
+.message .body,
+.message .fullbody,
+.message .synopsis {
   margin-top: 3px;
-  color: #666;
-}
-
-.message .fullbody {
-  margin-top: 3px;
-  white-space: pre-wrap;
   color: #666;
 }
