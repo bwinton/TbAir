@@ -69,9 +69,8 @@ function setFolders(folders) {
     li.addClass((folder.unread > 0) ? "unread" : "read");
     li.attr("id", folder.id);
     li.append($("<span class='name'/>").text(folder.name + " "));
-    if (folder.unread > 0) {
+    if (folder.unread > 0)
       li.append($("<span class='count'/>").text(folder.unread));
-    }
     content.append(li);
     li.bind("click", function (e) {showConversations($(this))});
   }
@@ -79,17 +78,15 @@ function setFolders(folders) {
 
 function addContent(data) {
   let conversations = $("ol.conversations");
-  if (conversations.length == 0) {
+  if (conversations.length == 0)
     conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
-  }
 
   let entry = $('<li class="conversation"/>').appendTo(conversations);
   entry.addClass(("unread" in data && data["unread"].length > 0) ? "unread" : "read");
   entry.attr("id", data["id"]);
 
-  if ("subject" in data) {
+  if ("subject" in data)
     $('<div class="subject"/>').text(data["subject"]).appendTo(entry);
-  }
 
   let messages = $('<ol class="messages"></ol>').appendTo(entry);
 
@@ -105,14 +102,31 @@ function addContent(data) {
     return msg;
   };
 
-  for (let unread in data["unread"]) {
+  for (let unread in data["unread"])
     addMessage(messages, data["unread"][unread]).addClass("unread");
-  }
-
-  for (let read in data["messages"]) {
+  for (let read in data["messages"])
     addMessage(messages, data["messages"][read]).addClass("read");
-  }
   entry.bind("click", function (e) {showMessages($(this))});
+}
+
+function addMessage(message) {
+  let conversations = $("ol.conversations");
+  if (conversations.length == 0)
+    conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
+
+  let entry = $('<li class="conversation"/>').appendTo(conversations);
+
+  entry.addClass(message.read ? "read" : "unread");
+  entry.attr("id", message.id);
+
+  let msg = $('<li class="message"/>').appendTo(entry);
+  $('<span class="from"/>').text(message.from.value).appendTo(msg);
+  $('<span class="date"/>').text(""+message.date).appendTo(msg);
+  let body = $('<span class="fullbody"/>').appendTo(msg);
+  // Sometimes a message has no text.
+  if (message.indexedBodyText) {
+    body.text(message.indexedBodyText);
+  }
 }
 
 const Cc = Components.classes;

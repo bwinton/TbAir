@@ -125,9 +125,8 @@ var hometab = {
             if (! message.read)
               seenConversations[id].unread.push(message);
           }
-          for (var id in seenConversations) {
+          for (var id in seenConversations)
             doc.addContent(seenConversations[id]);
-          }
         } catch (e) {
           dump("Caught error in Conversations Query.  e="+e+"\n");
           doc.addContent({"error":e});
@@ -149,17 +148,14 @@ var hometab = {
     let doc = hometab.conversationDoc;
     let id = aTab.id;
     if (aTab.results != null) {
-      for (var id in aTab.results) {
-        doc.addContent(aTab.results[id]);
-      }
+      for (var id in aTab.results)
+        doc.addMessage(aTab.results[id]);
       return;
     }
     let self = this;
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
     query.conversation(id)
-    dump("Asking for conversation for "+id+"\n");
     query.orderBy("date");
-    query.limit(1);
     query.getCollection({
       onItemsAdded: function _onItemsAdded(aItems, aCollection) {
       },
@@ -170,19 +166,10 @@ var hometab = {
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
         aTab.results = [];
-        for (var i in messages.items) {
-          message = messages.items[i];
-          let id = message.conversationID;
-          aTab.results.push({
-              "id" : id,
-              "subject" : message.subject,
-              "message" : message,
-              "unread" : !message.read,
-              });
-        }
-        for (var i in aTab.results) {
-          doc.addContent(aTab.results[i]);
-        }
+        for (var i in messages.items)
+          aTab.results.push(messages.items[i]);
+        for (var i in aTab.results)
+          doc.addMessage(aTab.results[i]);
       }});
   },
 };
@@ -211,7 +198,6 @@ var homeTabType = {
       },
 
       htmlLoadHandler: function ht_htmlLoadHandler(doc) {
-        dump("Calling home htmlLoadHandler!\n");
         let content = [];
         for (let mode in hometab._modes) {
           content.push({folder : mode,
@@ -259,7 +245,6 @@ var homeTabType = {
       isDefault: false,
 
       openTab: function ml_openTab(aTab, aArgs) {
-        dump("Calling messageList openTab!\n");
         aTab.title = aArgs.title;
         aTab.id = aArgs.id;
         window.title = aTab.title;
@@ -271,7 +256,6 @@ var homeTabType = {
       },
 
       htmlLoadHandler: function ml_htmlLoadHandler(doc) {
-        dump("Calling messageList htmlLoadHandler!\n");
         hometab.conversationDoc = doc;
       },
 
