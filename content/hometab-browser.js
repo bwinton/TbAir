@@ -130,7 +130,7 @@ const Cu = Components.utils;
 
 var hometab;
 
-function reachOutAndTouchFrame() {
+function reachOutAndTouchFrame(aMode) {
   let us = window.QueryInterface(Ci.nsIInterfaceRequestor)
                  .getInterface(Ci.nsIWebNavigation)
                  .QueryInterface(Ci.nsIDocShellTreeItem);
@@ -140,7 +140,8 @@ function reachOutAndTouchFrame() {
                     .getInterface(Ci.nsIDOMWindow);
 
   hometab = parentWin.hometab;
-  hometab.htmlLoadHandler(this);
+  let homeTabType = parentWin.homeTabType;
+  homeTabType.modes[aMode].htmlLoadHandler(this);
 }
 
 function updateTab(e) {
@@ -156,5 +157,6 @@ function showConversations(element) {
 }
 
 function showMessages(element) {
-  hometab.showMessages(this, element.attr("id"));
+  hometab.showMessages(this, element.attr("id"),
+                       element.children(".subject").text());
 }

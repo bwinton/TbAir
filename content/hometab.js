@@ -67,15 +67,7 @@ var hometab = {
           "Accounts": null,
          },
 
-  htmlLoadHandler: function htmlLoadHandler(doc) {
-    let content = [];
-    for (let mode in this._modes) {
-      content.push({folder : mode,
-                    id : mode,
-                   });
-    }
-    doc.addCategories(content);
-  },
+  conversationDoc: null,
 
   showFolders: function showFolders(doc, id) {
     let content = [];
@@ -106,7 +98,6 @@ var hometab = {
     query.limit(100);
     query.getCollection({
       onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-        dump("onItemsAdded:\n");
       },
       onItemsModified: function _onItemsModified(aItems, aCollection) {
       },
@@ -114,7 +105,6 @@ var hometab = {
       },
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
-        dump("onQueryCompleted\n");
         doc.clearContent();
         try {
           seenConversations = {};
@@ -145,7 +135,26 @@ var hometab = {
       }});
   },
 
-  showMessages: function showMessages(doc, id) {
+  showMessages: function showMessages(doc, id, subject) {
+    let tabmail = document.getElementById("tabmail");
+    // The following call fails because glodaList isn't a recognized
+    // tab mode for some reason.
+    tabmail.openTab("messageList", {
+      id: id,
+      title: subject,
+    });
+  },
+
+  showMessagesInConversation: function showMessagesInConversation(aTab, flag) {
+    let doc = hometab.conversationDoc;
+    let id = aTab.id;
+    if (aTab.results != null) {
+      for (var id in aTab.results) {
+        doc.addContent(aTab.results[id]);
+      }
+      return;
+    }
+    let self = this;
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
     query.conversation(id)
     dump("Asking for conversation for "+id+"\n");
@@ -153,7 +162,6 @@ var hometab = {
     query.limit(1);
     query.getCollection({
       onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-        dump("onItemsAdded:\n");
       },
       onItemsModified: function _onItemsModified(aItems, aCollection) {
       },
@@ -161,20 +169,19 @@ var hometab = {
       },
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
-        dump("onQueryCompleted\n");
-        try {
-          message = messages.items[0];
-          let tabmail = document.getElementById("tabmail");
-          dump("currentTabInfo="+tabmail.currentTabInfo+"\n");
-          // The following call fails because glodaList isn't a recognized
-          // tab mode for some reason.
-          tabmail.openTab("messageList", {
-            conversation: message.conversation,
-            message: message,
-            title: message.conversation.subject,
-          });
-        } catch (e) {
-          dump("Caught error in Messages Query.  e="+e+"\n");
+        aTab.results = [];
+        for (var i in messages.items) {
+          message = messages.items[i];
+          let id = message.conversationID;
+          aTab.results.push({
+              "id" : id,
+              "subject" : message.subject,
+              "message" : message,
+              "unread" : !message.read,
+              });
+        }
+        for (var i in aTab.results) {
+          doc.addContent(aTab.results[i]);
         }
       }});
   },
@@ -189,32 +196,47 @@ var homeTabType = {
     home: {
       type: "home",
       isDefault: true,
+
       openFirstTab: function ht_openTab(aTab, aArgs) {
-        dump("Args="+aArgs+"\n");
         aTab.title = "HomeTab";
         aTab.image = "chrome://hometab/content/hometab.png";
       },
+
       openTab: function ht_openTab(aTab, aArgs) {
         aTab.title = aArgs.title;
+        aTab.id = "Home";
         window.title = aTab.title;
         document.getElementById("browser").hidden = false;
         document.getElementById("conversation").hidden = true;
       },
-      closeTab: function ht_closeTab(aTab) {
+
+      htmlLoadHandler: function ht_htmlLoadHandler(doc) {
+        dump("Calling home htmlLoadHandler!\n");
+        let content = [];
+        for (let mode in hometab._modes) {
+          content.push({folder : mode,
+                        id : mode,
+                       });
+        }
+        doc.addCategories(content);
       },
-      saveTabState: function ht_saveTabState(aTab) {
-      },
+
       showTab: function ht_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = false;
         document.getElementById("conversation").hidden = true;
       },
+
+      onTitleChanged: function ht_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function ht_closeTab(aTab) {
+      },
+      saveTabState: function ht_saveTabState(aTab) {
+      },
       persistTab: function ht_persistTab(aTab) {
       },
       restoreTab: function ht_restoreTab(aTabmail, aPersistedState) {
-      },
-      onTitleChanged: function ht_onTitleChanged(aTab) {
-        window.title = aTab.title;
       },
       supportsCommand: function ht_supportsCommand(aCommand, aTab) {
         return false;
@@ -235,33 +257,42 @@ var homeTabType = {
     messageList: {
       type: "messageList",
       isDefault: false,
+
       openTab: function ml_openTab(aTab, aArgs) {
-        dump("aArgs="+aArgs+"\n");
-        for (let x in aArgs)
-          dump("  ."+x+"\n");
-        dump("aTab="+aTab+"\n");
-        for (let x in aTab)
-          dump("  ."+x+"\n");
+        dump("Calling messageList openTab!\n");
         aTab.title = aArgs.title;
+        aTab.id = aArgs.id;
+        window.title = aTab.title;
+        document.getElementById("browser").hidden = true;
+        let conversation = document.getElementById("conversation");
+        conversation.hidden = false;
+        hometab.conversationDoc.clearContent();
+        hometab.showMessagesInConversation(aTab);
+      },
+
+      htmlLoadHandler: function ml_htmlLoadHandler(doc) {
+        dump("Calling messageList htmlLoadHandler!\n");
+        hometab.conversationDoc = doc;
+      },
+
+      showTab: function ml_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
         document.getElementById("conversation").hidden = false;
+        hometab.conversationDoc.clearContent();
+        hometab.showMessagesInConversation(aTab, true);
+      },
+
+      onTitleChanged: function ml_onTitleChanged(aTab) {
+        window.title = aTab.title;
       },
       closeTab: function ml_closeTab(aTab) {
       },
       saveTabState: function ml_saveTabState(aTab) {
       },
-      showTab: function ml_showTab(aTab) {
-        window.title = aTab.title;
-        document.getElementById("browser").hidden = true;
-        document.getElementById("conversation").hidden = false;
-      },
       persistTab: function ml_persistTab(aTab) {
       },
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
-      },
-      onTitleChanged: function ml_onTitleChanged(aTab) {
-        window.title = aTab.title;
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {
         return false;
@@ -288,11 +319,30 @@ function SetBusyCursor() {
   // Stub this out so that tabmail.xml is happy.
 }
 
-
 var statusFeedback = {
   showProgress: function sf_showProgress(aProgress) {
     // Stub this out so that tabmail.xml is happy.
   },
+}
+
+/**
+ * From mail/base/content/mailWindowOverlay.js.
+ */
+function CreateToolbarTooltip(document, event)
+{
+  event.stopPropagation();
+  var tn = document.tooltipNode;
+  if (tn.localName != "tab")
+    return false; // Not a tab, so cancel the tooltip.
+  if ("mOverCloseButton" in tn && tn.mOverCloseButton) {
+     event.target.setAttribute("label", tn.getAttribute("closetabtext"));
+     return true;
+  }
+  if (tn.hasAttribute("label")) {
+    event.target.setAttribute("label", tn.getAttribute("label"));
+    return true;
+  }
+  return false;
 }
 
 var gStatusBar = document.getElementById("statusbar-icon");
