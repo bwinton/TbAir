@@ -193,4 +193,12 @@ li.folder.unread {
 .message .synopsis {
   margin-top: 3px;
   color: #666;
+  width: 100%;
+  min-width: 100%;
+  white-space: pre-wrap;
+}
+
+.message .body,
+.message .synopsis {
+  white-space: nowrap;
 }
