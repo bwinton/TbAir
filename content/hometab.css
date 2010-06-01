@@ -73,10 +73,10 @@ div { border: 1px solid green }
 }
 
 #preview-box {
-  display: -moz-box;
+  display: block;
   -moz-box-orient: vertical;
   -moz-box-align: start;
-  -moz-box-flex: 1;
+  -moz-box-flex: 1; 
 }
 
 #categories {
