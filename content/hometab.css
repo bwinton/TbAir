@@ -36,7 +36,8 @@
 
 body {
   font-family: sans-serif;
-  margin: 7px;
+  margin: 0px;
+  padding: 0px;
   background-color: #fff;
 }
 
@@ -72,7 +73,8 @@ div { border: 1px solid green }
   -moz-box-orient: vertical;
   -moz-box-align: start;
   -moz-box-flex: 0;
-  border-right: 1px solid GrayText;
+  border-right: 1px solid #d6e5f5;
+  padding: 3px;
 }
 
 #preview-box {
@@ -80,6 +82,7 @@ div { border: 1px solid green }
   -moz-box-orient: vertical;
   -moz-box-align: start;
   -moz-box-flex: 1;
+
 }
 
 #categories {
@@ -88,7 +91,8 @@ div { border: 1px solid green }
   margin: 0;
 }
 
-.category {
+.category,
+li.folder {
   -moz-user-focus: none;
   -moz-user-select: none;
   min-width: 148px;
@@ -96,11 +100,21 @@ div { border: 1px solid green }
   margin: 1px 0;
   color: Text;
   cursor: pointer;
+  border: 1px solid transparent;
+  -moz-border-radius: 3px;
 }
 
 .category[selected="true"] {
-  background-color: HighLight;
-  color: HighLightText;
+  background: -moz-linear-gradient(top, #fafbfd, #ebf3fd);
+  border: 1px solid #b8d6fb;
+}
+
+.category:hover,
+li.folder:hover {
+  border: 1px solid #84acdd;
+/*  background: #ddecfe; */
+  background: -moz-linear-gradient(top, #ebf4fe, #cfe4fe);
+
 }
 
 #preview {
@@ -112,7 +126,7 @@ ol.folders {
   margin: 0;
   padding: 0;
 }
-
+/*
 li.folder {
   min-height: 32px;
   min-width: 200px;
@@ -120,16 +134,18 @@ li.folder {
   padding: 3px;
   border: 1px solid rgba(147, 179, 206, 100);
   -moz-border-radius: 3px;
-  /*92b4d2*/
   background-color: #c0d3e2;
   background-image: -moz-linear-gradient(top bottom, #c0d3e2, #92b4d2);
   color: #141414;
   cursor: pointer;
 }
 
+
 li.folder:hover {
   background-color: #92b4d2;
 }
+*/
+
 li.folder.unread {
   font-weight: bold;
 }
@@ -146,14 +162,16 @@ li.folder.unread {
 .conversation {
   margin-bottom: 7px;
   padding: 3px;
-  background-color: #fafafa;
-  border: 1px solid #aaa;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #d6e5f5;
   -moz-border-radius: 3px;
   cursor: pointer;
 }
 
 .conversation:hover {
-  background-color: #fff;
+  background-color: #f1f5fb;
+  border: 1px solid #d6e5f5;
 }
 
 .conversation.unread > .subject {
