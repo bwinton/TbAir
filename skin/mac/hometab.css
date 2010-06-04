@@ -1,1 +1,339 @@
 @import url("chrome://hometab-classic/skin/hometab.css");
+
+/* reset */
+* {
+  border: 0 none;
+  font-family: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  vertical-align: baseline;
+  list-style-type: none;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: "Lucida Grande", sans-serif;
+  background-color: #fff;
+  min-height: 100%;
+  height: 100%;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+/*
+ * Debugging!
+div { border: 1px solid green }
+*/
+
+.head {
+  font: bold larger sans-serif;
+}
+
+#search-box {
+  margin: 3.5px 0;
+}
+
+#q {
+  font-size: large;
+  width: 90%;
+}
+
+#menu {
+  width: 100%;
+  /*background-image: -moz-linear-gradient(center top ,#fefefe 0%, #f5f5f5 50%, #ebebeb 50%, #ebebeb 100%);*/
+  background-image: -moz-linear-gradient(top,#ededed,#d2d2d2);
+  height: 24px;
+  border-bottom: 1px solid #aaa;
+}
+
+#menu li {
+  height: 24px;
+  padding: 0 10px;
+  text-align: center;
+  border-width: 0 1px 1px 0;
+  border-color: transparent #aaa #aaa transparent;
+  border-style: solid;
+  display: inline-block;
+  float: left;
+  margin: 0;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+#menu li:hover {
+  background-color: #ccc;
+}
+
+#menu li.search {
+  border: none;
+  float: right;
+}
+
+#menu li.search:hover {
+  background-color: transparent;
+}
+
+#menu li.search input {
+  padding: 2px 10px;
+  -moz-border-radius: 10px;
+  -moz-box-shadow: 0px -1px 1px #333;
+  color: #878787;
+}
+
+#results-box {
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  -moz-box-flex: 1;
+  width: 100%;
+  min-height: 100%;
+  background: #fff;
+}
+
+#category-box {
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: start;
+  -moz-box-flex: 0;
+  border-right: 1px solid #aaa;
+  background-color: #dee4ea;
+}
+
+#preview-box {
+  display: block;
+  -moz-box-orient: vertical;
+  -moz-box-align: start;
+  -moz-box-flex: 1;
+}
+
+#categories {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#categories li.title {
+  padding: 0 10px;
+  height: 24px;
+  line-height: 24px;
+  font-weight: bold;
+  color: #555;
+}
+
+.category {
+  -moz-user-focus: none;
+  -moz-user-select: none;
+  min-width: 256px;
+  padding: 1px 10px 1px 30px;
+  margin: 0;
+  color: Text;
+  cursor: pointer;
+}
+
+.category[selected="true"] {
+  background-image: -moz-linear-gradient(top,#6ca4dd,#236ebc);
+  text-shadow: 0 1px 0 #626d7f;
+  font-weight: bold;
+  color: HighLightText;
+  border-top: 1px solid #5694d3;
+  border-bottom: 1px solid #1d6aba;
+}
+
+li#Unread.category[selected="true"] {
+  background-image: url("i/unread.gif"),
+                    -moz-linear-gradient(top,#6ca4dd,#236ebc);
+  background-position: 10px center, center center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+li#Folders.category {
+  background-image: url("i/folder.png");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 30px;
+}
+
+#preview {
+  margin: 0;
+}
+
+ol.folders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li.folder,
+.conversations li {
+  min-height: 32px;
+  line-height: 32px;
+  min-width: 256px;
+  margin: 0;
+  padding: 0 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-left: none;
+  border-right: none;
+}
+
+li.folder:nth-child(odd),
+.conversations li:nth-child(odd) {
+  background-color: #ecf3fe;
+}
+
+li.folder:hover,
+.conversations li:hover {
+  background-image: -moz-linear-gradient(top,#6ca4dd,#236ebc);
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 1px 0 #626d7f;  
+  border-top: 1px solid #5694d3;
+  border-bottom: 1px solid #1d6aba;
+}
+
+li.folder.unread {
+  font-weight: bold;
+  background-image: url("i/folder.png");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 30px;
+}
+
+li.folder.unread:hover {  
+  background-image: url("i/folder.png"),
+                    -moz-linear-gradient(top,#6ca4dd,#236ebc);
+  background-repeat: no-repeat, no-repeat;
+  background-position: 10px center, center center;
+}
+
+.conversations {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conversations ol.messages {
+  display: none;
+}
+
+.conversation {
+  margin-bottom: 7px;
+  padding: 3px;
+  background-color: #fafafa;
+  border: 1px solid #aaa;
+  cursor: pointer;
+}
+
+.conversation:hover {
+  background-color: #fff;
+}
+
+.conversation.unread > .subject {
+  font-weight: bold;
+}
+
+.conversation.unread > .count {
+  font-weight: bold;
+}
+
+.fullConversations > li {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #aaa;
+  border-top: none;
+  background: #fff;
+}
+
+.fullConversations li.conversation {
+  border-left: none;
+  border-right: none;
+}
+
+.fullConversations li.conversation li.message .from {
+  font-weight: bold;
+}
+
+.fullConversations li.conversation.read {
+  color: #888;
+  background-color: #f2f2f2;
+}
+
+.fullConversations > .conversation.read > .message > .date:after {
+  content: " - expand";
+  color: highlight;
+}
+
+.fullConversations li.conversation.unread {
+  border-bottom: 1px solid #c3cddb;
+}
+
+.fullConversations li.conversation.unread:nth-child(odd) {
+  background-color: #ECF3FE;
+}
+
+.fullConversations li.conversation.read li.message .synopsis,
+.fullConversations li.conversation.read li.message .fullBody {
+  display: none;
+}
+
+.fullConversations li.conversation li.message .fullBody {
+  display: none;
+}
+
+.fullConversations li.conversation.unread li.message .from {
+  color: highlight;
+}
+
+.fullConversations li.conversation.unread li.message .date {
+  color: #888;
+}
+
+
+.messages {
+  margin: 7px 0 0 21px;
+  padding: 0;
+  list-style: none;
+}
+
+.count:before {
+  content: "(";
+}
+
+.count:after {
+  content: ")";
+}
+
+.message {
+}
+
+.message .from:after {
+  content: " - ";
+}
+
+.message .body,
+.message .fullbody,
+.message .synopsis {
+  margin-top: 3px;
+  color: #666;
+  width: 100%;
+  min-width: 100%;
+  white-space: pre-wrap;
+}
+
+.message .body,
+.message .synopsis {
+  color: #000;
+  font-size: 13px;
+}
