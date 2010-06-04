@@ -1,4 +1,7 @@
 content	hometab	content/
 locale	hometab	en-US	locale/en-US/
-skin	hometab	classic/1.0	skin/
+skin    hometab-classic classic/1.0   skin/
+skin    hometab classic/1.0   skin/gnome/     os=Linux
+skin    hometab classic/1.0   skin/windows/   os=WINNT
+skin    hometab classic/1.0   skin/mac/       os=Darwin
 overlay	chrome://messenger/content/messenger.xul    chrome://hometab/content/thunderbirdOverlay.xul
