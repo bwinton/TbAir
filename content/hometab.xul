@@ -58,6 +58,8 @@
                        hidden="true"/>
         <browser id="browser" flex="1" disablehistory="true"
                  src="chrome://hometab/content/hometab.xhtml"/>
+        <browser id="folder" flex="1" hidden="true" disablehistory="true"
+                 src="chrome://hometab/content/folderView.xhtml"/>
         <browser id="conversation" flex="1" hidden="true" disablehistory="true"
                  src="chrome://hometab/content/conversationView.xhtml"/>
       </box>

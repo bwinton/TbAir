@@ -68,6 +68,7 @@ var hometab = {
          },
 
   conversationDoc: null,
+  folderDoc: null,
 
   showFolders: function showFolders(doc, id) {
     let content = [];
@@ -83,16 +84,25 @@ var hometab = {
     doc.setFolders(content);
   },
 
-  showConversations: function showConversations(doc, id) {
-    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-    let folder = MailUtils.getFolderForURI(id, true);
+  showConversations: function show_Conversations(doc, id) {
+    let tabmail = document.getElementById("tabmail");
+    // The following call fails because glodaList isn't a recognized
+    // tab mode for some reason.
+    tabmail.openTab("folderList", {
+      id: id
+    });
+  },
 
-    if (folder.flags & nsMsgFolderFlags.Virtual) {
-      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+  showConversationsInFolder: function show_ConversationsInFolder(aTab, aFolder) {
+    let doc = hometab.folderDoc;
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+
+    if (aFolder.flags & nsMsgFolderFlags.Virtual) {
+      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(aFolder)
       query.folder.apply(query, vFolder.searchFolders);
     }
     else {
-      query.folder(folder);
+      query.folder(aFolder);
     }
     query.orderBy("-date");
     query.limit(100);
@@ -109,7 +119,7 @@ var hometab = {
         try {
           seenConversations = {};
           for (var i in messages.items) {
-            message = messages.items[i];
+            let message = messages.items[i];
             let id = message.conversationID;
             if (id in seenConversations) {
               seenConversations[id].messages.push(message);
@@ -210,6 +220,7 @@ var homeTabType = {
       showTab: function ht_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = false;
+        document.getElementById("folder").hidden = true;
         document.getElementById("conversation").hidden = true;
       },
 
@@ -239,6 +250,63 @@ var homeTabType = {
       },
     },
 
+    // "folderList" tab type.
+    folderList: {
+      type: "folderList",
+      isDefault: false,
+
+      openTab: function ml_openTab(aTab, aArgs) {
+        let folder = MailUtils.getFolderForURI(aArgs.id, true);
+        aTab.title = folder.prettyName;
+        aTab.id = aArgs.id;
+        window.title = aTab.title;
+        document.getElementById("browser").hidden = true;
+        document.getElementById("conversation").hidden = true;
+        document.getElementById("folder").hidden = false;
+        hometab.folderDoc.clearContent();
+        hometab.showConversationsInFolder(aTab, folder)
+      },
+
+      htmlLoadHandler: function ml_htmlLoadHandler(doc) {
+        hometab.folderDoc = doc;
+      },
+
+      showTab: function ml_showTab(aTab) {
+        window.title = aTab.title;
+        document.getElementById("browser").hidden = true;
+        document.getElementById("conversation").hidden = true;
+        document.getElementById("folder").hidden = false;
+        hometab.folderDoc.clearContent();
+        let folder = MailUtils.getFolderForURI(aTab.id, true);
+        hometab.showConversationsInFolder(aTab, folder);
+      },
+
+      onTitleChanged: function ml_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function ml_closeTab(aTab) {
+      },
+      saveTabState: function ml_saveTabState(aTab) {
+      },
+      persistTab: function ml_persistTab(aTab) {
+      },
+      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      },
+      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function ml_doCommand(aCommand, aTab) {
+      },
+      onEvent: function ml_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function ml_getBrowser(aCommand, aTab) {
+        return null;
+      },
+    },
+
     // "messageList" tab type.
     messageList: {
       type: "messageList",
@@ -249,6 +317,7 @@ var homeTabType = {
         aTab.id = aArgs.id;
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
+        document.getElementById("folder").hidden = true;
         let conversation = document.getElementById("conversation");
         conversation.hidden = false;
         hometab.conversationDoc.clearContent();
@@ -262,6 +331,7 @@ var homeTabType = {
       showTab: function ml_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
+        document.getElementById("folder").hidden = true;
         document.getElementById("conversation").hidden = false;
         hometab.conversationDoc.clearContent();
         hometab.showMessagesInConversation(aTab, true);

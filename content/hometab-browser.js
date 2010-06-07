@@ -54,12 +54,6 @@ function clearContent() {
   $("#preview").html("");
 }
 
-function getSpan(id, data) {
-  let retval = $("<span class='"+id+"'/>");
-  retval.text(""+data[id]);
-  return retval;
-}
-
 function setFolders(folders) {
   clearContent();
   let content = $("<ol class='folders'/>").appendTo($("#preview"));
@@ -88,17 +82,13 @@ function addContent(data) {
   if ("subject" in data)
     $('<div class="subject"/>').text(data["subject"]).appendTo(entry);
 
-  let messages = $('<ol class="messages"></ol>').appendTo(entry);
+  let messages = $('<ol class="messages"/>').appendTo(entry);
 
   let addMessage = function(messages, message) {
     let msg = $('<li class="message"/>').appendTo(messages);
     $('<span class="from"/>').text(message.from.value).appendTo(msg);
-    $('<span class="date"/>').text(""+message.date).appendTo(msg);
-    let body = $('<span class="body"/>').appendTo(msg);
-    // Sometimes a message has no text.
-    if (message.indexedBodyText) {
-      body.text(message.indexedBodyText.substr(0, 140));
-    }
+    $('<span class="date"/>').text(message.date.toLocaleString()).appendTo(msg);
+    $('<span class="body"/>').text((message.indexedBodyText || "").substr(0, 140)).appendTo(msg);
     return msg;
   };
 
