@@ -44,18 +44,18 @@
     <box id="tabmail-buttons" orientation="horizontal"/>
     <tabpanels id="tabpanelcontainer" flex="1" class="plain" selectedIndex="0">
       <box id="mailContent" orient="vertical" flex="1">
-        <textbox id="searchInput"
-                 searchCriteria="true"
-                 type="search"
-                 searchbutton="true"
-                 autocompletesearch="gloda"
-                 autocompletepopup="PopupGlodaAutocomplete"
-                 />
-        <progressmeter class="progressmeter-statusbar"
-                       id="statusbar-icon"
-                       mode="normal"
-                       value="0"
-                       hidden="true"/>
+        <!--<textbox id="searchInput"-->
+        <!--         searchCriteria="true"-->
+        <!--         type="search"-->
+        <!--         searchbutton="true"-->
+        <!--         autocompletesearch="gloda"-->
+        <!--         autocompletepopup="PopupGlodaAutocomplete"-->
+        <!--         />-->
+        <!--<progressmeter class="progressmeter-statusbar"-->
+        <!--               id="statusbar-icon"-->
+        <!--               mode="normal"-->
+        <!--               value="0"-->
+        <!--               hidden="true"/>-->
         <browser id="browser" flex="1" disablehistory="true"
                  src="chrome://hometab/content/hometab.xhtml"/>
         <browser id="folder" flex="1" hidden="true" disablehistory="true"
