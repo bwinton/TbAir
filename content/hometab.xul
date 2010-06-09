@@ -51,11 +51,12 @@
         <!--         autocompletesearch="gloda"-->
         <!--         autocompletepopup="PopupGlodaAutocomplete"-->
         <!--         />-->
-        <!--<progressmeter class="progressmeter-statusbar"-->
-        <!--               id="statusbar-icon"-->
-        <!--               mode="normal"-->
-        <!--               value="0"-->
-        <!--               hidden="true"/>-->
+        <!-- We need the progressmeter or the tabs won't work correctly. -->
+        <progressmeter class="progressmeter-statusbar"
+                       id="statusbar-icon"
+                       mode="normal"
+                       value="0"
+                       hidden="true"/>
         <browser id="browser" flex="1" disablehistory="true"
                  src="chrome://hometab/content/hometab.html"/>
         <browser id="folder" flex="1" hidden="true" disablehistory="true"
