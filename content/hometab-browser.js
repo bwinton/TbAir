@@ -57,17 +57,12 @@ function clearContent() {
 function setFolders(folders) {
   clearContent();
   let content = $("<ol class='folders'/>").appendTo($("#preview"));
-  for (let index in folders) {
-    let folder = folders[index];
-    let li = $("<li class='folder'/>");
-    li.addClass((folder.unread > 0) ? "unread" : "read");
-    li.attr("id", folder.id);
-    li.append($("<span class='name'/>").text(folder.name + " "));
-    if (folder.unread > 0)
-      li.append($("<span class='count'/>").text(folder.unread));
-    content.append(li);
-    li.bind("click", function (e) {showConversations($(this))});
-  }
+  $.each(folders, function(i, e) {
+    e.count = e.unread || "";
+    e.extraClass = e.unread > 0 ? "unread" : "read";
+  });
+  $("#foldertmpl").render(folders).appendTo(content);
+  content.children("li").click(function (e) {showConversations($(this))});
 }
 
 function addContent(data) {

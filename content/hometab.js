@@ -255,7 +255,7 @@ var homeTabType = {
       type: "folderList",
       isDefault: false,
 
-      openTab: function ml_openTab(aTab, aArgs) {
+      openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
         aTab.title = folder.prettyName;
         aTab.id = aArgs.id;
@@ -267,11 +267,11 @@ var homeTabType = {
         hometab.showConversationsInFolder(aTab, folder)
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(doc) {
+      htmlLoadHandler: function fl_htmlLoadHandler(doc) {
         hometab.folderDoc = doc;
       },
 
-      showTab: function ml_showTab(aTab) {
+      showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
         document.getElementById("conversation").hidden = true;
@@ -281,28 +281,28 @@ var homeTabType = {
         hometab.showConversationsInFolder(aTab, folder);
       },
 
-      onTitleChanged: function ml_onTitleChanged(aTab) {
+      onTitleChanged: function fl_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
-      closeTab: function ml_closeTab(aTab) {
+      closeTab: function fl_closeTab(aTab) {
       },
-      saveTabState: function ml_saveTabState(aTab) {
+      saveTabState: function fl_saveTabState(aTab) {
       },
-      persistTab: function ml_persistTab(aTab) {
+      persistTab: function fl_persistTab(aTab) {
       },
-      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      restoreTab: function fl_restoreTab(aTabmail, aPersistedState) {
       },
-      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+      supportsCommand: function fl_supportsCommand(aCommand, aTab) {
         return false;
       },
-      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+      isCommandEnabled: function fl_isCommandEnabled(aCommand, aTab) {
         return false;
       },
-      doCommand: function ml_doCommand(aCommand, aTab) {
+      doCommand: function fl_doCommand(aCommand, aTab) {
       },
-      onEvent: function ml_onEvent(aEvent, aTab) {
+      onEvent: function fl_onEvent(aEvent, aTab) {
       },
-      getBrowser: function ml_getBrowser(aCommand, aTab) {
+      getBrowser: function fl_getBrowser(aCommand, aTab) {
         return null;
       },
     },
