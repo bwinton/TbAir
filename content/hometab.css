@@ -205,6 +205,10 @@ li.folder.unread {
   content: " - ";
 }
 
+.message .date {
+  display: inline-block;
+}
+
 .message .body,
 .message .fullbody,
 .message .synopsis {

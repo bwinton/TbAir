@@ -35,6 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+Components.utils.import("resource:///modules/templateUtils.js");
+
 function addCategories(data) {
   let categories = $("#categories").html("");
   let firstCategory = null;
@@ -82,7 +84,7 @@ function addContent(data) {
   let addMessage = function(messages, message) {
     let msg = $('<li class="message"/>').appendTo(messages);
     $('<span class="from"/>').text(message.from.value).appendTo(msg);
-    $('<span class="date"/>').text(message.date.toLocaleString()).appendTo(msg);
+    $('<span class="date"/>').text(makeFriendlyDateAgo(message.date)).appendTo(msg);
     $('<span class="body"/>').text((message.indexedBodyText || "").substr(0, 140)).appendTo(msg);
     return msg;
   };
@@ -106,7 +108,7 @@ function addMessage(message) {
 
   let msg = $('<li class="message"/>').appendTo(entry);
   $('<span class="from"/>').text(message.from.value).appendTo(msg);
-  $('<span class="date"/>').text(""+message.date).appendTo(msg);
+  $('<span class="date"/>').text(""+makeFriendlyDateAgo(message.date)).appendTo(msg);
 
   let body = $('<div class="fullbody"/>').appendTo(msg).css("display", "none");
   let synopsis = $('<div class="synopsis">').appendTo(msg);
