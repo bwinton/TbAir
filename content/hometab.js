@@ -404,3 +404,11 @@ var gStatusBar = document.getElementById("statusbar-icon");
 var tabmail = document.getElementById("tabmail");
 tabmail.registerTabType(homeTabType);
 tabmail.openFirstTab("home", {});
+
+// Give the XBL a change to build the anonymous elements before we ask for them.
+window.setTimeout(function() {
+  tabmail.tabContainer.orient = "vertical";
+  tabmail.tabContainer.mTabstrip.orient = "vertical";
+  document.getAnonymousElementByAttribute(tabmail, "anonid", "tabbox")
+          .orient = "horizontal";
+}, 0);
