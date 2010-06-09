@@ -1,3 +1,28 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
 #tabmail {
   -moz-binding: url("chrome://messenger/content/tabmail.xml#tabmail");
+}
+
+/* we need to dig into the all tabs button to make it line up */
+#tabmail .tabmail-tabs > .tabs-stack > vbox > hbox {
+  -moz-box-orient: vertical;
+}
+
+.tabmail-tabs .tabmail-tab,
+.tabmail-tabs .tabmail-tab:hover,
+.tabmail-tabs .tabmail-tab[selected="true"],
+.tabmail-tabs .tabmail-tab[selected="true"]:hover {
+  text-align: left;
+  -moz-border-radius: 6px 0 0 6px;
+  margin: 1px 0;
+  -moz-border-top-colors: rgba(0, 0, 0, .08) rgba(0, 0, 0, .17) rgba(180, 180, 180, .29);
+  -moz-border-right-colors: transparent;
+  border-right-width: 0;
+  opacity: 0.7;  /* a quick hack to make selected more visible */
+}
+
+.tabmail-tabs .tabmail-tab[selected="true"],
+.tabmail-tabs .tabmail-tab[selected="true"]:hover {
+  opacity: 1;
 }
