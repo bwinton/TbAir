@@ -35,12 +35,16 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://app/modules/virtualFolderWrapper.js");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://app/modules/virtualFolderWrapper.js");
 
 // -- Import modules we need.
-Components.utils.import("resource://app/modules/gloda/public.js");
-Components.utils.import("resource://app/modules/MailUtils.js");
-Components.utils.import("resource://app/modules/errUtils.js");
+Cu.import("resource://app/modules/gloda/public.js");
+Cu.import("resource://app/modules/MailUtils.js");
+Cu.import("resource://app/modules/errUtils.js");
 
 var hometab = {
 
@@ -154,12 +158,82 @@ var hometab = {
     });
   },
 
+  tempFolder: null,
+
+  populateMessageBody: function populateMessageBody(aMessageHeader) {
+    try {
+    let messenger = Cc["@mozilla.org/messenger;1"]
+                      .createInstance(Ci.nsIMessenger);
+    let listener = Cc["@mozilla.org/network/sync-stream-listener;1"]
+                     .createInstance(Ci.nsISyncStreamListener);
+    let uri = aMessageHeader.folderMessageURI;
+    let self = this;
+    let neckoURL = {};
+    messenger.messageServiceFromURI(uri).GetUrlForUri(uri, neckoURL, null);
+    let iframe = document.createElementNS(
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+        "iframe");
+    iframe.setAttribute("type", "content");
+    //iframe.setAttribute("display", "hidden");
+    iframe.setAttribute("id", aMessageHeader.id);
+    /* The xul:iframe automatically loads about:blank when it is added
+     * into the tree. We need to wait for the document to be loaded before
+     * doing things.
+     *
+     * Why do we do that ? Basically because we want the <xul:iframe> to
+     * have a docShell and a webNavigation. If we don't do that, and we
+     * set directly src="about:blank" in the XML above, sometimes we are
+     * too fast and the docShell isn't ready by the time we get there. */
+    iframe.addEventListener("load", function f_temp2(event) {
+      iframe.removeEventListener("load", f_temp2, true);
+
+      /* The second load event is triggered by loadURI with the URL
+       * being the necko URL to the given message. */
+      iframe.addEventListener("load", function f_temp1(event) {
+        iframe.removeEventListener("load", f_temp1, true);
+
+        /* The part below is all about quoting */
+        let iframeDoc = iframe.contentDocument;
+        self.tempFolder = iframeDoc;
+        self.conversationDoc.populateMessageBody(aMessageHeader.id, iframeDoc);
+        /* And remove ourselves. */
+        document.getElementById("mailContent").removeChild(iframe);
+
+        /* Here ends the chain of event listeners, nothing happens
+         * after this. */
+        }, true); /* end document.addEventListener */
+
+      let url = neckoURL.value;
+
+      let cv = iframe.docShell.contentViewer;
+      cv.QueryInterface(Ci.nsIMarkupDocumentViewer);
+      cv.hintCharacterSet = "UTF-8";
+      cv.hintCharacterSetSource = 10; // kCharsetFromMetaTag
+      iframe.docShell.appType = Ci.nsIDocShell.APP_TYPE_MAIL;
+      iframe.webNavigation.loadURI(url.spec+"?header=quotebody",
+                                   iframe.webNavigation.LOAD_FLAGS_IS_LINK,
+                                   null, null, null);
+    }, true); /* end document.addEventListener */
+    document.getElementById("mailContent").appendChild(iframe);
+    } catch (e) {
+      dump("\n\nCaught error in populateMessageBody.  e="+e+"\n");
+      dump(e.stack);
+      dump("\n");
+    }
+  },
+
+  addMessages: function addMessages(aDoc, aMessages) {
+    for (var i in aMessages) {
+      aDoc.addMessage(aMessages[i]);
+      this.populateMessageBody(aMessages[i]);
+    }
+  },
+
   showMessagesInConversation: function showMessagesInConversation(aTab, flag) {
     let doc = hometab.conversationDoc;
     let id = aTab.id;
     if (aTab.results != null) {
-      for (var id in aTab.results)
-        doc.addMessage(aTab.results[id]);
+      this.addMessages(doc, aTab.results);
       return;
     }
     let self = this;
@@ -178,10 +252,10 @@ var hometab = {
         aTab.results = [];
         for (var i in messages.items)
           aTab.results.push(messages.items[i]);
-        for (var i in aTab.results)
-          doc.addMessage(aTab.results[i]);
+        self.addMessages(doc, aTab.results);
       }});
   },
+
 };
 
 var homeTabType = {
@@ -255,7 +329,7 @@ var homeTabType = {
       type: "folderList",
       isDefault: false,
 
-      openTab: function ml_openTab(aTab, aArgs) {
+      openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
         aTab.title = folder.prettyName;
         aTab.id = aArgs.id;
@@ -267,11 +341,11 @@ var homeTabType = {
         hometab.showConversationsInFolder(aTab, folder)
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(doc) {
+      htmlLoadHandler: function fl_htmlLoadHandler(doc) {
         hometab.folderDoc = doc;
       },
 
-      showTab: function ml_showTab(aTab) {
+      showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
         document.getElementById("conversation").hidden = true;
@@ -281,28 +355,28 @@ var homeTabType = {
         hometab.showConversationsInFolder(aTab, folder);
       },
 
-      onTitleChanged: function ml_onTitleChanged(aTab) {
+      onTitleChanged: function fl_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
-      closeTab: function ml_closeTab(aTab) {
+      closeTab: function fl_closeTab(aTab) {
       },
-      saveTabState: function ml_saveTabState(aTab) {
+      saveTabState: function fl_saveTabState(aTab) {
       },
-      persistTab: function ml_persistTab(aTab) {
+      persistTab: function fl_persistTab(aTab) {
       },
-      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      restoreTab: function fl_restoreTab(aTabmail, aPersistedState) {
       },
-      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+      supportsCommand: function fl_supportsCommand(aCommand, aTab) {
         return false;
       },
-      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+      isCommandEnabled: function fl_isCommandEnabled(aCommand, aTab) {
         return false;
       },
-      doCommand: function ml_doCommand(aCommand, aTab) {
+      doCommand: function fl_doCommand(aCommand, aTab) {
       },
-      onEvent: function ml_onEvent(aEvent, aTab) {
+      onEvent: function fl_onEvent(aEvent, aTab) {
       },
-      getBrowser: function ml_getBrowser(aCommand, aTab) {
+      getBrowser: function fl_getBrowser(aCommand, aTab) {
         return null;
       },
     },

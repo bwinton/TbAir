@@ -57,17 +57,12 @@ function clearContent() {
 function setFolders(folders) {
   clearContent();
   let content = $("<ol class='folders'/>").appendTo($("#preview"));
-  for (let index in folders) {
-    let folder = folders[index];
-    let li = $("<li class='folder'/>");
-    li.addClass((folder.unread > 0) ? "unread" : "read");
-    li.attr("id", folder.id);
-    li.append($("<span class='name'/>").text(folder.name + " "));
-    if (folder.unread > 0)
-      li.append($("<span class='count'/>").text(folder.unread));
-    content.append(li);
-    li.bind("click", function (e) {showConversations($(this))});
-  }
+  $.each(folders, function(i, e) {
+    e.count = e.unread || "";
+    e.extraClass = e.unread > 0 ? "unread" : "read";
+  });
+  $("#foldertmpl").render(folders).appendTo(content);
+  content.children("li").click(function (e) {showConversations($(this))});
 }
 
 function addContent(data) {
@@ -99,29 +94,6 @@ function addContent(data) {
   entry.bind("click", function (e) {showMessages($(this))});
 }
 
-function getMessageBody(aMessageHeader) {
-  try {
-  let messenger = Components.classes["@mozilla.org/messenger;1"]
-                            .createInstance(Components.interfaces.nsIMessenger);
-  let listener = Components.classes["@mozilla.org/network/sync-stream-listener;1"]
-                           .createInstance(Components.interfaces.nsISyncStreamListener);
-  let uri = aMessageHeader.folder.getUriForMsg(aMessageHeader);
-  messenger.messageServiceFromURI(uri)
-           .streamMessage(uri, listener, null, null, false, "");
-  let folder = aMessageHeader.folder;
-  return folder.getMsgTextFromStream(listener.inputStream,
-                                     aMessageHeader.Charset,
-                                     65536,
-                                     32768,
-                                     false,
-                                     true,
-                                     { });
-  } catch (e) {
-    dump("Caught error in getMessageBody.  e="+e+"\n");
-    return "";
-  }
-}
-
 function addMessage(message) {
   let conversations = $("ol.conversations");
   if (conversations.length == 0)
@@ -136,14 +108,20 @@ function addMessage(message) {
   $('<span class="from"/>').text(message.from.value).appendTo(msg);
   $('<span class="date"/>').text(""+message.date).appendTo(msg);
 
-  let body = getMessageBody(message.folderMessage);
-  $('<div class="fullbody"/>').appendTo(msg).text(body).css("display", "none");
-  let synopsis = body;
-  if (message.indexedBodyText)
-    synopsis = message.indexedBodyText;
-  $('<div class="synopsis">').appendTo(msg).text(synopsis.substr(0, 140));
+  let body = $('<div class="fullbody"/>').appendTo(msg).css("display", "none");
+  let synopsis = $('<div class="synopsis">').appendTo(msg);
+  if (message.indexedBodyText) {
+    synopsis.text(message.indexedBodyText.substr(0, 140));
+    synopsis = null;
+  }
+//  populateMessageBody(message.folderMessage, body, synopsis);
 
   msg.bind("click", function (e) {showMessage($(this))});
+}
+
+function populateMessageBody(id, data) {
+  let body = $("#"+id).find(".fullbody");
+  body.html(data.documentElement.children);
 }
 
 const Cc = Components.classes;
