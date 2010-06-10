@@ -74,7 +74,8 @@
   </script>
 
   <script id="foldertmpl" type="text/html">
-    <li class="folder ${extraClass}" id="${id}">
+    <li class="folder ${extraClass}" id="${id}"
+        onclick="showConversations($(this))">
       <span class="name">${name}</span>
       <span class="count">${count}</span>
     </li>

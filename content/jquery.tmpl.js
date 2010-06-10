@@ -7,14 +7,14 @@
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip;
-	
+
 	jQuery.fn.extend({
 		render: function( data ) {
 			return this.map(function(i, tmpl){
 				return jQuery.render( tmpl, data );
 			});
 		},
-		
+
 		// This will allow us to do: .append( "template", dataObject )
 		domManip: function( args ) {
 			// This appears to be a bug in the appendTo, etc. implementation
@@ -26,19 +26,19 @@
 			if ( args.length === 2 && typeof args[0] === "string" && typeof args[1] !== "string" ) {
 				arguments[0] = [ jQuery.render( args[0], args[1] ) ];
 			}
-			
+
 			return oldManip.apply( this, arguments );
 		}
 	});
-	
+
 	jQuery.extend({
 		render: function( tmpl, data ) {
 			var fn;
-			
+
 			// Use a pre-defined template, if available
 			if ( jQuery.templates[ tmpl ] ) {
 				fn = jQuery.templates[ tmpl ];
-				
+
 			// We're pulling from a script node
 			} else if ( tmpl.nodeType ) {
 				var node = tmpl, elemData = jQuery.data( node );
@@ -46,7 +46,7 @@
 			}
 
 			fn = fn || jQuery.tmpl( tmpl );
-			
+
 			// We assume that if the template string is being passed directly
 			// in the user doesn't want it cached. They can stick it in
 			// jQuery.templates to cache it.
@@ -60,7 +60,7 @@
 				return fn.call( data, jQuery, data, 0 );
 			}
 		},
-		
+
 		// You can stick pre-built template functions here
 		templates: {},
 

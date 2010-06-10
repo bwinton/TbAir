@@ -121,28 +121,36 @@ var hometab = {
       onQueryCompleted: function _onQueryCompleted(messages) {
         doc.clearContent();
         try {
+          conversations = [];
           seenConversations = {};
           for (var i in messages.items) {
             let message = messages.items[i];
             let id = message.conversationID;
-            if (id in seenConversations) {
-              seenConversations[id].messages.push(message);
-            }
-            else {
+            if (!(id in seenConversations)) {
               seenConversations[id] = {
                   "id" : id,
                   "subject" : message.subject,
-                  "messages" : [message],
+                  "read" : [],
                   "unread" : []
                   };
+              conversations.push(seenConversations[id]);
             }
             if (! message.read)
               seenConversations[id].unread.push(message);
+            else
+              seenConversations[id].read.push(message);
           }
-          for (var id in seenConversations)
-            doc.addContent(seenConversations[id]);
+          for (var id in seenConversations) {
+            conversation = seenConversations[id];
+            conversation.messages = conversation.unread.concat(conversation.read);
+            delete conversation.unread;
+            delete conversation.read;
+          }
+          doc.addContent(conversations);
         } catch (e) {
-          dump("Caught error in Conversations Query.  e="+e+"\n");
+          dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
+          dump(e.stack);
+          dump("\n");
           doc.addContent({"error":e});
         }
       }});

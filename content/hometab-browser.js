@@ -50,41 +50,47 @@ function clearContent() {
 function setFolders(folders) {
   clearContent();
   let content = $("<ol class='folders'/>").appendTo($("#preview"));
+
+  // Augment the data with styles.
   $.each(folders, function(i, e) {
     e.count = e.unread || "";
     e.extraClass = e.unread > 0 ? "unread" : "read";
   });
+
+  // And render the template.
   $("#foldertmpl").render(folders).appendTo(content);
-  content.children("li").click(function (e) {showConversations($(this))});
 }
 
-function addContent(data) {
-  let conversations = $("ol.conversations");
-  if (conversations.length == 0)
-    conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
+function addContent(conversations) {
+  let conversationsElem = $("ol.conversations");
+  if (conversationsElem.length == 0)
+    conversationsElem = $('<ol class="conversations"/>').appendTo($("#preview"))
 
-  let entry = $('<li class="conversation"/>').appendTo(conversations);
-  entry.addClass(("unread" in data && data["unread"].length > 0) ? "unread" : "read");
-  entry.attr("id", data["id"]);
+  // Augment the data with styles.
+  for (let cId in conversations) {
+    let conversation = conversations[cId];
+    conversation["extraClass"] = function conv_extraClass() {
+      if (this.messages[0].read)
+        return "read";
+      else
+        return "unread";
+    };
+    for (let mId in conversation.messages) {
+      let message = conversation.messages[mId];
+      message["extraClass"] = function msg_extraClass() {
+        if (this.read)
+          return "read";
+        else
+          return "unread";
+      };
+      message.fromValue = message.from.value;
+      message.friendlyDate = makeFriendlyDateAgo(message.date);
+      message.body = (message.indexedBodyText || "").substr(0, 140);
+    }
+  }
 
-  if ("subject" in data)
-    $('<div class="subject"/>').text(data["subject"]).appendTo(entry);
-
-  let messages = $('<ol class="messages"/>').appendTo(entry);
-
-  let addMessage = function(messages, message) {
-    let msg = $('<li class="message"/>').appendTo(messages);
-    $('<span class="from"/>').text(message.from.value).appendTo(msg);
-    $('<span class="date"/>').text(makeFriendlyDateAgo(message.date)).appendTo(msg);
-    $('<span class="body"/>').text((message.indexedBodyText || "").substr(0, 140)).appendTo(msg);
-    return msg;
-  };
-
-  for (let unread in data["unread"])
-    addMessage(messages, data["unread"][unread]).addClass("unread");
-  for (let read in data["messages"])
-    addMessage(messages, data["messages"][read]).addClass("read");
-  entry.bind("click", function (e) {showMessages($(this))});
+  // And render the template.
+  $("#conversationtmpl").render(conversations).appendTo(conversationsElem);
 }
 
 function addMessage(message) {
