@@ -61,6 +61,18 @@ function setFolders(folders) {
   $("#foldertmpl").render(folders).appendTo(content);
 }
 
+function augmentMessage(message) {
+  message["extraClass"] = function msg_extraClass() {
+    if (this.read)
+      return "read";
+    else
+      return "unread";
+  };
+  message.fromValue = message.from.value;
+  message.friendlyDate = makeFriendlyDateAgo(message.date);
+  message.synopsis = (message.indexedBodyText || "").substr(0, 140);
+}
+
 function addContent(conversations) {
   let conversationsElem = $("ol.conversations");
   if (conversationsElem.length == 0)
@@ -75,46 +87,25 @@ function addContent(conversations) {
       else
         return "unread";
     };
-    for (let mId in conversation.messages) {
-      let message = conversation.messages[mId];
-      message["extraClass"] = function msg_extraClass() {
-        if (this.read)
-          return "read";
-        else
-          return "unread";
-      };
-      message.fromValue = message.from.value;
-      message.friendlyDate = makeFriendlyDateAgo(message.date);
-      message.body = (message.indexedBodyText || "").substr(0, 140);
-    }
+    for (let mId in conversation.messages)
+      augmentMessage(conversation.messages[mId]);
   }
 
   // And render the template.
   $("#conversationtmpl").render(conversations).appendTo(conversationsElem);
 }
 
-function addMessage(message) {
-  let conversations = $("ol.conversations");
-  if (conversations.length == 0)
-    conversations = $('<ol class="conversations"/>').appendTo($("#preview"))
+function addMessages(messages) {
+  let messagesElem = $("ol.messages");
+  if (messagesElem.length == 0)
+    messagesElem = $('<ol class="messages"/>').appendTo($("#preview"))
 
-  let entry = $('<li class="conversation"/>').appendTo(conversations);
+  // Augment the data with styles.
+  for (let mId in messages)
+    augmentMessage(messages[mId]);
 
-  entry.addClass(message.read ? "read" : "unread");
-  entry.attr("id", message.id);
-
-  let msg = $('<li class="message"/>').appendTo(entry);
-  $('<span class="from"/>').text(message.from.value).appendTo(msg);
-  $('<span class="date"/>').text(""+makeFriendlyDateAgo(message.date)).appendTo(msg);
-
-  let body = $('<div class="fullbody"/>').appendTo(msg).css("display", "none");
-  let synopsis = $('<div class="synopsis">').appendTo(msg);
-  if (message.indexedBodyText) {
-    synopsis.text(message.indexedBodyText.substr(0, 140));
-    synopsis = null;
-  }
-
-  msg.bind("click", function (e) {showMessage($(this))});
+  // And render the template.
+  $("#messagetmpl").render(messages).appendTo(messagesElem);
 }
 
 function populateMessageBody(id, data) {

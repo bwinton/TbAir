@@ -36,17 +36,7 @@
   -
   - ***** END LICENSE BLOCK ***** -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" [
-<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-%brandDTD;
-<!ENTITY % aboutDTD SYSTEM "chrome://global/locale/about.dtd">
-%aboutDTD;
-<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
-%globalDTD;
-<!ENTITY % hometabDTD SYSTEM "chrome://hometab/locale/hometab.dtd">
-%hometabDTD;
-]>
+<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -67,7 +57,21 @@
   <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/jquery.js"></script>
   <script type="application/javascript;version=1.8"
+      src="chrome://hometab/content/jquery.tmpl.js"></script>
+  <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
+
+  <!-- Templates!  Woo! -->
+  <script id="messagetmpl" type="text/html">
+    <li class="message ${extraClass}" id="${id}"
+        onclick="showMessage($(this));">
+      <span class="from">${fromValue}</span>
+      <span class="date">${friendlyDate}</span>
+      <div class="fullbody" style="display:none"/>
+      <div class="synopsis">${synopsis}</div>
+    </li>
+  </script>
+
 </html>

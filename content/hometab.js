@@ -231,8 +231,8 @@ var hometab = {
   },
 
   addMessages: function addMessages(aDoc, aMessages) {
+    aDoc.addMessages(aMessages);
     for (var i in aMessages) {
-      aDoc.addMessage(aMessages[i]);
       this.populateMessageBody(aMessages[i]);
     }
   },

@@ -62,7 +62,7 @@
         <browser id="folder" flex="1" hidden="true" disablehistory="true"
                  src="chrome://hometab/content/folderView.html"/>
         <browser id="conversation" flex="1" hidden="true" disablehistory="true"
-                 src="chrome://hometab/content/conversationView.xhtml"/>
+                 src="chrome://hometab/content/conversationView.html"/>
       </box>
     </tabpanels>
   </tabbrowser>

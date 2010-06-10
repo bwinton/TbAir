@@ -14,11 +14,12 @@
  * The Original Code is Home Tab.
  *
  * The Initial Developer of the Original Code is
- * Blake Winton.
+ * The Mozilla Foundation.
  * Portions created by the Initial Developer are Copyright (C) 2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Blake Winton <bwinton@latte.ca>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -112,7 +113,6 @@ li.folder {
 .category:hover,
 li.folder:hover {
   border: 1px solid #84acdd;
-/*  background: #ddecfe; */
   background: -moz-linear-gradient(top, #ebf4fe, #cfe4fe);
 
 }
@@ -126,31 +126,9 @@ ol.folders {
   margin: 0;
   padding: 0;
 }
-/*
-li.folder {
-  min-height: 32px;
-  min-width: 200px;
-  margin: 3px;
-  padding: 3px;
-  border: 1px solid rgba(147, 179, 206, 100);
-  -moz-border-radius: 3px;
-  background-color: #c0d3e2;
-  background-image: -moz-linear-gradient(top bottom, #c0d3e2, #92b4d2);
-  color: #141414;
-  cursor: pointer;
-}
-
-
-li.folder:hover {
-  background-color: #92b4d2;
-}
-*/
 
 li.folder.unread {
   font-weight: bold;
-}
-
-.content {
 }
 
 .conversations {
@@ -159,7 +137,8 @@ li.folder.unread {
   list-style: none;
 }
 
-.conversation {
+.conversation,
+.message {
   margin-bottom: 7px;
   padding: 3px;
   background-color: #fff;
@@ -169,16 +148,16 @@ li.folder.unread {
   cursor: pointer;
 }
 
-.conversation:hover {
+.conversation:hover,
+.message:hover {
   background-color: #f1f5fb;
   border: 1px solid #d6e5f5;
 }
 
-.conversation.unread > .subject {
-  font-weight: bold;
-}
-
-.conversation.unread > .count {
+.conversation.unread > .subject,
+.conversation.unread > .count,
+.message.unread > .from,
+.message.unread > .date {
   font-weight: bold;
 }
 
@@ -216,10 +195,6 @@ li.folder.unread {
   color: #666;
   width: 100%;
   min-width: 100%;
-  white-space: pre-wrap;
+  white-space: auto;
 }
 
-.message .body,
-.message .synopsis {
-  white-space: nowrap;
-}
