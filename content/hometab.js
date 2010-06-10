@@ -298,11 +298,24 @@ var hometab = {
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
         aTab.results = [];
-        for (var i in messages.items)
-          aTab.results.push(messages.items[i]);
+        let items = self._removeDupes(messages.items);
+        for each(var [,message] in Iterator(items))
+          aTab.results.push(message);
         self.addMessages(doc, aTab.results);
-        doc.setHeaderTitle(messages.items[0].subject);
+        doc.setHeaderTitle(aTab.title);
       }});
+  },
+
+  _removeDupes: function(aItems) {
+    let deduped = [];
+    let msgIdsSeen = {};
+    for each (let [, item] in Iterator(aItems)) {
+      if (item.headerMessageID in msgIdsSeen)
+        continue;
+      deduped.push(item);
+      msgIdsSeen[item.headerMessageID] = true;
+    }
+    return deduped;
   },
 
 };
