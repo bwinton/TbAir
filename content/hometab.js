@@ -53,7 +53,7 @@ var hometab = {
             let currentFolder = gFolderTreeView.getSelectedFolders()[0];
             const outFolderFlagMask = nsMsgFolderFlags.SentMail |
               nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
-              nsMsgFolderFlags.Templates;
+              nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
             for each (let folder in gFolderTreeView._enumerateFolders) {
               if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
                   (!folder.isServer && folder.getNumUnread(false) > 0) ||
