@@ -1,0 +1,106 @@
+body {
+  background-color: #fafafa;
+}
+
+ol.conversations {
+  list-style: none;
+  padding: 0;
+  margin: 7px;
+  width: 600px;
+}
+
+.column {
+  display: inline-block;
+  vertical-align: top;
+}
+.column.left {
+  width: 150px;
+}
+.column.right {
+  width: 400px;
+}
+
+.avatar,
+.column.left .from {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  background-color: #666;
+}
+
+.column.left .from {
+  color: #666;
+  width: 120px;
+}
+
+.conversation {
+  border-right: 1px solid #CCCCCC;
+  border-left: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+  padding: 3px 10px 10px 10px;
+  cursor: pointer;
+}
+
+.conversation:last-child {
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.conversation[read=false] {
+  background-color: #fff;
+}
+.conversation[read=true] {
+  background-color: #F2F2F2;
+}
+
+.conversation[read=true] .topic > .subject {
+  color: #666666
+}
+
+.conversation[read=true] .topic > .body,
+.conversation[read=true] .replies {
+  display: none;
+}
+
+.conversation .topic > .date {
+  color: #888;
+}
+
+.conversation .topic > .subject {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.conversation .topic > .body {
+  overflow: hidden;
+}
+
+.conversation .replies {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conversation .replies > .reply {
+  background-color:rgba(204, 204, 204, 0.35);
+  color:#666666;
+  margin:10px 0 0 0;
+  padding:5px;
+  position:relative;
+}
+
+.conversation .replies > .reply > .from {
+  color: #111;
+}
+
+.conversation .replies > .reply > .body {
+  overflow: hidden;
+}
+
+.conversation .replies > .reply > .date {
+  text-align: left;
+}

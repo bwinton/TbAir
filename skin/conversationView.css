@@ -1,0 +1,51 @@
+.fullConversations > li {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #aaa;
+  border-top: none;
+  background: #fff;
+}
+
+.fullConversations li.conversation {
+  border-left: none;
+  border-right: none;
+}
+
+.fullConversations li.conversation li.message .from {
+  font-weight: bold;
+}
+
+.fullConversations li.conversation.read {
+  color: #888;
+  background-color: #f2f2f2;
+}
+
+.fullConversations > .conversation.read > .message > .date:after {
+  content: " - expand";
+  color: highlight;
+}
+
+.fullConversations li.conversation.unread {
+  border-bottom: 1px solid #c3cddb;
+}
+
+.fullConversations li.conversation.unread:nth-child(odd) {
+  background-color: #ECF3FE;
+}
+
+.fullConversations li.conversation.read li.message .synopsis,
+.fullConversations li.conversation.read li.message .fullBody {
+  display: none;
+}
+
+.fullConversations li.conversation li.message .fullBody {
+  display: none;
+}
+
+.fullConversations li.conversation.unread li.message .from {
+  color: highlight;
+}
+
+.fullConversations li.conversation.unread li.message .date {
+  color: #888;
+}

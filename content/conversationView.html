@@ -45,8 +45,15 @@
   <!-- Themes -->
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/content/hometab.css" />
+  <link rel="stylesheet" type="text/css"
+      href="chrome://hometab/content/conversationView.css" />
 </head>
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('messageList')">
+  <div class="header">
+    <div class="title"></div>
+    <input type="text" class="search"/>
+    <button class="action options">v</button>
+  </div>
   <div id="results-box">
     <div id="preview-box">
       <div id="preview">
@@ -67,9 +74,9 @@
 
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
-    <li class="message ${extraClass}" id="${id}"
+    <li class="message" read="${read}" id="${id}"
         onclick="handleClick($(this), event);">
-      <span class="from">${fromValue}</span>
+      <span class="from">${from.value}</span>
       <span class="date">${friendlyDate}</span>
       <div class="fullbody" style="display:none"/>
       <div class="synopsis">${synopsis}</div>

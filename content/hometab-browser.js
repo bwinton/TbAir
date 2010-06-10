@@ -37,6 +37,7 @@
 
 Components.utils.import("resource:///modules/templateUtils.js");
 Components.utils.import("resource:///modules/errUtils.js");
+Components.utils.import("resource:///modules/gloda/utils.js");
 
 function addCategories(categories) {
   let categoriesElem = $("#categories").html("");
@@ -64,32 +65,36 @@ function setFolders(folders) {
   $("#foldertmpl").render(folders).appendTo(content);
 }
 
+function setHeaderTitle(name) {
+  $(".header > .title").text(name);
+}
+
 function augmentMessage(message) {
-  message["extraClass"] = function msg_extraClass() {
-    if (this.read)
-      return "read";
-    else
-      return "unread";
-  };
-  message.fromValue = message.from.value;
-  message.friendlyDate = makeFriendlyDateAgo(message.date);
-  message.synopsis = (message.indexedBodyText || "").substr(0, 140);
+      message.friendlyDate = makeFriendlyDateAgo(message.date);
+      message.synopsis = (message.indexedBodyText || "").substr(0, 140);
+      message.avatar = "http://www.gravatar.com/avatar/" +
+                       GlodaUtils.md5HashString(message.from.value) +
+                       "?d=identicon&s=24&r=g";
 }
 
 function addContent(conversations) {
   let conversationsElem = $("ol.conversations");
 
-  // Augment the data with styles.
-  for (let cId in conversations) {
-    let conversation = conversations[cId];
-    conversation["extraClass"] = function conv_extraClass() {
-      if (this.messages[0].read)
-        return "read";
-      else
-        return "unread";
-    };
-    for (let mId in conversation.messages)
-      augmentMessage(conversation.messages[mId]);
+  // Augment the data - this could possibly be done on the first pass to save time
+  for (let [,conversation] in Iterator(conversations)) {
+    conversation.from = conversation.topic.from;
+    conversation.subject = conversation.topic.subject;
+    conversation.synopsis = (conversation.topic.indexedBodyText || "").substr(0, 140);
+    conversation.date = makeFriendlyDateAgo(conversation.topic.date);
+    conversation.avatar = "http://www.gravatar.com/avatar/" +
+                          GlodaUtils.md5HashString(conversation.topic.from.value) +
+                          "?d=identicon&s=24&r=g";
+
+    // Looping again isn't that bad (in big N terms) because we should have limited the
+    // number of messages previously to only unread
+    for (let [,message] in Iterator(conversation.messages)) {
+      augmentMessage(message);
+    }
   }
 
   // And render the template.

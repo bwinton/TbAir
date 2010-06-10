@@ -44,9 +44,17 @@
 <head>
   <!-- Themes -->
   <link rel="stylesheet" type="text/css"
-      href="chrome://hometab/content/hometab.css" />
+      href="chrome://hometab/skin/hometab.css" />
+  <link rel="stylesheet" type="text/css"
+      href="chrome://hometab/skin/folderView.css" />
+
 </head>
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('folderList')">
+  <div class="header">
+    <div class="title"></div>
+    <div class="search"><input type="text" class="search"/></div>
+    <div class="actions"><button class="action options">v</button></div>
+  </div>
   <div id="results-box">
     <div id="preview-box">
       <div id="preview">
@@ -67,19 +75,38 @@
 
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
-    <li class="conversation ${extraClass}" id="${id}"
+    <li class="conversation" read="${read}" id="${id}"
         onclick="showMessages($(this));">
-      <div class="subject">${subject}</div>
-      <ol class="messages">
-      {{each(i,message) messages}}
-        <li class="message ${message.extraClass}">
-          <span class="from">${message.fromValue}</span>
-          <span class="date">${message.friendlyDate}</span>
-          <span class="body">${message.synopsis}</span>
-        </li>
-      {{/each}}
-      </ol>
+
+      <div class="columns">
+
+        <div class="column left">
+          <div class="date" style="visibility:hidden;">spacer</div>
+          <div class="avatar"><img src="${avatar}"/></div>
+          <div class="from">${from.contact.name}</div>
+        </div>
+
+        <div class="column right">
+          <div class="topic">
+            <div class="date">${date}</div>
+            <div class="subject">${subject}</div>
+            <div class="body">${synopsis}</div>
+          </div>
+          <ol class="messages replies">
+            <div class="arrow"></div>
+            {{each(i,message) messages}}
+              <li class="message reply" read="${message.read}">
+                <div class="from">${message.from.contact.name}</div>
+                <div class="body">${message.synopsis}</div>
+                <div class="date">${message.friendlyDate}</div>
+              </li>
+            {{/each}}
+          </ol>
+        </div>
+
+      </div>
     </li>
   </script>
+
 
 </html>

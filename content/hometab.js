@@ -86,6 +86,7 @@ var hometab = {
                     id : folder.id
                    });
     }
+    doc.setHeaderTitle("Home")
     doc.setFolders(content);
   },
 
@@ -100,6 +101,7 @@ var hometab = {
 
   showConversationsInFolder: function show_ConversationsInFolder(aTab, aFolder) {
     let doc = hometab.folderDoc;
+    doc.setHeaderTitle(aFolder.prettyName);
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
     if (aFolder.flags & nsMsgFolderFlags.Virtual) {
@@ -124,35 +126,51 @@ var hometab = {
         try {
           conversations = [];
           seenConversations = {};
-          for (var i in messages.items) {
-            let message = messages.items[i];
+          for (var [,message] in Iterator(messages.items)) {
             let id = message.conversationID;
             if (!(id in seenConversations)) {
               seenConversations[id] = {
                   "id" : id,
-                  "subject" : message.subject,
+                  "topic" : message,
                   "read" : [],
                   "unread" : []
                   };
-              conversations.push(seenConversations[id]);
             }
             if (! message.read)
               seenConversations[id].unread.push(message);
             else
               seenConversations[id].read.push(message);
+
+            if (message.date < seenConversations[id].topic.date) {
+              seenConversations[id].topic = message;
+            }
+
           }
           for (var id in seenConversations) {
-            conversation = seenConversations[id];
-            conversation.messages = conversation.unread.concat(conversation.read);
+            let conversation = seenConversations[id];
+
+            // Remove the topic message from the messages list
+            for each(let [i,message] in Iterator(conversation.unread))
+              if (message.id == conversation.topic.id) {
+                conversation.unread.splice(i,1);
+                break;
+              }
+
+            let unread = conversation.unread.length;
+            conversation.messages = [].concat(conversation.unread.splice(0,3));
+
+            conversation.read = (unread <= 0);
             delete conversation.unread;
-            delete conversation.read;
+            conversations.push(conversation);
           }
           doc.addContent(conversations);
         } catch (e) {
+          Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
+          Application.console.log(e.stack);
+
           dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
           dump(e.stack);
           dump("\n");
-          doc.addContent({"error":e});
         }
       }});
   },

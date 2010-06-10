@@ -37,7 +37,7 @@
   - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://hometab-classic/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://hometab/skin/overlay.css" type="text/css"?>
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="window">
   <tabbrowser id="tabmail" flex="1" panelcontainer="tabpanelcontainer">

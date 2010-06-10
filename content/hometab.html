@@ -47,6 +47,11 @@
       href="chrome://hometab/skin/hometab.css" />
 </head>
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
+  <div class="header">
+    <div class="title"></div>
+    <input type="text" class="search"/>
+    <button class="action options">v</button>
+  </div>
   <div id="results-box">
     <div id="category-box">
       <ol id="categories" onclick="updateTab(event)"/>
