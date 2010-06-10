@@ -63,11 +63,28 @@ var hometab = {
                           unread: folder.getNumUnread(false),
                           id: folder.URI});
             }
-            //sortFolderItems(map);
+            map = sortFolderItems(map);
             return map;
           },
           "Tags": null,
-          "Folders": null,
+          "Folders":  function ht_all() {
+            let map = [];
+            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
+            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
+              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
+              nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
+            for each (let folder in gFolderTreeView._enumerateFolders) {
+              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
+                  (folder.server && folder.server.type != "rss") &&
+                  (folder.server && folder.server.type != "nntp") &&
+                  (!folder.isServer && folder.getTotalMessages(true) > 0))
+                map.push({name: folder.abbreviatedName,
+                          unread: folder.getNumUnread(false),
+                          id: folder.URI});
+            }
+            map = sortFolderItems(map);
+            return map;
+          },
           "People": null,
           "Accounts": null,
          },
@@ -81,8 +98,9 @@ var hometab = {
     let folders = func();
     for (let index in folders) {
       let folder = folders[index];
+      dump("unread = " + folder.unread + '\n');
       content.push({name : folder.name,
-                    unread: folder.unread,
+                    unread: folder.unread > 0 ? folder.unread : "",
                     id : folder.id
                    });
     }
@@ -481,6 +499,16 @@ var statusFeedback = {
   showProgress: function sf_showProgress(aProgress) {
     // Stub this out so that tabmail.xml is happy.
   },
+}
+
+function sortFolderByNameFunc(a,b) {
+  if (a.name < b.name) return -1;
+  return 1;
+}
+
+function sortFolderItems(map) {
+  map.sort(sortFolderByNameFunc);
+  return map;
 }
 
 /**

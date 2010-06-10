@@ -57,7 +57,6 @@ function setFolders(folders) {
 
   // Augment the data with styles.
   $.each(folders, function(i, e) {
-    e.count = e.unread || "";
     e.extraClass = e.unread > 0 ? "unread" : "read";
   });
 
