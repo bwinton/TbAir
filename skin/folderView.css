@@ -57,11 +57,14 @@ ol.conversations {
   background-color: #F2F2F2;
 }
 
-.conversation[read=true] .topic > .subject {
-  color: #666666
+.conversation[read=true] .from,
+.conversation[read=true] .topic > .subject,
+.conversation[read=true] .topic > .body {
+  color: #666666;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.conversation[read=true] .topic > .body,
 .conversation[read=true] .replies {
   display: none;
 }
