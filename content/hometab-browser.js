@@ -36,6 +36,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource:///modules/templateUtils.js");
+Components.utils.import("resource:///modules/errUtils.js");
 
 function addCategories(categories) {
   let categoriesElem = $("#categories").html("");
@@ -160,9 +161,21 @@ function showMessages(element) {
                        element.children(".subject").text());
 }
 
+function handleClick(element, event) {
+  if (event.target.tagName == "BLOCKQUOTE") {
+    if (event.target.hasAttribute("shown")) {
+      event.target.removeAttribute("shown");
+    } else {
+      event.target.setAttribute("shown", "true");
+    }
+  } else {
+    showMessage(element);
+  }
+}
+
 function showMessage(element) {
-  dump(element.children(".synopsis").text()+"\n");
-  dump(element.children(".fullbody").text()+"\n");
+  //dump(element.children(".synopsis").text()+"\n");
+  //dump(element.children(".fullbody").text()+"\n");
   element.children(".synopsis").toggle("fast");
   element.children(".fullbody").slideToggle("fast");
 }

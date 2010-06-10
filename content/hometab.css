@@ -198,3 +198,28 @@ li.folder.unread {
   white-space: auto;
 }
 
+.message BLOCKQUOTE {
+  height: 1.5em;
+  overflow: hidden;
+  border-left: none;
+}
+
+
+BLOCKQUOTE:before {
+  display: block;
+  content: "show quoted text";
+  border: 1px solid transparent;
+  color: darkgray;
+  height: 1.5em;
+  width: 200px;
+}
+
+.message BLOCKQUOTE[shown=true] {
+  height: auto;
+  overflow: auto;
+  border-left: 1px solid orange;
+}
+
+.message BLOCKQUOTE[shown=true]:before {
+  content: "hide quoted text";
+}

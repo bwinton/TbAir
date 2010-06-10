@@ -68,7 +68,7 @@
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
     <li class="message ${extraClass}" id="${id}"
-        onclick="showMessage($(this));">
+        onclick="handleClick($(this), event);">
       <span class="from">${fromValue}</span>
       <span class="date">${friendlyDate}</span>
       <div class="fullbody" style="display:none"/>
