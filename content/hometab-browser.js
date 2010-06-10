@@ -37,19 +37,10 @@
 
 Components.utils.import("resource:///modules/templateUtils.js");
 
-function addCategories(data) {
-  let categories = $("#categories").html("");
-  let firstCategory = null;
-  for (let index in data) {
-    let record = data[index];
-    let category = $("<li class='category'></li>");
-    category.text(record.folder);
-    category.attr("id", record.id);
-    categories.append(category);
-    if (index == 0)
-      firstCategory = category;
-  }
-  updateTab({"target":firstCategory});
+function addCategories(categories) {
+  let categoriesElem = $("#categories").html("");
+  $("#categorytmpl").render(categories).appendTo(categoriesElem);
+  updateTab({"target":categories[0]});
 }
 
 function clearContent() {
@@ -116,7 +107,6 @@ function addMessage(message) {
     synopsis.text(message.indexedBodyText.substr(0, 140));
     synopsis = null;
   }
-//  populateMessageBody(message.folderMessage, body, synopsis);
 
   msg.bind("click", function (e) {showMessage($(this))});
 }

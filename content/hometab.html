@@ -69,6 +69,10 @@
       src="chrome://hometab/content/hometab-browser.js"></script>
 
   <!-- Templates!  Woo! -->
+  <script id="categorytmpl" type="text/html">
+    <li class="category" id="${id}">${folder}</li>
+  </script>
+
   <script id="foldertmpl" type="text/html">
     <li class="folder ${extraClass}" id="${id}">
       <span class="name">${name}</span>
