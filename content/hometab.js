@@ -58,8 +58,7 @@ var hometab = {
               if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
                   (folder.server && folder.server.type != "rss") &&
                   (folder.server && folder.server.type != "nntp") &&
-                  (!folder.isServer && folder.getNumUnread(false) > 0) ||
-                  (folder == currentFolder))
+                  (!folder.isServer && folder.getNumUnread(false) > 0))
                 map.push({name: folder.abbreviatedName,
                           unread: folder.getNumUnread(false),
                           id: folder.URI});
