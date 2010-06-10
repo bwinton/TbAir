@@ -195,13 +195,14 @@ var hometab = {
       }});
   },
 
-  showMessages: function showMessages(doc, id, subject) {
+  showMessages: function showMessages(doc, id, subject, read) {
     let tabmail = document.getElementById("tabmail");
     // The following call fails because glodaList isn't a recognized
     // tab mode for some reason.
     tabmail.openTab("messageList", {
       id: id,
       title: subject,
+      read : read
     });
   },
 

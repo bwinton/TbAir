@@ -55,13 +55,7 @@
     <div class="search"><input type="text" class="search"/></div>
     <div class="actions"><button class="action options">v</button></div>
   </div>
-  <div id="results-box">
-    <div id="preview-box">
-      <div id="preview">
-        <ol class="conversations"/>
-      </div>
-    </div>
-  </div>
+  <ol class="conversations"></ol>
 </body>
   <!-- Libs -->
   <script type="application/javascript;version=1.8"
@@ -75,8 +69,7 @@
 
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
-    <li class="conversation" read="${read}" id="${id}"
-        onclick="showMessages($(this));">
+    <li class="conversation" read="${read}" id="${id}" subject="${subject}">
 
       <div class="columns">
 
@@ -88,12 +81,15 @@
 
         <div class="column right">
           <div class="topic">
+            <div class="actions">
+              <a class="action archive">archive</a>
+              <a class="action delete">delete</a>
+            </div>
             <div class="date">${date}</div>
-            <div class="subject">${subject}</div>
-            <div class="body">${synopsis}</div>
+            <div class="subject" onclick="showMessages($(this));">${subject}</div>
+            <div class="body" onclick="showMessages($(this));">${synopsis}</div>
           </div>
-          <ol class="messages replies">
-            <div class="arrow"></div>
+          <ol class="messages replies" onclick="showMessages($(this));">
             {{each(i,message) messages}}
               <li class="message reply" read="${message.read}">
                 <div class="from">${message.from.contact.name}</div>

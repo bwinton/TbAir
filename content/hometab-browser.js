@@ -69,11 +69,11 @@ function setHeaderTitle(name) {
 }
 
 function augmentMessage(message) {
-      message.friendlyDate = makeFriendlyDateAgo(message.date);
-      message.synopsis = (message.indexedBodyText || "").substr(0, 140);
-      message.avatar = "http://www.gravatar.com/avatar/" +
-                       GlodaUtils.md5HashString(message.from.value) +
-                       "?d=identicon&s=24&r=g";
+  message.friendlyDate = makeFriendlyDateAgo(message.date);
+  message.synopsis = (message.indexedBodyText || "").substr(0, 140);
+  message.avatar = "http://www.gravatar.com/avatar/" +
+                   GlodaUtils.md5HashString(message.from.value) +
+                   "?d=identicon&s=24&r=g";
 }
 
 function addContent(conversations) {
@@ -115,7 +115,7 @@ function populateMessageBody(id, data) {
   let message = $("#"+id);
   let body = message.children(".fullbody");
   body.html(data.documentElement.children);
-  if (message.hasClass("unread"))
+  if (!message.attr("read"))
     showMessage(message);
 }
 
@@ -161,8 +161,10 @@ function showConversations(element) {
 }
 
 function showMessages(element) {
-  hometab.showMessages(this, element.attr("id"),
-                       element.children(".subject").text());
+  let el = element.parents("li.conversation");
+  hometab.showMessages(this, el.attr("id"),
+                       el.attr("subject"),
+                       el.attr("read"));
 }
 
 function handleClick(element, event) {

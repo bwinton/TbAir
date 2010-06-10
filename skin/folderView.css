@@ -17,7 +17,8 @@ ol.conversations {
   width: 150px;
 }
 .column.right {
-  width: 400px;
+/*  full width (- .left) + ( - conversation paddings) */
+  width: 424px;
 }
 
 .avatar,
@@ -43,7 +44,6 @@ ol.conversations {
   border-left: 1px solid #CCCCCC;
   border-top: 1px solid #CCCCCC;
   padding: 3px 10px 10px 10px;
-  cursor: pointer;
 }
 
 .conversation:last-child {
@@ -69,8 +69,29 @@ ol.conversations {
   display: none;
 }
 
+.conversation .topic {
+  position: relative;
+  cursor: pointer;
+}
+
+.conversation .topic > .actions {
+  position: absolute;
+  right: 0;
+}
+
+.conversation .topic > .actions,
 .conversation .topic > .date {
   color: #888;
+}
+
+.conversation .topic > .actions > .action:hover {
+  text-decoration: underline;
+}
+
+.conversation .topic > .actions > .action.delete:hover {
+  text-decoration: none;
+  background-color: red;
+  color: white;
 }
 
 .conversation .topic > .subject {
@@ -85,14 +106,15 @@ ol.conversations {
 .conversation .replies {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 10px 0;
+  cursor: pointer;
 }
 
 .conversation .replies > .reply {
-  background-color:rgba(204, 204, 204, 0.35);
-  color:#666666;
-  margin:10px 0 0 0;
-  padding:5px;
+  background-color: rgba(204, 204, 204, 0.35);
+  color: #666666;
+  margin: 2px 0 0 0;
+  padding: 5px;
   position:relative;
 }
 
