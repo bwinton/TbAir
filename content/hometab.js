@@ -149,6 +149,9 @@ var hometab = {
           for (var id in seenConversations) {
             let conversation = seenConversations[id];
 
+            //Count unread before we possible remove the topic from the list
+            let unread = conversation.unread.length;
+
             // Remove the topic message from the messages list
             for each(let [i,message] in Iterator(conversation.unread))
               if (message.id == conversation.topic.id) {
@@ -156,7 +159,6 @@ var hometab = {
                 break;
               }
 
-            let unread = conversation.unread.length;
             conversation.messages = [].concat(conversation.unread.splice(0,3));
 
             conversation.read = (unread <= 0);
