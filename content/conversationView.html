@@ -54,11 +54,9 @@
     <input type="text" class="search"/>
     <button class="action options">v</button>
   </div>
-  <div id="results-box">
-    <div id="preview-box">
-      <div id="preview">
-        <ol class="messages"/>
-      </div>
+  <div id="convDisplay">
+    <div class="conversation">
+      <ol class="messages"/>
     </div>
   </div>
 </body>
@@ -74,12 +72,24 @@
 
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
-    <li class="message" read="${read}" id="${id}"
+    <li class="row" read="${read}" id="${id}"
         onclick="handleClick($(this), event);">
-      <span class="from">${from.value}</span>
-      <span class="date">${friendlyDate}</span>
-      <div class="fullbody" style="display:none"/>
-      <div class="synopsis">${synopsis}</div>
+        <div class="headerblock">
+          <div class="avatar"><img src="${avatar}"/></div>
+          <div class="from name">${from.contact.name}</div>
+          <div class="messageactions">v</div>
+          <div class="date">${friendlyDate}</div>
+        </div>
+        <div class="messageblock">
+          <div class="messageBody">
+            <div class="quoteContent" style="display:none"/>
+          </div>
+         <div class="synopsis">${synopsis}</div>
+        </div>
+        <div class="actionblock">
+          <div class="actions">
+            <a class="archive" href="#reply">reply</a>
+        </div>
     </li>
   </script>
 

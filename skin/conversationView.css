@@ -1,51 +1,205 @@
-.fullConversations > li {
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, Sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+  position: relative; 
+  overflow-y: scroll;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  min-height: 100%;
+  background-color: #fafafa;
+}
+
+li.row {
   margin: 0;
+  list-style-type: none;
   padding: 10px;
+  padding-bottom: 0;
+  padding-right: 0;
   border-bottom: 1px solid #aaa;
   border-top: none;
   background: #fff;
+  color: #333;
+  line-height: 18px;
+  overflow: hidden;
 }
 
-.fullConversations li.conversation {
-  border-left: none;
-  border-right: none;
+.message {
+  width: 100%;
+  margin: 10px 0;
+  float: left;
+  position: relative;
 }
 
-.fullConversations li.conversation li.message .from {
-  font-weight: bold;
+.conversation {
+  width: 600px;
+  background: #fafafa;
+  padding-bottom: 55px;
+  float: left;
+  border-right: 1px solid #ccc;
+  z-index: 1;
 }
 
-.fullConversations li.conversation.read {
-  color: #888;
+.row.read {
   background-color: #f2f2f2;
 }
 
-.fullConversations > .conversation.read > .message > .date:after {
-  content: " - expand";
-  color: highlight;
+#convDisplay {
+  top: 0;
+  width: 600px;
+  background-color: #fafafa;
+  min-height: 81px;
 }
 
-.fullConversations li.conversation.unread {
-  border-bottom: 1px solid #c3cddb;
+.headerblock {
+  padding-bottom: 1em;
 }
 
-.fullConversations li.conversation.unread:nth-child(odd) {
-  background-color: #ECF3FE;
+.avatar,
+.headerblock .from {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
 }
 
-.fullConversations li.conversation.read li.message .synopsis,
-.fullConversations li.conversation.read li.message .fullBody {
-  display: none;
+.headerblock .date {
+  float: right;
+  margin-right: 1em;
 }
 
-.fullConversations li.conversation li.message .fullBody {
-  display: none;
+.messageactions {
+  display: inline-block;
+  float: right;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
-.fullConversations li.conversation.unread li.message .from {
-  color: highlight;
+.name {
+  display: inline;
 }
 
-.fullConversations li.conversation.unread li.message .date {
+.messageblock {
+}
+
+.actionblock {
+  float: right;
+  vertical-align: bottom;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 1px solid lightgrey;
+  border-bottom: none;
+  border-right: none;
+  -moz-border-radius: 3px 0px 0px 0px;
+}
+
+#convDisplay .message {
+  background-color: #fff;
+}
+
+#convDisplay .message.highlight {
+  background-color: #ffffd9;
+}
+
+.fullMessage .row {
+  margin: 0;
+  padding: 10px 0;
+}
+
+.fullMessage .row:first-child {
+  margin: 55px 0 0 0;
+  padding: 0;
+  border-top: 1px solid #ccc;
+}
+
+.fullMessage .subject {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.fullMessage .messageBody {
+  color: #333;
+  overflow: hidden;
+  line-height: 18px;
+}
+
+.fullMessage .row.fullReply {
+  border-top: 1px dotted #ccc;
+}
+
+.fullMessage .row.fullReply:last-child {
+  border-bottom: 1px solid #ccc;
+}
+
+.fullMessage a.quoteToggle {
+  text-decoration: none;
+  font-size: 11px;
   color: #888;
+}
+
+.fullMessage .row.fullReply .actions {
+  font-size: 12px;
+  color: #000;
+}
+
+.fullMessage .quoteContent.quote {
+  display: none;
+  color: #666;
+  font-size: 11px;
+  background-color: #f2f2f2;
+  padding: 5px;
+}
+
+.fullMessage .quoteContent.quote.expanded {
+  display: block;
+}
+
+.date {
+  font-size: 11px;
+  color: #888;
+  font-weight: normal;
+  padding-left: 1em;
+}
+
+.date.button {
+  -moz-border-radius:0 0 3px 3px;
+  background-color: #Fafafa;
+  border: 1px solid #ccc;
+  border-top: none;
+  display: inline;
+  padding: 6px 10px 3px;
+}
+
+.date.button:hover {
+  color: #000;
+  cursor: pointer;
+}
+
+.actions a {
+  color: #888;
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.subject:empty:after {
+  content: 'tweeted...';
+}
+
+.name {
+  color: #666;
+  font-weight: bold;
+}
+
+.name:empty:after {
+  content: 'unknown';
+}
+
+#header li.account {
+  padding: 2px 10px;
+  background-color: #ff5959;
+  color: #fff;
+  font-weight: bold;
+  -moz-border-radius: 10px;
 }

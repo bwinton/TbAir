@@ -301,6 +301,7 @@ var hometab = {
         for (var i in messages.items)
           aTab.results.push(messages.items[i]);
         self.addMessages(doc, aTab.results);
+        doc.setHeaderTitle(messages.items[0].subject);
       }});
   },
 
