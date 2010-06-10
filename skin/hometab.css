@@ -101,7 +101,7 @@ li.folder {
   min-width: 148px;
   padding: 7px;
   margin: 1px 0;
-  color: Text;
+  color: ButtonText;
   cursor: pointer;
   border: 1px solid transparent;
   -moz-border-radius: 3px;
