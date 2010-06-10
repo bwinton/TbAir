@@ -56,6 +56,8 @@ var hometab = {
               nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
             for each (let folder in gFolderTreeView._enumerateFolders) {
               if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
+                  (folder.server && folder.server.type != "rss") &&
+                  (folder.server && folder.server.type != "nntp") &&
                   (!folder.isServer && folder.getNumUnread(false) > 0) ||
                   (folder == currentFolder))
                 map.push({name: folder.abbreviatedName,

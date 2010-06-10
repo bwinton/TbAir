@@ -174,8 +174,6 @@ function handleClick(element, event) {
 }
 
 function showMessage(element) {
-  //dump(element.children(".synopsis").text()+"\n");
-  //dump(element.children(".fullbody").text()+"\n");
   element.children(".synopsis").toggle("fast");
   element.children(".fullbody").slideToggle("fast");
 }
