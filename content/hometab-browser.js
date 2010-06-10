@@ -44,12 +44,14 @@ function addCategories(categories) {
 }
 
 function clearContent() {
-  $("#preview").html("");
+  $("ol.folders").html("");
+  $("ol.conversations").html("");
+  $("ol.messages").html("");
 }
 
 function setFolders(folders) {
   clearContent();
-  let content = $("<ol class='folders'/>").appendTo($("#preview"));
+  let content = $("ol.folders");
 
   // Augment the data with styles.
   $.each(folders, function(i, e) {
@@ -75,8 +77,6 @@ function augmentMessage(message) {
 
 function addContent(conversations) {
   let conversationsElem = $("ol.conversations");
-  if (conversationsElem.length == 0)
-    conversationsElem = $('<ol class="conversations"/>').appendTo($("#preview"))
 
   // Augment the data with styles.
   for (let cId in conversations) {
@@ -97,8 +97,6 @@ function addContent(conversations) {
 
 function addMessages(messages) {
   let messagesElem = $("ol.messages");
-  if (messagesElem.length == 0)
-    messagesElem = $('<ol class="messages"/>').appendTo($("#preview"))
 
   // Augment the data with styles.
   for (let mId in messages)
@@ -109,8 +107,11 @@ function addMessages(messages) {
 }
 
 function populateMessageBody(id, data) {
-  let body = $("#"+id).find(".fullbody");
+  let message = $("#"+id);
+  let body = message.children(".fullbody");
   body.html(data.documentElement.children);
+  if (message.hasClass("unread"))
+    showMessage(message);
 }
 
 const Cc = Components.classes;
@@ -146,7 +147,7 @@ function updateTab(e) {
   let element = $(e.target);
   $("#categories > .category[selected='true']").removeAttr("selected");
   element.attr("selected", "true");
-  $("#preview").html("Clicked on tab "+element.attr("id"));
+  // $("#preview").html("Clicked on tab "+element.attr("id"));
   hometab.showFolders(this, element.attr("id"));
 }
 
@@ -160,6 +161,8 @@ function showMessages(element) {
 }
 
 function showMessage(element) {
+  dump(element.children(".synopsis").text()+"\n");
+  dump(element.children(".fullbody").text()+"\n");
   element.children(".synopsis").toggle("fast");
   element.children(".fullbody").slideToggle("fast");
 }

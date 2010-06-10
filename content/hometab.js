@@ -286,6 +286,7 @@ var homeTabType = {
         aTab.id = "Home";
         window.title = aTab.title;
         document.getElementById("browser").hidden = false;
+        document.getElementById("folder").hidden = true;
         document.getElementById("conversation").hidden = true;
       },
 
@@ -343,8 +344,8 @@ var homeTabType = {
         aTab.id = aArgs.id;
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
-        document.getElementById("conversation").hidden = true;
         document.getElementById("folder").hidden = false;
+        document.getElementById("conversation").hidden = true;
         hometab.folderDoc.clearContent();
         hometab.showConversationsInFolder(aTab, folder)
       },
@@ -356,8 +357,8 @@ var homeTabType = {
       showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
-        document.getElementById("conversation").hidden = true;
         document.getElementById("folder").hidden = false;
+        document.getElementById("conversation").hidden = true;
         hometab.folderDoc.clearContent();
         let folder = MailUtils.getFolderForURI(aTab.id, true);
         hometab.showConversationsInFolder(aTab, folder);
