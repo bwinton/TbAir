@@ -143,7 +143,9 @@ var hometab = {
                 break;
               }
 
-            conversation.messages = [].concat(conversation.unread.splice(0,3));
+            //We need these unread messages sorted opposite the conversations; oldest first
+            conversation.messages = [].concat(conversation.unread.splice(0,3))
+                                      .sort(function(a,b) { return a.date > b.date; });
 
             conversation.read = (unread <= 0);
             delete conversation.unread;
