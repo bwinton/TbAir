@@ -587,6 +587,8 @@ function doKeyDown(event) {
 }
 
 function doShortcuts(show) {
+  return;  // too many bugs to have enabled for now, but still working on it.
+
   if (!show && !gAccelDown) return;
   let counter = 1;
   for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
@@ -610,6 +612,10 @@ function doKeyUp(event) {
     doShortcuts(false);
 }
 
+// we should also do a doShortcuts(false) whenever a new tab gets created.
+
 function onBlur(event) {
+  //logEvent(event);
+  //dump("onblur\n");
   doShortcuts(false);
 }
