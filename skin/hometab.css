@@ -146,3 +146,6 @@ li.folder.unread {
   display: none;
 }
 
+portlet-header {
+  cursor: pointer;
+}

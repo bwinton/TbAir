@@ -562,3 +562,55 @@ window.setTimeout(function() {
   //Make the tabs a little wider by default
   tabmail.tabContainer.childNodes[0].minWidth = 150;
 }, 0);
+
+var gAccelDown = false;
+
+function doKeyPress(event) {
+  try {
+    if (! event.metaKey) return;
+    let charString = String.fromCharCode(event.charCode);
+    counter = 1;
+    for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
+      let tabinfo = tabmail.tabInfo[i];
+      if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
+        if (charString == counter.toString()) {
+          tabmail.selectTabByIndex(event, i);
+          return;
+        }
+        counter++;
+      }
+      if (counter == 10) break;
+    }
+  } catch (e) { logException(e); }
+}
+function doKeyDown(event) {
+  if (event.keyCode == 224) doShortcuts(true);
+}
+
+function doShortcuts(show) {
+  if (!show && !gAccelDown) return;
+  let counter = 1;
+  for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
+    let tabinfo = tabmail.tabInfo[i];
+    if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
+      if (show) {
+        tabinfo.title = counter.toString() + ": " + tabinfo.title;
+      } else {
+        tabinfo.title = tabinfo.title.slice(3,tabinfo.title.length);
+      }
+      tabmail.setTabTitle(tabinfo)
+      counter++;
+    }
+    if (counter == 10) break;
+  }
+  gAccelDown = show;
+}
+
+function doKeyUp(event) {
+  if (event.keyCode == 224)
+    doShortcuts(false);
+}
+
+function onBlur(event) {
+  doShortcuts(false);
+}
