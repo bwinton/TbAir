@@ -191,8 +191,8 @@ function filterFolders(event) {
   try {
     let filterNode = $(event.target);
     var filter = filterNode.val(), count = 0;
-    $(".filtered:first li").each(function () {
-      let matchString = $(this).text();
+    $(".column .portlet").each(function () {
+      let matchString = $(this).children('.portlet-header').text();
       if (matchString.search(new RegExp(filter, "i")) < 0)
         $(this).hide();
       else
