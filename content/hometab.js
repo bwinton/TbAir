@@ -45,8 +45,44 @@ Cu.import("resource://app/modules/virtualFolderWrapper.js");
 Cu.import("resource://app/modules/gloda/public.js");
 Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
+Cu.import("resource:///modules/iteratorUtils.jsm");
 
 var hometab = {
+
+  /**
+   * This is a helper attribute that simply returns a flat list of all folders
+   */
+  get _enumerateFolders() {
+    const Cc = Components.classes;
+    const Ci = Components.interfaces;
+    let folders = [];
+
+    let acctMgr = Cc["@mozilla.org/messenger/account-manager;1"]
+                     .getService(Ci.nsIMsgAccountManager);
+    for each (let acct in fixIterator(acctMgr.accounts, Ci.nsIMsgAccount)) {
+      // Skip deferred accounts
+      if (acct.incomingServer instanceof Ci.nsIPop3IncomingServer &&
+          acct.incomingServer.deferredToAccount)
+        continue;
+      folders.push(acct.incomingServer.rootFolder);
+      this.addSubFolders(acct.incomingServer.rootFolder, folders);
+    }
+    return folders;
+  },
+
+  /**
+   * This is a recursive function to add all subfolders to the array. It
+   * assumes that the passed in folder itself has already been added.
+   *
+   * @param aFolder  the folder whose subfolders should be added
+   * @param folders  the array to add the folders to.
+   */
+  addSubFolders : function addSubFolders (folder, folders) {
+    for each (let f in fixIterator(folder.subFolders, Components.interfaces.nsIMsgFolder)) {
+      folders.push(f);
+      this.addSubFolders(f, folders);
+    }
+  },
 
   showFolders: function showFolders(doc) {
     doc.setupHome();
@@ -57,7 +93,7 @@ var hometab = {
                               nsMsgFolderFlags.Templates |
                               nsMsgFolderFlags.Newsgroup;
 
-    for each (let folder in gFolderTreeView._enumerateFolders) {
+    for each (let folder in this._enumerateFolders) {
       if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
           (folder.server && folder.server.type != "rss") &&
           (folder.server && folder.server.type != "nntp") &&
