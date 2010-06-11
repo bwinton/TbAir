@@ -48,7 +48,7 @@
   border: 1px solid #CCCCCC;
   -moz-border-radius: 3px;
 }
-.portlet-header { font-weight: bold; }
+.portlet-header { font-weight: bold;  cursor: pointer; }
 .portlet-header .ui-icon { float: right; }
 .portlet-content { padding: 7px; }
 

@@ -48,58 +48,29 @@ Cu.import("resource://app/modules/errUtils.js");
 
 var hometab = {
 
-  _modes: {"Unread": function ht_unread() {
-            let map = [];
-            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
-              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
-              nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
-            for each (let folder in gFolderTreeView._enumerateFolders) {
-              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
-                  (folder.server && folder.server.type != "rss") &&
-                  (folder.server && folder.server.type != "nntp") &&
-                  (!folder.isServer && folder.getNumUnread(false) > 0))
-                map.push({name: folder.abbreviatedName,
-                          unread: folder.getNumUnread(false),
-                          id: folder.URI});
-            }
-            map = sortFolderItems(map);
-            return map;
-          },
-          "Tags": null,
-          "Folders":  function ht_all() {
-            let map = [];
-            const outFolderFlagMask = nsMsgFolderFlags.SentMail |
-              nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
-              nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
-            for each (let folder in gFolderTreeView._enumerateFolders) {
-              if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
-                  (folder.server && folder.server.type != "rss") &&
-                  (folder.server && folder.server.type != "nntp") &&
-                  (!folder.isServer && folder.getTotalMessages(true) > 0))
-                map.push({name: folder.abbreviatedName,
-                          unread: folder.getNumUnread(false),
-                          id: folder.URI});
-            }
-            map = sortFolderItems(map);
-            return map;
-          },
-          "People": null,
-          "Accounts": null,
-         },
-
-  showFolders: function showFolders(doc, id) {
+  showFolders: function showFolders(doc) {
+    doc.setupHome();
     let content = [];
-    let func = this._modes[id] || function ht_null() { return []; };
-    let folders = func();
-    for (let index in folders) {
-      let folder = folders[index];
-      content.push({name : folder.name,
-                    unread: folder.unread > 0 ? folder.unread : "",
-                    id : folder.id
-                   });
+    const outFolderFlagMask = nsMsgFolderFlags.SentMail |
+                              nsMsgFolderFlags.Drafts |
+                              nsMsgFolderFlags.Queue |
+                              nsMsgFolderFlags.Templates |
+                              nsMsgFolderFlags.Newsgroup;
+
+    for each (let folder in gFolderTreeView._enumerateFolders) {
+      if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
+          (folder.server && folder.server.type != "rss") &&
+          (folder.server && folder.server.type != "nntp") &&
+          (!folder.isServer && folder.getTotalMessages(true) > 0)) {
+        let _unread = folder.getNumUnread(false);
+        content.push({name: folder.abbreviatedName,
+                      read: (_unread > 0),
+                      unread: (_unread || ""),
+                      id: folder.URI});
+      }
     }
     doc.setHeaderTitle("Home")
-    doc.setFolders(content);
+    doc.setFolders(sortFolderItems(content));
   },
 
   showConversations: function show_Conversations(doc, id) {
@@ -137,8 +108,8 @@ var hometab = {
       onQueryCompleted: function _onQueryCompleted(messages) {
         //let t2 = new Date();
         try {
-          conversations = [];
-          seenConversations = {};
+          let conversations = [];
+          let seenConversations = {};
           for (var [,message] in Iterator(messages.items)) {
             let id = message.conversationID;
             if (!(id in seenConversations)) {
@@ -338,14 +309,7 @@ var homeTabType = {
       },
 
       htmlLoadHandler: function ht_htmlLoadHandler(doc) {
-        doc.setupHome();
-        let content = [];
-        for (let mode in hometab._modes) {
-          content.push({folder : mode,
-                        id : mode,
-                       });
-        }
-        doc.addCategories(content);
+        hometab.showFolders(doc);
       },
 
       showTab: function ht_showTab(aTab) {
@@ -487,7 +451,8 @@ var homeTabType = {
 };
 
 function getFolderNameAndCount(aFolder) {
-  return aFolder.prettyName + " (" + aFolder.getNumUnread(false) + ")"
+  let unread = aFolder.getNumUnread(false);
+  return aFolder.prettyName + (unread > 0? " (" + unread + ")" : "");
 }
 
 function UpdateMailToolbar() {
@@ -505,6 +470,13 @@ var statusFeedback = {
 }
 
 function sortFolderByNameFunc(a,b) {
+
+  if (a.name == "Inbox") return -1;
+  if (b.name == "Inbox") return 1;
+
+  if (a.name == "Starred") return -1;
+  if (b.name == "Starred") return 1;
+
   if (a.name < b.name) return -1;
   return 1;
 }

@@ -57,40 +57,11 @@
 
   <br clear="all"/>
 
-  <div class="column">
+  <div class="column"></div>
 
-    <div class="portlet" type="folder" folder="Inbox">
-      <div class="portlet-header">Inbox</div>
-      <div class="portlet-content">Messages</div>
-    </div>
+  <div class="column"></div>
 
-    <div class="portlet" type="folder" folder="Starred">
-      <div class="portlet-header">Starred</div>
-      <div class="portlet-content">Messages</div>
-    </div>
-
-  </div>
-
-  <div class="column">
-
-    <div class="portlet" type="folder" folder="Mozilla">
-      <div class="portlet-header">Mozilla</div>
-      <div class="portlet-content">Messages</div>
-    </div>
-
-  </div>
-
-  <div class="column">
-
-    <div class="portlet" type="compose">
-      <div class="portlet-header">Compose</div>
-      <div class="portlet-content">
-        <div id="compose">Compose New Message</div>
-        <div id="drafts">Drafts</div>
-      </div>
-    </div>
-
-  </div>
+  <div class="column"></div>
 
   <br clear="all"/>
 
@@ -134,25 +105,26 @@
   </script>
 
   <script id="foldertmpl" type="text/html">
-    <li class="folder ${extraClass}" id="${id}"
+    <li class="folder" read="${read}" id="${id}"
         onclick="showConversations($(this))">
       <span class="name">${name}</span>
-      <span class="count">${unread}</span>
+      <span class="count">${read}</span>
     </li>
   </script>
 
-  <script id="portlettmpl" type="text/html">
-    <div class="portlet">
-      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">${name}</div>
-      <div class="portlet-content">
+  <script id="folderPortletTmpl" type="text/html">
+    <div class="portlet" read="${read}">
+      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">${name} <span class="count">${unread}</span></div>
+      <div class="portlet-content"></div>
+    </div>
+  </script>
+
+<!--
         <ol class="conversations">
           <li class="conversation" read="${read}" id="${id}" subject="${subject}">
             <span class="from" onclick="showMessages($(this));">${message.from.contact.name}</span>
             <span class="subject" onclick="showMessages($(this));">${message.conversation.subject}</span>
           </li>
         </ol>
-      </div>
-    </div>
-  </script>
-
+-->
 </html>

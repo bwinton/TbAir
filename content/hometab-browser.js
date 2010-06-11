@@ -47,12 +47,6 @@ function setupHome() {
   $(".column").disableSelection();
 }
 
-function addCategories(categories) {
-  let categoriesElem = $("#categories").html("");
-  $("#categorytmpl").render(categories).appendTo(categoriesElem);
-  updateTab({"target":categories[0]});
-}
-
 function clearContent() {
   $("ol.folders").html("");
   $("ol.conversations").html("");
@@ -61,15 +55,12 @@ function clearContent() {
 
 function setFolders(folders) {
   clearContent();
-  let content = $("ol.folders");
-
-  // Augment the data with styles.
-  $.each(folders, function(i, e) {
-    e.extraClass = e.unread > 0 ? "unread" : "read";
-  });
-
+  let even = (folders.length / $(".column").length) + 1;
   // And render the template.
-  $("#foldertmpl").render(folders).appendTo(content);
+  $(".column").each(function() {
+    $("#folderPortletTmpl").render(folders.splice(0, even)).appendTo($(this))
+  })
+  ;
 }
 
 function setHeaderTitle(name) {
@@ -182,14 +173,6 @@ function reachOutAndTouchFrame(aMode) {
   hometab = parentWin.hometab;
   let homeTabType = parentWin.homeTabType;
   homeTabType.modes[aMode].htmlLoadHandler(this);
-}
-
-function updateTab(e) {
-  let element = $(e.target);
-  $("#categories > .category[selected='true']").removeAttr("selected");
-  element.attr("selected", "true");
-  // $("#preview").html("Clicked on tab "+element.attr("id"));
-  hometab.showFolders(this, element.attr("id"));
 }
 
 function showConversations(element) {
