@@ -48,6 +48,7 @@ function onHometabMenuItemCommand(e) {
       "chrome://hometab/content/hometab.xul", strings.get("hometab.title"),
       "all,chrome,dialog=no,status,toolbar=no,resizable,width=1024,height=527",
       null);
+  window.gFolderTreeView = gFolderTreeView;
   window.msgBundle = document.getElementById("bundle_messenger");
   window.nsMsgFolderFlags = Components.interfaces.nsMsgFolderFlags;
 };
