@@ -349,6 +349,7 @@ var homeTabType = {
       },
 
       htmlLoadHandler: function ht_htmlLoadHandler(doc) {
+        doc.setupHome();
         let content = [];
         for (let mode in hometab._modes) {
           content.push({folder : mode,

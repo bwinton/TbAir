@@ -39,6 +39,14 @@ Components.utils.import("resource:///modules/templateUtils.js");
 Components.utils.import("resource:///modules/errUtils.js");
 Components.utils.import("resource:///modules/gloda/utils.js");
 
+
+function setupHome() {
+  $(".column").sortable({
+    connectWith: '.column'
+    });
+  $(".column").disableSelection();
+}
+
 function addCategories(categories) {
   let categoriesElem = $("#categories").html("");
   $("#categorytmpl").render(categories).appendTo(categoriesElem);

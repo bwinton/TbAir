@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
   -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
   -
@@ -45,6 +44,9 @@
   <!-- Themes -->
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/hometab.css" />
+  <link rel="stylesheet" type="text/css"
+      href="chrome://hometab/skin/homeView.css" />
+
 </head>
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
   <div class="header">
@@ -52,6 +54,46 @@
     <div class="search"><input type="text" class="search"/></div>
     <div class="actions"><button class="action options">&diams;</button></div>
   </div>
+
+  <br clear="all"/>
+
+  <div class="column">
+
+    <div class="portlet" type="folder" folder="Inbox">
+      <div class="portlet-header">Inbox</div>
+      <div class="portlet-content">Messages</div>
+    </div>
+
+    <div class="portlet" type="folder" folder="Starred">
+      <div class="portlet-header">Starred</div>
+      <div class="portlet-content">Messages</div>
+    </div>
+
+  </div>
+
+  <div class="column">
+
+    <div class="portlet" type="folder" folder="Mozilla">
+      <div class="portlet-header">Mozilla</div>
+      <div class="portlet-content">Messages</div>
+    </div>
+
+  </div>
+
+  <div class="column">
+
+    <div class="portlet" type="compose">
+      <div class="portlet-header">Compose</div>
+      <div class="portlet-content">
+        <div id="compose">Compose New Message</div>
+        <div id="drafts">Drafts</div>
+      </div>
+    </div>
+
+  </div>
+
+  <br clear="all"/>
+
   <div id="results-box">
     <div id="category-box">
       <ol id="categories" onclick="updateTab(event)"/>
@@ -70,6 +112,17 @@
       src="chrome://messenger/content/jquery.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/jquery.tmpl.js"></script>
+
+  <script type="application/javascript;version=1.8"
+          src="chrome://hometab/content/jquery.ui.core.js"></script>
+  <script type="application/javascript;version=1.8"
+          src="chrome://hometab/content/jquery.ui.widget.js"></script>
+
+  <script type="application/javascript;version=1.8"
+          src="chrome://hometab/content/jquery.ui.mouse.js"></script>
+  <script type="application/javascript;version=1.8"
+          src="chrome://hometab/content/jquery.ui.sortable.js"></script>
+
   <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
   <script type="application/javascript;version=1.8"
@@ -86,6 +139,20 @@
       <span class="name">${name}</span>
       <span class="count">${unread}</span>
     </li>
+  </script>
+
+  <script id="portlettmpl" type="text/html">
+    <div class="portlet">
+      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">${name}</div>
+      <div class="portlet-content">
+        <ol class="conversations">
+          <li class="conversation" read="${read}" id="${id}" subject="${subject}">
+            <span class="from" onclick="showMessages($(this));">${message.from.contact.name}</span>
+            <span class="subject" onclick="showMessages($(this));">${message.conversation.subject}</span>
+          </li>
+        </ol>
+      </div>
+    </div>
   </script>
 
 </html>
