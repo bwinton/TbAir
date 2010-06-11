@@ -116,8 +116,6 @@ function populateMessageBody(id, data) {
     let message = $("#"+id);
     let body = message.find(".fullbody");
     body.html(data.documentElement.children);
-    if (!message.attr("read"))
-      showMessage(message);
   } catch (e) {
     logException(e);
   }
