@@ -101,6 +101,11 @@ button.action.options {
   display: none;
 }
 
-portlet-header {
+.portlet-header {
   cursor: pointer;
 }
+
+.portlet-header:hover {
+  text-decoration: underline;
+}
+

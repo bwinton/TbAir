@@ -63,5 +63,7 @@
   </tabbrowser>
   <script type="application/javascript"
           src="chrome://messenger/content/mailTabs.js;version=1.8"/>
+  <script type="application/javascript"
+          src="chrome://messenger/content/utils.js;version=1.8"/>
   <script type="application/javascript" src="hometab.js;version=1.8"/>
 </window>

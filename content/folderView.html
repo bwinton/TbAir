@@ -67,6 +67,8 @@
       src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
+  <script type="application/javascript;version=1.8"
+      src="chrome://hometab/content/utils.js"></script>
 
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
@@ -83,8 +85,8 @@
         <div class="column right">
           <div class="topic">
             <div class="actions">
-              <a class="action archive">archive</a>
-              <a class="action delete">delete</a>
+              <a class="action archive" onclick="archiveConversation($(this))">archive</a>
+              <a class="action delete" onclick="deleteConversation($(this))">delete</a>
             </div>
             <div class="date">${date}</div>
             <div class="subject" onclick="showMessages($(this));">${subject}</div>

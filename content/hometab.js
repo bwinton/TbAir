@@ -87,11 +87,11 @@ var hometab = {
   showFolders: function showFolders(doc) {
     doc.setupHome();
     let content = [];
-    const outFolderFlagMask = nsMsgFolderFlags.SentMail |
-                              nsMsgFolderFlags.Drafts |
-                              nsMsgFolderFlags.Queue |
-                              nsMsgFolderFlags.Templates |
-                              nsMsgFolderFlags.Newsgroup;
+    const outFolderFlagMask = Ci.nsMsgFolderFlags.SentMail |
+                              Ci.nsMsgFolderFlags.Drafts |
+                              Ci.nsMsgFolderFlags.Queue |
+                              Ci.nsMsgFolderFlags.Templates |
+                              Ci.nsMsgFolderFlags.Newsgroup;
 
     let seenFolderNames = {};
     for each (let folder in this._enumerateFolders) {
@@ -135,7 +135,7 @@ var hometab = {
     aWin.setHeaderTitle(aWin.title);
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
-    if (aFolder.flags & nsMsgFolderFlags.Virtual) {
+    if (aFolder.flags & Ci.nsMsgFolderFlags.Virtual) {
       let vFolder = new VirtualFolderHelper.wrapVirtualFolder(aFolder)
       query.folder.apply(query, vFolder.searchFolders);
     }
@@ -164,6 +164,7 @@ var hometab = {
               seenConversations[id] = {
                   "id" : id,
                   "topic" : message,
+                  "all": [],
                   "read" : [],
                   "unread" : []
                   };
@@ -172,6 +173,7 @@ var hometab = {
               seenConversations[id].unread.push(message);
             else
               seenConversations[id].read.push(message);
+            seenConversations[id].all.push(message);
 
             //This is rarely going to work out correctly as we're creating our
             // own conversation mapping over a subset of messages.  Only if the

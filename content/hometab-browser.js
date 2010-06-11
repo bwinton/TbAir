@@ -39,6 +39,9 @@ Components.utils.import("resource:///modules/templateUtils.js");
 Components.utils.import("resource:///modules/errUtils.js");
 Components.utils.import("resource:///modules/gloda/utils.js");
 
+var gCopyService = Components.classes["@mozilla.org/messenger/messagecopyservice;1"]
+                     .getService(Components.interfaces.nsIMsgCopyService);
+
 
 function setupHome() {
   $(".column").sortable({
@@ -114,7 +117,9 @@ function addContent(conversations) {
   }
 
   // And render the template.
-  $("#conversationtmpl").render(conversations).appendTo(conversationsElem);
+  $("#conversationtmpl").render(conversations).each(function(i, li) {
+    li.conversation = conversations[i];
+    }).appendTo(conversationsElem);
   // cache the gloda objects
   document.getElementById("cache").conversations = conversationMap;
 }
@@ -261,3 +266,74 @@ function showMessage(element) {
   element.find(".synopsis").toggle("fast");
   element.find(".fullbody").slideToggle("fast");
 }
+
+
+//--- actions on conversations
+
+function archiveConversation(link) {
+  try {
+    let conversationElt = link.parents('li.conversation')[0];
+    $(conversationElt).slideUp('fast');
+    // XXX: update counts of messages in title
+    let conversation = conversationElt.conversation;
+    let msgHdrs = [];
+    for (let [,message] in Iterator(conversation.all)) {
+      msgHdrs.push(message.folderMessage);
+    }
+    let batchMover = new BatchMessageMover();
+    batchMover.archiveMessages(msgHdrs);
+  } catch (e) {
+    logException(e);
+  }
+}
+
+
+function deleteConversation(link) {
+  try {
+    let conversationElt = link.parents('li.conversation')[0];
+    $(conversationElt).slideUp('fast');
+    // XXX: update counts of messages in title
+    let conversation = conversationElt.conversation;
+    let folderMap = {};
+
+    // try to be a bit smart and group deletes by folder.
+    // this code is a bit messy, could easily be cleaned up.
+    let msgHdrs = [];
+    let folders = [];
+    for (let [,message] in Iterator(conversation.all)) {
+      let msgHdr = message.folderMessage;
+      if (! msgHdr) {
+        dump("uh-oh, got gloda message w/ no real message\n");
+        return;
+      }
+      let folderURI = msgHdr.folder.URI;
+      if (folderURI in folderMap) {
+        folderMap[folderURI].messages.appendElement(msgHdr, false);
+      } else {
+        let msgs = Components.classes["@mozilla.org/array;1"].
+          createInstance(Components.interfaces.nsIMutableArray);
+        
+        let folderDict = {
+          'URI': folderURI,
+          'folder': msgHdr.folder,
+          'messages': msgs
+        }
+        msgs.appendElement(msgHdr, false);
+        folderMap[folderURI] = folderDict;
+        folders.push(folderDict);
+      }
+    }
+    for (let [, folderDict] in Iterator(folders)) {
+      // XXX check these args - and ideally pick up delete model based on prefs.
+      folderDict['folder'].deleteMessages(folderDict.messages,
+                                          null /*msgWindow*/,
+                                          false /* deleteStorage */,
+                                          true /* isMove */,
+                                          null /* copyservicelistener */,
+                                          true /* allowUndo */);
+    }
+  } catch (e) {
+    logException(e);
+  }
+}
+
