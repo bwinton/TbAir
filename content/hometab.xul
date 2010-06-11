@@ -42,6 +42,7 @@
         id="window">
   <keyset>
     <key id="key_goHome" modifiers="accel" key="D" oncommand="window.close();"/>
+    <key id="key_closeTab" modifiers="accel" key="W" oncommand="document.getElementById('tabmail').removeCurrentTab();"/>
   </keyset>
   <tabbrowser id="tabmail" flex="1" panelcontainer="tabpanelcontainer">
     <box id="tabmail-buttons" orientation="horizontal"/>
