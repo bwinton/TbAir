@@ -125,6 +125,9 @@ var hometab = {
             else
               seenConversations[id].read.push(message);
 
+            //This is rarely going to work out correctly as we're creating our
+            // own conversation mapping over a subset of messages.  Only if the
+            // actual topic is in the 50 message limit will this trick work
             if (message.date < seenConversations[id].topic.date) {
               seenConversations[id].topic = message;
             }
