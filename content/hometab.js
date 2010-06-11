@@ -594,40 +594,68 @@ function doKeyPress(event) {
     }
   } catch (e) { logException(e); }
 }
+
+var gKeyDownTimeout = null;
+
 function doKeyDown(event) {
-  if (event.keyCode == 224) doShortcuts(true);
+  // to avoid flashing on common sequences
+  if (event.keyCode == 224) {
+    gKeyDownTimeout = window.setTimeout(function() {
+      doShortcuts(true);
+    }, 250); // don't show them immediately
+  }
 }
 
 function doShortcuts(show) {
-  return;  // too many bugs to have enabled for now, but still working on it.
-
-  if (!show && !gAccelDown) return;
-  let counter = 1;
-  for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
-    let tabinfo = tabmail.tabInfo[i];
-    if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
-      if (show) {
-        tabinfo.title = counter.toString() + ": " + tabinfo.title;
-      } else {
-        tabinfo.title = tabinfo.title.slice(3,tabinfo.title.length);
+  try {
+    if (!show && !gAccelDown) return;
+    let counter = 1;
+  
+    window.clearTimeout(gKeyDownTimeout);
+    gKeyDownTimeout = null;
+    for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
+      let tabinfo = tabmail.tabInfo[i];
+      if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
+        if (show) {
+          tabinfo.title = counter.toString() + ": " + tabinfo.title;
+        } else {
+          tabinfo.title = tabinfo.title.slice(3,tabinfo.title.length);
+        }
+        tabmail.setTabTitle(tabinfo)
+        counter++;
       }
-      tabmail.setTabTitle(tabinfo)
-      counter++;
+      if (counter == 10) break;
     }
-    if (counter == 10) break;
+    gAccelDown = show;
+    if (show) {
+      // Sometimes, for reasons unknown, we don't get blur events on application
+      // switching, which results in shortcuts staying around after the meta key
+      // is up (but in a different app).  This is a hack that gets around the
+      // problem.
+      window.setTimeout(function() { doShortcuts(false);}, 2000); 
+    }
+  } catch (e) {
+    logException(e);
   }
-  gAccelDown = show;
 }
 
 function doKeyUp(event) {
-  if (event.keyCode == 224)
-    doShortcuts(false);
+  try {
+    if (gKeyDownTimeout) {
+      window.clearTimeout(gKeyDownTimeout);
+      gKeyDownTimeout = null;
+      return;
+    }
+    if (event.keyCode == 224)
+      doShortcuts(false);
+    gKeyDownTimeout = null;
+  } catch (e) {
+    logException(e);
+  }
 }
 
 // we should also do a doShortcuts(false) whenever a new tab gets created.
 
 function onBlur(event) {
-  //logEvent(event);
-  //dump("onblur\n");
   doShortcuts(false);
 }
