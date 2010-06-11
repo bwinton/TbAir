@@ -409,6 +409,18 @@ var homeTabType = {
       showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
       },
+      shouldSwitchTo: function onSwitchTo({id: aFolder}) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].type == this.type &&
+              tabInfo[selectedIndex].id == aFolder) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
 
       onTitleChanged: function fl_onTitleChanged(aTab) {
         window.title = aTab.title;
