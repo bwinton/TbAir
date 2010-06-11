@@ -40,6 +40,9 @@
 <?xml-stylesheet href="chrome://hometab/skin/overlay.css" type="text/css"?>
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="window">
+  <keyset>
+    <key id="key_goHome" modifiers="accel" key="D" oncommand="window.close();"/>
+  </keyset>
   <tabbrowser id="tabmail" flex="1" panelcontainer="tabpanelcontainer">
     <box id="tabmail-buttons" orientation="horizontal"/>
     <tabpanels id="tabpanelcontainer" flex="1" class="plain" selectedIndex="0">

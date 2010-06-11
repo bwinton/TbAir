@@ -46,7 +46,9 @@
   <stringbundleset id="stringbundleset">
     <stringbundle id="hometab-strings" src="chrome://hometab/locale/hometab.properties"/>
   </stringbundleset>
-
+  <keyset>
+    <key id="key_goHome" modifiers="accel" key="D" oncommand="onHometabMenuItemCommand();"/>
+  </keyset>
   <menupopup id="menu_GoPopup">
     <menuitem id="menu_goHome" label="&gohome.label;"
               accesskey="&gohome.accesskey;"
