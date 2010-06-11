@@ -119,6 +119,14 @@ function addContent(conversations) {
   document.getElementById("cache").conversations = conversationMap;
 }
 
+function markAsRead(message) {
+  try {
+    message.folderMessage.markRead(true);
+  } catch (e) {
+    logException(e);
+  }
+}
+
 function addMessages(messages) {
   let messagesElem = $("ol.messages");
 
@@ -127,8 +135,8 @@ function addMessages(messages) {
   for (let mId in messages) {
     augmentMessage(messages[mId]);
     messageMap[messages[mId].id] = messages[mId];
+    markAsRead(messages[mId]); // should really happen on making it into viewport, but...
   }
-
   // And render the template.
   $("#messagetmpl").render(messages).appendTo(messagesElem);
   
