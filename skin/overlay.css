@@ -27,10 +27,32 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
   opacity: 1;
 }
 
+/* type folder is really the home tab */
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"],
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"]:hover,
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"],
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"]:hover{
+  -moz-appearance: none !important;
+  padding: 7px;
+  margin: 0;
+  -moz-border-radius: 0;
+  -moz-border-radius-bottomleft: 6px;
+  border-left: none;
+  background-color: #fafafa;
+  list-style-image: url("chrome://hometab/skin/home.png");
+}
+
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folderList"] {
-  margin-left: 3px;
+  list-style-image: url("chrome://hometab/skin/folder.png");
 }
 
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"] {
+  list-style-image: url("chrome://hometab/skin/conversation.png");
+}
+
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"],
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"]:hover,
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"],
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"]:hover {
   margin-left: 10px;
 }

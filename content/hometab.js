@@ -339,8 +339,7 @@ var homeTabType = {
       isDefault: true,
 
       openFirstTab: function ht_openTab(aTab, aArgs) {
-        aTab.title = "HomeTab";
-        aTab.image = "chrome://hometab/content/hometab.png";
+        aTab.title = "Home";
       },
 
       openTab: function ht_openTab(aTab, aArgs) {
