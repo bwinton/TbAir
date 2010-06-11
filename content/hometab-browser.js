@@ -112,11 +112,15 @@ function addMessages(messages) {
 }
 
 function populateMessageBody(id, data) {
-  let message = $("#"+id);
-  let body = message.children(".fullbody");
-  body.html(data.documentElement.children);
-  if (!message.attr("read"))
-    showMessage(message);
+  try {
+    let message = $("#"+id);
+    let body = message.find(".fullbody");
+    body.html(data.documentElement.children);
+    if (!message.attr("read"))
+      showMessage(message);
+  } catch (e) {
+    logException(e);
+  }
 }
 
 const Cc = Components.classes;
@@ -180,6 +184,6 @@ function handleClick(element, event) {
 }
 
 function showMessage(element) {
-  element.children(".synopsis").toggle("fast");
-  element.children(".fullbody").slideToggle("fast");
+  element.find(".synopsis").toggle("fast");
+  element.find(".fullbody").slideToggle("fast");
 }

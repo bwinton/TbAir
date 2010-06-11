@@ -48,7 +48,7 @@
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/conversationView.css" />
 </head>
-<body dir="&locale.dir;" onload="reachOutAndTouchFrame('messageList')">
+<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('messageList')">
   <div class="header">
     <div class="title"></div>
     <div class="search"><input type="text" class="search"/></div>
@@ -82,7 +82,7 @@
         </div>
         <div class="messageblock">
           <div class="messageBody">
-            <div class="quoteContent" style="display:none"/>
+            <div class="fullbody" style="display:none"/>
           </div>
          <div class="synopsis">${synopsis}</div>
         </div>
