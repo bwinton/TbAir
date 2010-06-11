@@ -50,7 +50,6 @@ var hometab = {
 
   _modes: {"Unread": function ht_unread() {
             let map = [];
-            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
             const outFolderFlagMask = nsMsgFolderFlags.SentMail |
               nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
               nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
@@ -69,7 +68,6 @@ var hometab = {
           "Tags": null,
           "Folders":  function ht_all() {
             let map = [];
-            let currentFolder = gFolderTreeView.getSelectedFolders()[0];
             const outFolderFlagMask = nsMsgFolderFlags.SentMail |
               nsMsgFolderFlags.Drafts | nsMsgFolderFlags.Queue |
               nsMsgFolderFlags.Templates | nsMsgFolderFlags.Newsgroup;
@@ -88,9 +86,6 @@ var hometab = {
           "People": null,
           "Accounts": null,
          },
-
-  conversationDoc: null,
-  folderDoc: null,
 
   showFolders: function showFolders(doc, id) {
     let content = [];
@@ -116,10 +111,9 @@ var hometab = {
     });
   },
 
-  showConversationsInFolder: function show_ConversationsInFolder(aTab, aFolder) {
+  showConversationsInFolder: function show_ConversationsInFolder(aWin, aFolder) {
     //let t0 = new Date();
-    let doc = hometab.folderDoc;
-    doc.setHeaderTitle(getFolderNameAndCount(aFolder));
+    aWin.setHeaderTitle(getFolderNameAndCount(aFolder));
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
     if (aFolder.flags & nsMsgFolderFlags.Virtual) {
@@ -142,7 +136,6 @@ var hometab = {
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
         //let t2 = new Date();
-        doc.clearContent();
         try {
           conversations = [];
           seenConversations = {};
@@ -185,7 +178,7 @@ var hometab = {
             delete conversation.unread;
             conversations.push(conversation);
           }
-          doc.addContent(conversations);
+          aWin.addContent(conversations);
           //let t3 = new Date();
           //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
         } catch (e) {
@@ -212,7 +205,7 @@ var hometab = {
 
   tempFolder: null,
 
-  populateMessageBody: function populateMessageBody(aMessageHeader) {
+  populateMessageBody: function populateMessageBody(aWin, aMessageHeader) {
     try {
     let messenger = Cc["@mozilla.org/messenger;1"]
                       .createInstance(Ci.nsIMessenger);
@@ -226,7 +219,6 @@ var hometab = {
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
         "iframe");
     iframe.setAttribute("type", "content");
-    //iframe.setAttribute("display", "hidden");
     iframe.setAttribute("id", aMessageHeader.id);
     /* The xul:iframe automatically loads about:blank when it is added
      * into the tree. We need to wait for the document to be loaded before
@@ -247,7 +239,7 @@ var hometab = {
         /* The part below is all about quoting */
         let iframeDoc = iframe.contentDocument;
         self.tempFolder = iframeDoc;
-        self.conversationDoc.populateMessageBody(aMessageHeader.id, iframeDoc);
+        aWin.populateMessageBody(aMessageHeader.id, iframeDoc);
         /* And remove ourselves. */
         document.getElementById("mailContent").removeChild(iframe);
 
@@ -274,18 +266,17 @@ var hometab = {
     }
   },
 
-  addMessages: function addMessages(aDoc, aMessages) {
-    aDoc.addMessages(aMessages);
+  addMessages: function addMessages(aWin, aMessages) {
+    aWin.addMessages(aMessages);
     for (var i in aMessages) {
-      this.populateMessageBody(aMessages[i]);
+      this.populateMessageBody(aWin, aMessages[i]);
     }
   },
 
-  showMessagesInConversation: function showMessagesInConversation(aTab, flag) {
-    let doc = hometab.conversationDoc;
-    let id = aTab.id;
-    if (aTab.results != null) {
-      this.addMessages(doc, aTab.results);
+  showMessagesInConversation: function showMessagesInConversation(aWin) {
+    let id = aWin.tab.id;
+    if (aWin.tab.results != null) {
+      this.addMessages(aWin, aWin.tab.results);
       return;
     }
     let self = this;
@@ -301,12 +292,12 @@ var hometab = {
       },
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
-        aTab.results = [];
+        aWin.tab.results = [];
         let items = self._removeDupes(messages.items);
         for each(var [,message] in Iterator(items))
-          aTab.results.push(message);
-        self.addMessages(doc, aTab.results);
-        doc.setHeaderTitle(aTab.title);
+          aWin.tab.results.push(message);
+        self.addMessages(aWin, aWin.tab.results);
+        aWin.setHeaderTitle(aWin.tab.title);
       }});
   },
 
@@ -327,6 +318,7 @@ var hometab = {
 var homeTabType = {
   // TabType attributes
   name: "HomeTab",
+  perTabPanel: "vbox",
   panelId: "mailContent",
   modes: {
     // "home" tab type.
@@ -343,9 +335,6 @@ var homeTabType = {
         aTab.title = aArgs.title;
         aTab.id = "Home";
         window.title = aTab.title;
-        document.getElementById("browser").hidden = false;
-        document.getElementById("folder").hidden = true;
-        document.getElementById("conversation").hidden = true;
       },
 
       htmlLoadHandler: function ht_htmlLoadHandler(doc) {
@@ -361,9 +350,6 @@ var homeTabType = {
 
       showTab: function ht_showTab(aTab) {
         window.title = aTab.title;
-        document.getElementById("browser").hidden = false;
-        document.getElementById("folder").hidden = true;
-        document.getElementById("conversation").hidden = true;
       },
 
       onTitleChanged: function ht_onTitleChanged(aTab) {
@@ -402,25 +388,22 @@ var homeTabType = {
         aTab.title = getFolderNameAndCount(folder);
         aTab.id = aArgs.id;
         window.title = aTab.title;
-        document.getElementById("browser").hidden = true;
-        document.getElementById("folder").hidden = false;
-        document.getElementById("conversation").hidden = true;
-        hometab.folderDoc.clearContent();
-        hometab.showConversationsInFolder(aTab, folder)
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "folderList"+aTab.id);
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.loadURI("chrome://hometab/content/folderView.html");
       },
 
-      htmlLoadHandler: function fl_htmlLoadHandler(doc) {
-        hometab.folderDoc = doc;
+      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
+        let folder = MailUtils.getFolderForURI(contentWindow.tab.id, true);
+        hometab.showConversationsInFolder(contentWindow, folder);
       },
 
       showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
-        document.getElementById("browser").hidden = true;
-        document.getElementById("folder").hidden = false;
-        document.getElementById("conversation").hidden = true;
-        hometab.folderDoc.clearContent();
-        let folder = MailUtils.getFolderForURI(aTab.id, true);
-        hometab.showConversationsInFolder(aTab, folder);
       },
 
       onTitleChanged: function fl_onTitleChanged(aTab) {
@@ -445,7 +428,7 @@ var homeTabType = {
       onEvent: function fl_onEvent(aEvent, aTab) {
       },
       getBrowser: function fl_getBrowser(aCommand, aTab) {
-        return null;
+        return aTab.browser;
       },
     },
 
@@ -458,25 +441,21 @@ var homeTabType = {
         aTab.title = aArgs.title;
         aTab.id = aArgs.id;
         window.title = aTab.title;
-        document.getElementById("browser").hidden = true;
-        document.getElementById("folder").hidden = true;
-        let conversation = document.getElementById("conversation");
-        conversation.hidden = false;
-        hometab.conversationDoc.clearContent();
-        hometab.showMessagesInConversation(aTab);
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "messageList"+aTab.id);
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.loadURI("chrome://hometab/content/conversationView.html");
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(doc) {
-        hometab.conversationDoc = doc;
+      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
+        hometab.showMessagesInConversation(contentWindow);
       },
 
       showTab: function ml_showTab(aTab) {
         window.title = aTab.title;
-        document.getElementById("browser").hidden = true;
-        document.getElementById("folder").hidden = true;
-        document.getElementById("conversation").hidden = false;
-        hometab.conversationDoc.clearContent();
-        hometab.showMessagesInConversation(aTab, true);
       },
 
       onTitleChanged: function ml_onTitleChanged(aTab) {
@@ -501,7 +480,7 @@ var homeTabType = {
       onEvent: function ml_onEvent(aEvent, aTab) {
       },
       getBrowser: function ml_getBrowser(aCommand, aTab) {
-        return null;
+        return aTab.browser;
       },
     },
   },
