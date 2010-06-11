@@ -51,14 +51,15 @@
 <body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('messageList')">
   <div class="header">
     <div class="title"></div>
-    <div class="search"><input type="text" class="search"/></div>
+    <div class="search"><input id="filter" type="text" class="search" onkeyup="filterMessages(event)"/></div>
     <div class="actions"><button class="action options">&diams;</button></div>
   </div>
   <div id="convDisplay">
     <div class="conversation">
-      <ol class="messages"/>
+      <ol class="messages filtered"/>
     </div>
   </div>
+  <div id="cache" style="display: none"></div>
 </body>
   <!-- Libs -->
   <script type="application/javascript;version=1.8"

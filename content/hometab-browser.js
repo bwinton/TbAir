@@ -86,9 +86,27 @@ function augmentMessage(message) {
 
 function addContent(conversations) {
   let conversationsElem = $("ol.conversations");
-
+  let conversationMap = {};
+  
   // Augment the data - this could possibly be done on the first pass to save time
   for (let [,conversation] in Iterator(conversations)) {
+    // We figure out what strings a conversation would match, and stash that
+    // in a DOM node for use by the search field.  Ideally we'd do that on the
+    // gloda objects, but for some reason that's not working for me.
+    // In particular, conversation.messages is busted.  Is "conversation" not
+    // a real GlodaConversation object?
+    
+    let substrings = [];
+    substrings.push(conversation.topic.subject);
+    substrings.push(conversation.topic.from.contact.name);
+    for (let [,message] in Iterator(conversation.messages)) {
+      for (let [,person] in Iterator(message.involves)) {
+        substrings.push(person.contact.name)
+      }
+    }
+    let matchString = substrings.join('');
+
+    conversationMap[conversation.id] = matchString;
     conversation.from = conversation.topic.from;
     conversation.subject = conversation.topic.subject;
     conversation.synopsis = (conversation.topic.indexedBodyText || "").substr(0, 140);
@@ -106,17 +124,25 @@ function addContent(conversations) {
 
   // And render the template.
   $("#conversationtmpl").render(conversations).appendTo(conversationsElem);
+  // cache the gloda objects
+  document.getElementById("cache").conversations = conversationMap;
 }
 
 function addMessages(messages) {
   let messagesElem = $("ol.messages");
 
+  let messageMap = {};
   // Augment the data with styles.
-  for (let mId in messages)
+  for (let mId in messages) {
     augmentMessage(messages[mId]);
+    messageMap[messages[mId].id] = messages[mId];
+  }
 
   // And render the template.
   $("#messagetmpl").render(messages).appendTo(messagesElem);
+  
+  // cache the gloda objects
+  document.getElementById("cache").messages = messageMap;
 }
 
 function populateMessageBody(id, data) {
@@ -175,6 +201,57 @@ function showMessages(element) {
   hometab.showMessages(this, el.attr("id"),
                        el.attr("subject"),
                        el.attr("read"));
+}
+
+
+function filterFolders(event) {
+  try {
+    let filterNode = $(event.target);
+    var filter = filterNode.val(), count = 0;
+    $(".filtered:first li").each(function () {
+      let matchString = $(this).text();
+      if (matchString.search(new RegExp(filter, "i")) < 0)
+        $(this).hide();
+      else
+        $(this).show();
+    });
+  } catch (e) {
+    logException(e);
+  }
+}
+
+function filterConversations(event) {
+  let filterNode = $(event.target);
+  var filter = filterNode.val(), count = 0;
+  try {
+    $(".filtered:first li.conversation").each(function () {
+      id = $(this).attr("id");
+      if (id) { // somehow some nodes don't have IDs?
+        let matchString = document.getElementById("cache").conversations[id];
+        if (matchString) {
+          if (matchString.search(new RegExp(filter, "i")) < 0)
+            $(this).hide();
+          else
+            $(this).show();
+        }
+      }
+    });
+  } catch (e) {
+    logException(e);
+  }
+}
+
+function filterMessages(event) {
+  let filterNode = $(event.target);
+  var filter = filterNode.val(), count = 0;
+  $(".filtered:first li").each(function () {
+    let message = document.getElementById("cache").messages[$(this).attr("id")];
+    let matchString = message.indexedBodyText + message.subject + message.from.contact.name;
+    if (matchString.search(new RegExp(filter, "i")) < 0)
+      $(this).hide();
+    else
+      $(this).show();
+  });
 }
 
 function handleClick(element, event) {

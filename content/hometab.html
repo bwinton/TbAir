@@ -51,7 +51,7 @@
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
   <div class="header">
     <div class="title"></div>
-    <div class="search"><input type="text" class="search"/></div>
+    <div class="search"><input type="text" class="search" onkeyup="filterFolders(event)"/></div>
     <div class="actions"><button class="action options">&diams;</button></div>
   </div>
 
@@ -100,7 +100,7 @@
     </div>
     <div id="preview-box">
       <div id="preview">
-        <ol class="folders"/>
+        <ol class="folders filtered"/>
       </div>
     </div>
   </div>

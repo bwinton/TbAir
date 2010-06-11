@@ -52,10 +52,11 @@
 <body dir="&locale.dir;" onload="reachOutAndTouchFrame('folderList')">
   <div class="header">
     <div class="title"></div>
-    <div class="search"><input type="text" class="search"/></div>
+    <div class="search"><input type="text" class="search" onkeyup="filterConversations(event)"/></div>
     <div class="actions"><button class="action options">&diams;</button></div>
   </div>
-  <ol class="conversations"></ol>
+  <ol class="conversations filtered"></ol>
+  <div id="cache" style="display: none"></div>
 </body>
   <!-- Libs -->
   <script type="application/javascript;version=1.8"
