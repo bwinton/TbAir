@@ -98,7 +98,6 @@ var hometab = {
     let folders = func();
     for (let index in folders) {
       let folder = folders[index];
-      dump("unread = " + folder.unread + '\n');
       content.push({name : folder.name,
                     unread: folder.unread > 0 ? folder.unread : "",
                     id : folder.id
@@ -118,8 +117,9 @@ var hometab = {
   },
 
   showConversationsInFolder: function show_ConversationsInFolder(aTab, aFolder) {
+    //let t0 = new Date();
     let doc = hometab.folderDoc;
-    doc.setHeaderTitle(aFolder.prettyName);
+    doc.setHeaderTitle(getFolderNameAndCount(aFolder));
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
     if (aFolder.flags & nsMsgFolderFlags.Virtual) {
@@ -130,7 +130,8 @@ var hometab = {
       query.folder(aFolder);
     }
     query.orderBy("-date");
-    query.limit(100);
+    query.limit(50);
+    //let t1 = new Date();
     query.getCollection({
       onItemsAdded: function _onItemsAdded(aItems, aCollection) {
       },
@@ -140,6 +141,7 @@ var hometab = {
       },
       /* called when our database query completes */
       onQueryCompleted: function _onQueryCompleted(messages) {
+        //let t2 = new Date();
         doc.clearContent();
         try {
           conversations = [];
@@ -184,6 +186,8 @@ var hometab = {
             conversations.push(conversation);
           }
           doc.addContent(conversations);
+          //let t3 = new Date();
+          //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
         } catch (e) {
           Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
           Application.console.log(e.stack);
@@ -394,7 +398,7 @@ var homeTabType = {
 
       openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
-        aTab.title = folder.prettyName;
+        aTab.title = getFolderNameAndCount(folder);
         aTab.id = aArgs.id;
         window.title = aTab.title;
         document.getElementById("browser").hidden = true;
@@ -501,6 +505,10 @@ var homeTabType = {
     },
   },
 };
+
+function getFolderNameAndCount(aFolder) {
+  return aFolder.prettyName + " (" + aFolder.getNumUnread(false) + ")"
+}
 
 function UpdateMailToolbar() {
   // Stub this out so that tabmail.xml is happy.
