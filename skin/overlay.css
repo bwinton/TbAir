@@ -9,50 +9,76 @@ tabbrowser#tabmail .tabmail-tabs > .tabs-stack > vbox > hbox {
   -moz-box-orient: vertical;
 }
 
+tabbrowser#tabmail .tabmail-tabs {
+  background-image: -moz-linear-gradient(180deg, #fff 0%, #fff 5px, transparent 5px, transparent 100%),
+                    -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 3px, #dadfe8 3px, #dadfe8 100%);
+  background-position: center, -5px 0;
+  border-right: 1px solid #ddd;
+}
+
+tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
+  background: none;
+}
+
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
+  -moz-appearance: none;
+  -moz-border-right-colors: #aaa;
+  -moz-border-left-colors: #aaa;
+  -moz-border-bottom-colors: #aaa;
+  margin: 3px 11px 3px 5px;
+  -moz-margin-end: 11px;
+  -moz-margin-start: 5px;
+  border: 1px solid #aaa;
+  height: 28px;
+  color: #333;
   text-align: left;
-  -moz-border-radius: 6px 0 0 6px;
-  margin: 1px 0;
-  -moz-border-top-colors: rgba(0, 0, 0, .08) rgba(0, 0, 0, .17) rgba(180, 180, 180, .29);
-  -moz-border-right-colors: transparent;
-  border-right-width: 0;
-  opacity: 0.7;  /* a quick hack to make selected more visible */
-}
-
-tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
-tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
-  opacity: 1;
+  -moz-border-radius: 5px;
+  -moz-box-shadow: 0 1px 0px #C8D0DE;
+  background-color: #e6e6e6;
+  background-image: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.025) 50%, rgba(0,0,0,0.025) 100%);
 }
 
 /* type folder is really the home tab */
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"],
-tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"]:hover{
-  -moz-appearance: none !important;
-  padding: 7px;
-  margin: 0;
-  -moz-border-radius: 0;
-  -moz-border-radius-bottomleft: 6px;
-  border-left: none;
-  background-color: #fafafa;
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"]:hover {
   list-style-image: url("chrome://hometab/skin/home.png");
+  -moz-border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  -moz-margin-end: 0;
+  -moz-margin-start: 0;
+  margin: 0 6px 3px 0;
+  height: 40px;
 }
 
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
+  background-color: #fff;
+  background-image: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 100%);
+}
+
+/* type folder is really the home tab */
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folderList"] {
   list-style-image: url("chrome://hometab/skin/folder.png");
 }
 
-tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"] {
-  list-style-image: url("chrome://hometab/skin/conversation.png");
-}
-
+/* type folder is really the home tab */
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"]:hover {
   margin-left: 10px;
+  list-style-image: url("chrome://hometab/skin/conversation.png");
 }

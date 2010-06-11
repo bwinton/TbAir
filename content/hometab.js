@@ -403,7 +403,7 @@ var homeTabType = {
 
       openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
-        aTab.title = aArgs.title;
+        aTab.title = getFolderNameAndCount(folder);
         aTab.id = aArgs.id;
         window.title = aTab.title;
 
@@ -590,7 +590,7 @@ window.setTimeout(function() {
   document.getAnonymousElementByAttribute(tabmail, "anonid", "tabbox")
           .orient = "horizontal";
   //Make the tabs a little wider by default
-  tabmail.tabContainer.childNodes[0].minWidth = 150;
+  tabmail.tabContainer.childNodes[0].minWidth = 200;
 }, 0);
 
 var gAccelDown = false;
