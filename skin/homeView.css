@@ -47,8 +47,16 @@
   border: 1px solid #CCCCCC;
   -moz-border-radius: 3px;
 }
-.portlet-header { font-weight: bold;  cursor: pointer; }
-.portlet-header .ui-icon { float: right; }
+.portlet[read="false"] .portlet-header > .name,
+.portlet[read="false"] .portlet-header > .count {
+  font-weight: bold;
+}
+
+.portlet[dupe="false"] .portlet-header > .account { display: none; }
+.portlet[dupe="true"] .portlet-header > .account { display: inline; }
+.portlet .portlet-header > .account { color: #666; margin-left: 1em; font-size: smaller; }
+
+.portlet-header { cursor: pointer; }
 .portlet-content { padding: 7px; }
 
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; background-color: inherit; }

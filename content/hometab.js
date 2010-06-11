@@ -100,17 +100,17 @@ var hometab = {
           (folder.server && folder.server.type != "nntp") &&
           (!folder.isServer && folder.getTotalMessages(true) > 0)) {
         let _unread = folder.getNumUnread(false);
-        let data = {name: getFolderNameAndCount(folder),
+        let data = {name: folder.name,
                     serverName: folder.server.prettyName,
-                    read: (_unread > 0),
+                    read: (_unread <= 0),
                     unread: (_unread || ""),
+                    dupe : false,
                     id: folder.URI};
         if (folder.name in seenFolderNames) {
           let prevData = seenFolderNames[folder.name];
-          seenFolderNames[folder.name] = null;
           if (prevData)
-            prevData.name += "-" + prevData.serverName;
-          data.name += "-" + data.serverName;
+            prevData.dupe = true;
+          data.dupe = true;
         }
         else {
           seenFolderNames[folder.name] = data;

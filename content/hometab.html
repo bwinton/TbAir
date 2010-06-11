@@ -113,8 +113,10 @@
   </script>
 
   <script id="folderPortletTmpl" type="text/html">
-    <div class="portlet" read="${read}">
-      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">${name}</span></div>
+    <div class="portlet" read="${read}" dupe="${dupe}">
+      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">
+        <span class="name">${name}</span> <span class="count">${unread}</span> <span class="account">${serverName}</span>
+      </div>
       <div class="portlet-content"></div>
     </div>
   </script>
