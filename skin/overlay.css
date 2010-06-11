@@ -26,3 +26,11 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
   opacity: 1;
 }
+
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folderList"] {
+  margin-left: 3px;
+}
+
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"] {
+  margin-left: 10px;
+}

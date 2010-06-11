@@ -523,4 +523,6 @@ window.setTimeout(function() {
   tabmail.tabContainer.mTabstrip.orient = "vertical";
   document.getAnonymousElementByAttribute(tabmail, "anonid", "tabbox")
           .orient = "horizontal";
+  //Make the tabs a little wider by default
+  tabmail.tabContainer.childNodes[0].minWidth = 150;
 }, 0);
