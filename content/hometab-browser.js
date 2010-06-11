@@ -63,8 +63,8 @@ function setFolders(folders) {
   ;
 }
 
-function setHeaderTitle(name) {
-  $(".header > .title").text(name);
+function setHeaderTitle(title) {
+  $(".header > .title").text(title);
 }
 
 function augmentMessage(message) {
@@ -184,7 +184,7 @@ function reachOutAndTouchFrame(aMode) {
 }
 
 function showConversations(element) {
-  hometab.showConversations(this, element.attr("id"));
+  hometab.showConversations(this, element.attr("id"), element.text());
 }
 
 function showMessages(element) {

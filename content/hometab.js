@@ -93,34 +93,46 @@ var hometab = {
                               nsMsgFolderFlags.Templates |
                               nsMsgFolderFlags.Newsgroup;
 
+    let seenFolderNames = {};
     for each (let folder in this._enumerateFolders) {
       if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
           (folder.server && folder.server.type != "rss") &&
           (folder.server && folder.server.type != "nntp") &&
           (!folder.isServer && folder.getTotalMessages(true) > 0)) {
         let _unread = folder.getNumUnread(false);
-        content.push({name: folder.abbreviatedName,
-                      read: (_unread > 0),
-                      unread: (_unread || ""),
-                      id: folder.URI});
+        let data = {name: getFolderNameAndCount(folder),
+                    serverName: folder.server.prettyName,
+                    read: (_unread > 0),
+                    unread: (_unread || ""),
+                    id: folder.URI};
+        if (folder.name in seenFolderNames) {
+          let prevData = seenFolderNames[folder.name];
+          seenFolderNames[folder.name] = null;
+          if (prevData)
+            prevData.name += "-" + prevData.serverName;
+          data.name += "-" + data.serverName;
+        }
+        else {
+          seenFolderNames[folder.name] = data;
+        }
+        content.push(data);
       }
     }
     doc.setHeaderTitle("Home")
     doc.setFolders(sortFolderItems(content));
   },
 
-  showConversations: function show_Conversations(doc, id) {
+  showConversations: function show_Conversations(doc, id, title) {
     let tabmail = document.getElementById("tabmail");
-    // The following call fails because glodaList isn't a recognized
-    // tab mode for some reason.
     tabmail.openTab("folderList", {
-      id: id
+      id: id,
+      title: title,
     });
   },
 
   showConversationsInFolder: function show_ConversationsInFolder(aWin, aFolder) {
     //let t0 = new Date();
-    aWin.setHeaderTitle(getFolderNameAndCount(aFolder));
+    aWin.setHeaderTitle(aWin.title);
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
     if (aFolder.flags & nsMsgFolderFlags.Virtual) {
@@ -389,7 +401,7 @@ var homeTabType = {
 
       openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
-        aTab.title = getFolderNameAndCount(folder);
+        aTab.title = aArgs.title;
         aTab.id = aArgs.id;
         window.title = aTab.title;
 
@@ -398,6 +410,7 @@ var homeTabType = {
         aTab.browser.setAttribute("id", "folderList"+aTab.id);
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
       },
 
@@ -463,6 +476,7 @@ var homeTabType = {
         aTab.browser.setAttribute("id", "messageList"+aTab.id);
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.loadURI("chrome://hometab/content/conversationView.html");
       },
 
@@ -523,11 +537,14 @@ var statusFeedback = {
 
 function sortFolderByNameFunc(a,b) {
 
-  if (a.name == "Inbox") return -1;
-  if (b.name == "Inbox") return 1;
+  let rv = 0;
+  if (/^Inbox/.test(a.name)) rv -= 1;
+  if (/^Inbox/.test(b.name)) rv += 1;
+  if (rv) return rv;
 
-  if (a.name == "Starred") return -1;
-  if (b.name == "Starred") return 1;
+  if (/^Starred/.test(a.name)) rv -= 1;
+  if (/^Starred/.test(b.name)) rv += 1;
+  if (rv) return rv;
 
   if (a.name < b.name) return -1;
   return 1;
@@ -617,9 +634,10 @@ function doShortcuts(show) {
       let tabinfo = tabmail.tabInfo[i];
       if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
         if (show) {
+          tabinfo.prevTitle = tabinfo.title;
           tabinfo.title = counter.toString() + ": " + tabinfo.title;
         } else {
-          tabinfo.title = tabinfo.title.slice(3,tabinfo.title.length);
+          tabinfo.title = tabinfo.prevTitle || tabinfo.title;
         }
         tabmail.setTabTitle(tabinfo)
         counter++;
