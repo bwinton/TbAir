@@ -1,5 +1,5 @@
 
-body {
+#body {
   font-family: "Helvetica Neue", Helvetica, Arial, Sans-serif;
   font-size: 12px;
   line-height: 24px;
@@ -103,37 +103,38 @@ li.row {
   background-color: #ffffd9;
 }
 
-.fullMessage .row {
+.row {
   margin: 0;
   padding: 10px 0;
 }
 
-.fullMessage .row:first-child {
+.row:first-child {
   margin: 55px 0 0 0;
   padding: 0;
+  padding-top: 1em;
   border-top: 1px solid #ccc;
 }
 
-.fullMessage .subject {
+.subject {
   font-size: 14px;
   font-weight: bold;
 }
 
-.fullMessage .messageBody {
+fullbody {
   color: #333;
-  overflow: hidden;
+  overflow: auto;
   line-height: 18px;
 }
 
-.fullMessage .row.fullReply {
+.row.fullReply {
   border-top: 1px dotted #ccc;
 }
 
-.fullMessage .row.fullReply:last-child {
+.row.fullReply:last-child {
   border-bottom: 1px solid #ccc;
 }
 
-.fullMessage a.quoteToggle {
+a.quoteToggle {
   text-decoration: none;
   font-size: 11px;
   color: #888;
@@ -144,7 +145,7 @@ li.row {
   color: #000;
 }
 
-.fullMessage .quoteContent.quote {
+.fullbody.quote {
   display: none;
   color: #666;
   font-size: 11px;
@@ -152,7 +153,7 @@ li.row {
   padding: 5px;
 }
 
-.fullMessage .quoteContent.quote.expanded {
+.fullbody.quote.expanded {
   display: block;
 }
 
@@ -202,4 +203,29 @@ li.row {
   color: #fff;
   font-weight: bold;
   -moz-border-radius: 10px;
+}
+
+BLOCKQUOTE {
+  height: 1.5em;
+  overflow: hidden;
+  border-left: none;
+}
+
+BLOCKQUOTE:before {
+  display: block;
+  content: "show quoted text";
+  border: 1px solid transparent;
+  color: darkgray;
+  height: 1.5em;
+  width: 200px;
+}
+
+BLOCKQUOTE[shown=true] {
+  height: auto;
+  overflow: auto;
+  border-left: 1px solid orange;
+}
+
+BLOCKQUOTE[shown=true]:before {
+  content: "hide quoted text";
 }
