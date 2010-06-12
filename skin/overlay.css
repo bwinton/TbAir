@@ -26,6 +26,10 @@ tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
   background: none;
 }
 
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[read="true"] .tab-text {
+  font-weight: normal;
+}
+
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],

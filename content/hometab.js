@@ -122,17 +122,16 @@ var hometab = {
     doc.setFolders(sortFolderItems(content));
   },
 
-  showConversations: function show_Conversations(doc, id, title) {
+  showConversations: function show_Conversations(doc, id) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("folderList", {
-      id: id,
-      title: title,
+      id: id
     });
   },
 
   showConversationsInFolder: function show_ConversationsInFolder(aWin, aFolder) {
     //let t0 = new Date();
-    aWin.setHeaderTitle(aWin.title);
+    aWin.setHeaderTitle(getFolderNameAndCount(aFolder));
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
     if (aFolder.flags & Ci.nsMsgFolderFlags.Virtual) {
@@ -403,7 +402,9 @@ var homeTabType = {
 
       openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
+        aTab.folder = folder;
         aTab.title = getFolderNameAndCount(folder);
+        aTab.tabNode.setAttribute("read", (folder.getNumUnread(false) <= 0));
         aTab.id = aArgs.id;
         window.title = aTab.title;
 
@@ -417,12 +418,13 @@ var homeTabType = {
       },
 
       htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
-        let folder = MailUtils.getFolderForURI(contentWindow.tab.id, true);
-        hometab.showConversationsInFolder(contentWindow, folder);
+        //let folder = MailUtils.getFolderForURI(contentWindow.tab.id, true);
+        hometab.showConversationsInFolder(contentWindow, contentWindow.tab.folder);
       },
 
       showTab: function fl_showTab(aTab) {
-        window.title = aTab.title;
+        window.title = aTab.title = getFolderNameAndCount(aTab.folder);
+        aTab.tabNode.setAttribute("read", (aTab.folder.getNumUnread(false) <= 0));
       },
       shouldSwitchTo: function onSwitchTo({id: aFolder}) {
         let tabInfo = document.getElementById("tabmail").tabInfo;
@@ -445,8 +447,11 @@ var homeTabType = {
       saveTabState: function fl_saveTabState(aTab) {
       },
       persistTab: function fl_persistTab(aTab) {
+        return { folderURI: aTab.id };
       },
       restoreTab: function fl_restoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("folderList", { id : aPersistedState.folderURI,
+                                         background: true });
       },
       supportsCommand: function fl_supportsCommand(aCommand, aTab) {
         return false;
@@ -679,3 +684,4 @@ function doKeyUp(event) {
 function onBlur(event) {
   doShortcuts(false);
 }
+
