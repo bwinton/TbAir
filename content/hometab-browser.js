@@ -195,8 +195,7 @@ function showConversations(element) {
 function showMessages(element) {
   let el = element.parents("li.conversation");
   hometab.showMessages(this, el.attr("id"),
-                       el.attr("subject"),
-                       el.attr("read"));
+                       el.attr("subject"));
 }
 
 

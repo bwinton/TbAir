@@ -223,8 +223,7 @@ var hometab = {
     // tab mode for some reason.
     tabmail.openTab("messageList", {
       id: id,
-      title: subject,
-      read : read
+      title: subject
     });
   },
 
