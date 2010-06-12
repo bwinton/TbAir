@@ -16,6 +16,10 @@ tabbrowser#tabmail .tabmail-tabs {
   border-right: 1px solid #ddd;
 }
 
+tabbrowser#tabmail > tabbox {
+  margin: 0;
+}
+
 tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
   border: none;
   margin: 0;
