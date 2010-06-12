@@ -53,40 +53,49 @@ body {
 
 .header {
   display: -moz-box;
-  width: 100%;
+  width: 600px;
+  color: #333;
+  background-color: #f2f2f2;
+  background-image: -moz-linear-gradient(center top , transparent 0%, transparent 50%, rgba(0, 0, 0, 0.024) 50%, rgba(0, 0, 0, 0.024) 100%);
+  border-right: 1px solid #ddd;
 }
 
 .header > .title {
-  margin: 7px;
+  margin: 10px;
   -moz-box-flex: 1;
+  -moz-box-pack: center;
+  -moz-box-align: center;
   font-weight: bold;
   font-size: 14px;
+  text-shadow: 0 1px 0 #fff;
 }
 
 .header > div.search,
 .header > div.actions {
+  margin: 10px;
   -moz-box-flex: 0;
   -moz-box-pack: center;
   -moz-box-align: center;
 }
 
 input.search {
-  margin: 7px;
+  margin: 0 3px;
   padding: 2px;
-  border: 1px solid #6A8CB9;
-  -moz-box-shadow: inset #999 0 1px 3px;
+  border: 1px solid #ccc;
+  -moz-box-shadow: inset #666 0 1px 2px;
   -moz-border-radius: 3px;
-  color: black;
+  color: #333;
 }
 
 button.action.options {
   -moz-appearance: none;
-  -moz-border-radius: 3px;
-  padding: 0 2px;
-  margin: 7px;
-  color: #405673;
-  border: 1px solid #6A8CB9;
-  background: -moz-linear-gradient(top, #8BB7F2, #7EA6DC);
+  -moz-border-radius: 2px;
+  padding: 0;
+  margin: 0;
+  width: 32px;
+  color: #333;
+  border: 1px solid #CCCCCC;
+  background: -moz-linear-gradient(center bottom , #EEEEEE 0%, #FFFFFF 100%) repeat scroll 0 0 #FFFFFF;
 }
 
 .count:before {

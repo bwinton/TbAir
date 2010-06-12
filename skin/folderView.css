@@ -5,8 +5,9 @@ body {
 ol.conversations {
   list-style: none;
   padding: 0;
-  margin: 7px;
-  width: 600px;
+  margin: 0;
+/* XXX there's an extra 1px somewhere... */
+  width: 601px;
 }
 
 .column {
@@ -14,11 +15,11 @@ ol.conversations {
   vertical-align: top;
 }
 .column.left {
-  width: 150px;
+  width: 170px;
 }
 .column.right {
 /*  full width (- .left) + ( - conversation paddings) */
-  width: 424px;
+  width: 405px;
 }
 
 .avatar,
@@ -36,18 +37,17 @@ ol.conversations {
 
 .column.left .from {
   color: #666;
-  width: 120px;
+  width: 140px;
 }
 
 .conversation {
-  border-right: 1px solid #CCCCCC;
-  border-left: 1px solid #CCCCCC;
-  border-top: 1px solid #CCCCCC;
-  padding: 3px 10px 10px 10px;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  padding: 10px;
 }
 
 .conversation:last-child {
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #ddd;
 }
 
 .conversation[read=false] {
@@ -60,7 +60,7 @@ ol.conversations {
 .conversation[read=true] .from,
 .conversation[read=true] .topic > .subject,
 .conversation[read=true] .topic > .body {
-  color: #666666;
+  color: #888;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -82,6 +82,7 @@ ol.conversations {
 .conversation .topic > .actions,
 .conversation .topic > .date {
   color: #888;
+  text-transform: lowercase;
 }
 
 .conversation .topic > .actions > .action:hover {
@@ -97,6 +98,7 @@ ol.conversations {
 .conversation .topic > .subject {
   font-weight: bold;
   font-size: 14px;
+  color: #5180D0;
 }
 
 .conversation .topic > .body {
@@ -111,11 +113,13 @@ ol.conversations {
 }
 
 .conversation .replies > .reply {
-  background-color: rgba(204, 204, 204, 0.35);
+  border: 1px solid #ddd;
+  background-color: #fafafa;
   color: #666666;
-  margin: 2px 0 0 0;
+  margin: 3px 0 0;
   padding: 5px;
   position:relative;
+  line-height: 1.5;
 }
 
 .conversation .replies > .reply > .from {
