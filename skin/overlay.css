@@ -30,6 +30,15 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[read="true"] .tab-text {
   font-weight: normal;
 }
 
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab .tab-close-button {
+  display: none;
+}
+
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab:hover .tab-close-button,
+tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"] .tab-close-button {
+  display: -moz-box;
+}
+
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
