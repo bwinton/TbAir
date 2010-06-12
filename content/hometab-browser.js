@@ -75,7 +75,7 @@ function augmentMessage(message) {
   message.synopsis = (message.indexedBodyText || "").substr(0, 140);
   message.avatar = "http://www.gravatar.com/avatar/" +
                    GlodaUtils.md5HashString(message.from.value) +
-                   "?d=identicon&s=24&r=g";
+                   "?d=monsterid&s=24&r=g";
 }
 
 function addContent(conversations) {
@@ -107,7 +107,7 @@ function addContent(conversations) {
     conversation.date = makeFriendlyDateAgo(conversation.topic.date);
     conversation.avatar = "http://www.gravatar.com/avatar/" +
                           GlodaUtils.md5HashString(conversation.topic.from.value) +
-                          "?d=identicon&s=24&r=g";
+                          "?d=monsterid&s=24&r=g";
 
     // Looping again isn't that bad (in big N terms) because we should have limited the
     // number of messages previously to only unread
