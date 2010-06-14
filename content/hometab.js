@@ -523,8 +523,12 @@ var homeTabType = {
         aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function ml_persistTab(aTab) {
+        return { conversationId: aTab.id, title : aTab.title };
       },
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("messageList", { id : aPersistedState.conversationId,
+                                          title : aTab.title,
+                                          background: true });
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {
         return false;
