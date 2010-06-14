@@ -81,7 +81,7 @@ BatchMessageMover.prototype = {
         let archiveFolder = MailUtils.getFolderForURI(archiveFolderUri, false);
         let granularity = archiveFolder.server.archiveGranularity;
   
-        let copyBatchKey = msgHdr.folder.URI + '\000';
+        let copyBatchKey = msgHdr.folder.URI + '\u0000';
         if (granularity >= Components.interfaces.nsIMsgIncomingServer
                                      .perYearArchiveFolders)
           copyBatchKey += msgYear;
