@@ -9,51 +9,13 @@ body {
 /*Only the toplevel one*/
 #body {  
   line-height: 24px;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
   background-color: #fafafa;
   min-height: 100%;
 }
 
-li.row {
-  margin: 0;
-  list-style-type: none;
-  padding-top: 10px;
-  padding-bottom: 0;
-  padding-right: 0;
-  padding-left: 2em;
-  border-bottom: 1px solid #aaa;
-  border-top: none;
-  background: #fff;
-  color: #333;
-  line-height: 18px;
-  overflow: hidden;
-}
-
-ol {
-  padding-left: 0;
-}
-
-.message {
-  width: 100%;
-  margin: 10px 0;
-  float: left;
-  position: relative;
-}
-
-.conversation {
-  width: 600px;
-  background: #fafafa;
-  padding-bottom: 55px;
-  float: left;
-  border-right: 1px solid #ccc;
-  margin-left: 55px;
-  border-left: 1px solid #ccc;
-  z-index: 1;
-}
-
-.row.read {
-  background-color: #f2f2f2;
+.header .title:empty:after {
+  /* ellipsis &#8230; */
+  content: "\2026";
 }
 
 #convDisplay {
@@ -63,121 +25,89 @@ ol {
   min-height: 81px;
 }
 
-.headerblock {
-  padding-bottom: 1em;
+.conversation {
+  /* XXX there's an extra 1px somewhere... */
+  width: 601px;
+  background: #fafafa;
 }
 
-.avatar,
-.headerblock .from {
-  display: inline-block;
-  vertical-align: top;
+ol.messages {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+li.message {
+  margin: 0;
+  padding: 10px;
+  border-top: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  background: #fff;
+  color: #333;
+  line-height: 1.5;
   overflow: hidden;
 }
 
-.headerblock .date {
-  float: right;
-  margin-right: 1em;
+li.message:last-child {
+  border-bottom: 1px solid #aaa;
 }
 
-.messageactions {
+li.message .headerblock {
+  padding-bottom: 1em;
+  cursor: pointer;
+}
+
+li.message .headerblock .avatar,
+li.message .headerblock .from {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  color: #666;
+}
+
+li.message .headerblock .from:empty:after {
+  content: 'unknown';
+}
+
+li.message .headerblock .messageactions {
   display: inline-block;
   float: right;
   padding-left: 3px;
   padding-right: 3px;
 }
 
-.name {
-  display: inline;
-}
-
-.messageblock {
-}
-
-.actionblock {
+li.message .headerblock .date {
   float: right;
-  vertical-align: bottom;
-  margin-bottom: 0px;
-  padding-bottom: 0px;
-  padding-left: 4px;
-  padding-right: 4px;
-  border: 1px solid lightgrey;
-  border-bottom: none;
-  border-right: none;
-  -moz-border-radius: 3px 0px 0px 0px;
+  margin-right: 1em;
+  font-size: 11px;
+  color: #888;
+  font-weight: normal;
+  padding-left: 1em;
 }
 
-#convDisplay .message {
-  background-color: #fff;
-}
-
-#convDisplay .message.highlight {
-  background-color: #ffffd9;
-}
-
-.row {
-  margin: 0;
-  padding: 10px 0;
-}
-
-.row:first-child {
-  margin: 55px 0 0 0;
-  padding: 0;
-  padding-left: 1ex;
-  padding-top: 1em;
-  border-top: 1px solid #ccc;
-}
-
-.subject {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.row[read=false] .from.name {
-  color: black;
-}
-
-.row[read=true] .fullbody {
+li.message[read=true] .messageblock .fullbody {
   display: none;
 }
 
-.row[read=false] .fullbody {
+li.message[read=false] .messageblock .fullbody {
   display: block;
 }
 
-.row[read=true] .synopsis {
+li.message[read=true] .messageblock .synopsis {
   display: block;
 }
 
-.row[read=false] .synopsis {
+li.message[read=false] .messageblock .synopsis {
   display: none;
 }
 
-fullbody {
-  color: #333;
-  overflow: auto;
-  line-height: 18px;
-}
-
-.row.fullReply {
-  border-top: 1px dotted #ccc;
-}
-
-.row.fullReply:last-child {
-  border-bottom: 1px solid #ccc;
-}
-
-a.quoteToggle {
+li.message .messageblock .fullbody a.quoteToggle {
   text-decoration: none;
   font-size: 11px;
   color: #888;
 }
 
-.fullMessage .row.fullReply .actions {
-  font-size: 12px;
-  color: #000;
-}
-
-.fullbody.quote {
+li.message .messageblock .fullbody.quote {
   display: none;
   color: #666;
   font-size: 11px;
@@ -185,56 +115,27 @@ a.quoteToggle {
   padding: 5px;
 }
 
-.fullbody.quote.expanded {
+li.message .messageblock .fullbody.quote.expanded {
   display: block;
 }
 
-.date {
-  font-size: 11px;
-  color: #888;
-  font-weight: normal;
-  padding-left: 1em;
+li.message[read=true] .actionblock {
+  display: none;
 }
 
-.date.button {
-  -moz-border-radius:0 0 3px 3px;
-  background-color: #Fafafa;
-  border: 1px solid #ccc;
-  border-top: none;
-  display: inline;
-  padding: 6px 10px 3px;
+li.message .actionblock {
+  float: right;
+  vertical-align: bottom;
 }
 
-.date.button:hover {
-  color: #000;
-  cursor: pointer;
-}
-
-.actions a {
-  color: #888;
-  text-decoration: none;
-  font-size: 11px;
-}
-
-.subject:empty:after {
-  content: 'tweeted...';
-}
-
-.name {
-  color: #666;
-  font-weight: bold;
-}
-
-.name:empty:after {
-  content: 'unknown';
-}
-
-#header li.account {
-  padding: 2px 10px;
-  background-color: #ff5959;
-  color: #fff;
-  font-weight: bold;
-  -moz-border-radius: 10px;
+li.message .actionblock .actions button {
+  -moz-appearance: none;
+  -moz-border-radius: 3px;
+  padding: 3px 7px;
+  margin: 0;
+  color: #333;
+  border: 1px solid #CCCCCC;
+  background: -moz-linear-gradient(center bottom , #EEEEEE 0%, #FFFFFF 100%) repeat scroll 0 0 #FFFFFF;
 }
 
 BLOCKQUOTE {
@@ -250,6 +151,7 @@ BLOCKQUOTE:before {
   color: darkgray;
   height: 1.5em;
   width: 200px;
+  cursor: pointer;
 }
 
 BLOCKQUOTE[shown=true] {
@@ -260,4 +162,5 @@ BLOCKQUOTE[shown=true] {
 
 BLOCKQUOTE[shown=true]:before {
   content: "hide quoted text";
+  cursor: pointer;
 }

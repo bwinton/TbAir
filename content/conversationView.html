@@ -73,23 +73,19 @@
 
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
-    <li class="row" read="${read}" id="${id}"
-        onclick="handleClick($(this), event);">
-        <div class="headerblock">
+    <li class="message" read="${read}" id="${id}">
+        <div class="headerblock" onclick="showMessage($(this));">
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from name">${from.contact.name}</div>
-          <div class="messageactions">v</div>
           <div class="date">${friendlyDate}</div>
         </div>
         <div class="messageblock">
-          <div class="messageBody">
-            <div class="fullbody"/>
-           <div class="synopsis">${synopsis}</div>
-          </div>
+          <div class="fullbody" onclick="handleClick($(this), event);"/>
+          <div class="synopsis">${synopsis}</div>
         </div>
         <div class="actionblock">
           <div class="actions">
-            <a class="archive" href="#reply">reply</a>
+            <button class="action reply">reply</button>
         </div>
     </li>
   </script>

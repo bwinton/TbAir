@@ -140,7 +140,10 @@ function addMessages(messages) {
   
   // And expand and show the last message.
   let lastMessage = $("#"+messages[messages.length-1].id);
-  showMessage(lastMessage);
+  lastMessage.find(".fullbody").show();
+  lastMessage.find(".synopsis").hide();
+  lastMessage.find(".actionblock").show();
+
   // XXX: This seems to mostly work, but not entirely for long threads.
   lastMessage[0].scrollIntoView(true);
 
@@ -263,14 +266,22 @@ function handleClick(element, event) {
     } else {
       event.target.setAttribute("shown", "true");
     }
-  } else {
-    showMessage(element);
   }
 }
 
 function showMessage(element) {
-  element.find(".synopsis").toggle("fast");
-  element.find(".fullbody").slideToggle("fast");
+  let body = element.parent().find(".fullbody");
+  let synopsis = element.parent().find(".synopsis");
+  let actions = element.parent().find(".actionblock");
+  if (body.is(':visible')) {
+    actions.hide();
+    body.slideUp();
+    synopsis.fadeIn()
+  } else {
+    synopsis.hide();
+    body.slideDown();
+    actions.fadeIn();
+  }
 }
 
 
