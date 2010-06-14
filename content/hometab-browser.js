@@ -181,14 +181,22 @@ function reachOutAndTouchFrame(aMode) {
   homeTabType.modes[aMode].htmlLoadHandler(this);
 }
 
-function showConversations(element) {
-  hometab.showConversations(this, element.attr("id"), element.text());
+function showConversations(event, element) {
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showConversations(element.attr("id"),
+                            background);
 }
 
-function showMessages(element) {
+function showMessages(event, element) {
   let el = element.parents("li.conversation");
-  hometab.showMessages(this, el.attr("id"),
-                       el.attr("subject"));
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showMessages(el.attr("id"),
+                       el.attr("subject"),
+                       background);
 }
 
 

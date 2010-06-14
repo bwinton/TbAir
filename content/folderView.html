@@ -89,10 +89,10 @@
               <a class="action delete" onclick="deleteConversation($(this))">delete</a>
             </div>
             <div class="date">${date}</div>
-            <div class="subject" onclick="showMessages($(this));">${subject}</div>
-            <div class="body" onclick="showMessages($(this));">${synopsis}</div>
+            <div class="subject" onclick="showMessages(event, $(this));">${subject}</div>
+            <div class="body" onclick="showMessages(event, $(this));">${synopsis}</div>
           </div>
-          <ol class="messages replies" onclick="showMessages($(this));">
+          <ol class="messages replies" onclick="showMessages(event, $(this));">
             {{each(i,message) messages}}
               <li class="message reply" read="${message.read}">
                 <div class="from">${message.from.contact.name}</div>

@@ -106,7 +106,7 @@
 
   <script id="foldertmpl" type="text/html">
     <li class="folder" read="${read}" id="${id}"
-        onclick="showConversations($(this))">
+        onclick="showConversations(event, $(this))">
       <span class="name">${name}</span>
       <span class="count">${read}</span>
     </li>
@@ -114,7 +114,7 @@
 
   <script id="folderPortletTmpl" type="text/html">
     <div class="portlet" read="${read}" dupe="${dupe}">
-      <div class="portlet-header" id="${id}" onclick="showConversations($(this))">
+      <div class="portlet-header" id="${id}" onclick="showConversations(event, $(this))">
         <span class="name">${name}</span> <span class="count">${unread}</span> <span class="account">${serverName}</span>
       </div>
       <div class="portlet-content"></div>

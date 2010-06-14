@@ -122,10 +122,11 @@ var hometab = {
     doc.setFolders(sortFolderItems(content));
   },
 
-  showConversations: function show_Conversations(doc, id) {
+  showConversations: function show_Conversations(aId, aBackground) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("folderList", {
-      id: id
+      id: aId,
+      background: aBackground
     });
   },
 
@@ -217,13 +218,12 @@ var hometab = {
       }});
   },
 
-  showMessages: function showMessages(doc, id, subject, read) {
+  showMessages: function showMessages(aId, aSubject, aBackground) {
     let tabmail = document.getElementById("tabmail");
-    // The following call fails because glodaList isn't a recognized
-    // tab mode for some reason.
     tabmail.openTab("messageList", {
-      id: id,
-      title: subject
+      id: aId,
+      title: aSubject,
+      background : aBackground
     });
   },
 
@@ -413,6 +413,8 @@ var homeTabType = {
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
         aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
       },
 
@@ -424,6 +426,7 @@ var homeTabType = {
       showTab: function fl_showTab(aTab) {
         window.title = aTab.title = getFolderNameAndCount(aTab.folder);
         aTab.tabNode.setAttribute("read", (aTab.folder.getNumUnread(false) <= 0));
+        aTab.browser.setAttribute("type", "content-primary");
       },
       shouldSwitchTo: function onSwitchTo({id: aFolder}) {
         let tabInfo = document.getElementById("tabmail").tabInfo;
@@ -442,8 +445,10 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function fl_closeTab(aTab) {
+        aTab.browser.destroy();
       },
       saveTabState: function fl_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function fl_persistTab(aTab) {
         return { folderURI: aTab.id };
@@ -483,6 +488,8 @@ var homeTabType = {
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
         aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/conversationView.html");
       },
 
@@ -492,14 +499,17 @@ var homeTabType = {
 
       showTab: function ml_showTab(aTab) {
         window.title = aTab.title;
+        aTab.browser.setAttribute("type", "content-primary");
       },
 
       onTitleChanged: function ml_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
       closeTab: function ml_closeTab(aTab) {
+        aTab.browser.destroy();
       },
       saveTabState: function ml_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function ml_persistTab(aTab) {
       },
