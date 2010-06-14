@@ -138,6 +138,12 @@ function addMessages(messages) {
   // And render the template.
   $("#messagetmpl").render(messages).appendTo(messagesElem);
   
+  // And expand and show the last message.
+  let lastMessage = $("#"+messages[messages.length-1].id);
+  showMessage(lastMessage);
+  // XXX: This seems to mostly work, but not entirely for long threads.
+  lastMessage[0].scrollIntoView(true);
+
   // cache the gloda objects
   document.getElementById("cache").messages = messageMap;
 }
