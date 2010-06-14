@@ -69,6 +69,12 @@ ol.conversations {
   display: none;
 }
 
+.conversation .topic[read=true] {
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .conversation .topic {
   font-size: 12px;
   position: relative;
@@ -121,7 +127,7 @@ ol.conversations {
 .conversation .replies > .reply {
   border: 1px solid #ddd;
   background-color: #fafafa;
-  color: #666666;
+  color: #333;
   margin: 3px 0 0;
   padding: 5px;
   position:relative;
@@ -130,6 +136,8 @@ ol.conversations {
 
 .conversation .replies > .reply > .from {
   color: #111;
+  font-weight: bold;
+  display: inline;
 }
 
 .conversation .replies > .reply > .body {
@@ -139,4 +147,6 @@ ol.conversations {
 
 .conversation .replies > .reply > .date {
   text-align: left;
+  color: #888;
+  display: inline;
 }

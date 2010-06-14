@@ -83,7 +83,7 @@
         </div>
 
         <div class="column right">
-          <div class="topic">
+          <div class="topic" read="${topic.read}">
             <div class="actions">
               <a class="action archive" onclick="archiveConversation($(this))">archive</a>
               <a class="action delete" onclick="deleteConversation($(this))">delete</a>
@@ -96,8 +96,8 @@
             {{each(i,message) messages}}
               <li class="message reply" read="${message.read}">
                 <div class="from">${message.from.contact.name}</div>
-                <div class="body">${message.synopsis}</div>
                 <div class="date">${message.friendlyDate}</div>
+                <div class="body">${message.synopsis}</div>
               </li>
             {{/each}}
           </ol>
