@@ -70,14 +70,7 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"]:hover {
   list-style-image: url("chrome://hometab/skin/home.png");
-  -moz-border-radius: 0;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  -moz-margin-end: 0;
-  -moz-margin-start: 0;
-  margin: 0 6px 3px 0;
-  height: 40px;
+  margin-top: 10px;
 }
 
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
@@ -96,6 +89,6 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"]:hover {
-  margin-left: 10px;
+  margin-left: 20px;
   list-style-image: url("chrome://hometab/skin/conversation.png");
 }
