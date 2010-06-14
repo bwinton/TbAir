@@ -501,7 +501,18 @@ var homeTabType = {
         window.title = aTab.title;
         aTab.browser.setAttribute("type", "content-primary");
       },
+      shouldSwitchTo: function onSwitchTo({id: aConversation}) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
 
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].type == this.type &&
+              tabInfo[selectedIndex].id == aConversation) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
       onTitleChanged: function ml_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
