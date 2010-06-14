@@ -70,6 +70,7 @@ ol.conversations {
 }
 
 .conversation .topic {
+  font-size: 12px;
   position: relative;
   cursor: pointer;
 }
@@ -105,6 +106,11 @@ ol.conversations {
   overflow: hidden;
 }
 
+.conversation .body:after {
+  /* ellipsis &#8230; */
+  content: "\2026";
+}
+
 .conversation .replies {
   list-style: none;
   padding: 0;
@@ -127,6 +133,7 @@ ol.conversations {
 }
 
 .conversation .replies > .reply > .body {
+  line-height: 1.5;
   overflow: hidden;
 }
 
