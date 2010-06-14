@@ -50,14 +50,7 @@ function setupHome() {
   $(".column").disableSelection();
 }
 
-function clearContent() {
-  $("ol.folders").html("");
-  $("ol.conversations").html("");
-  $("ol.messages").html("");
-}
-
 function setFolders(folders) {
-  clearContent();
   let even = (folders.length / $(".column").length) + 1;
   // And render the template.
   $(".column").each(function() {
