@@ -881,20 +881,16 @@ function onBlur(event) {
 
 //This saves the current session and stops the session manager service
 function saveSession() {
-  Application.console.log("saveSession");
   let tabmail = document.getElementById('tabmail');
   let tabsState = tabmail.persistTabs();
-  Application.console.log("tabsState: "+ tabsState.tabs.length);
   if (tabsState)
     hometabSessionManager.unloadingWindow(tabsState);
 }
 
 //This restores the session and starts a new session manager service
 function restoreSession() {
-  Application.console.log("restoreSession");
   let tabsState = hometabSessionManager.loadingWindow();
   let dontRestoreFirstTab = false;
-  Application.console.log("tabsState: " + tabsState.tabs.tabs.length);
   if (tabsState)
     document.getElementById("tabmail").restoreTabs(tabsState.tabs, dontRestoreFirstTab);
 }
