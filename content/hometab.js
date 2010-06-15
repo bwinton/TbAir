@@ -233,11 +233,22 @@ var hometab = {
 
   showMessages: function showMessages(aId, aSubject, aBackground) {
     let tabmail = document.getElementById("tabmail");
+    let tabInfo = tabmail.tabInfo;
+    let tabContainer = tabmail.tabContainer;
+    let index = tabInfo.indexOf(tabmail.currentTabInfo);
     tabmail.openTab("messageList", {
       id: aId,
       title: aSubject,
       background : aBackground
     });
+    // Move the new tab into position, if it's not already the last child.
+    if (index != tabContainer.children.length - 1) {
+      let last = tabInfo.pop();
+      tabInfo.splice(index+1, 0, last);
+      last = tabContainer.lastElementChild;
+      tabContainer.removeChild(last);
+      tabContainer.insertBefore(last, tabContainer.children[index+1]);
+    }
   },
 
   tempFolder: null,
