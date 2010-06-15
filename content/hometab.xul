@@ -40,7 +40,8 @@
 <?xml-stylesheet href="chrome://hometab/skin/overlay.css" type="text/css"?>
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="window" onkeydown="doKeyDown(event)" onkeyup="doKeyUp(event)"
-        onkeypress="doKeyPress(event)" onblur="onBlur(event)">
+        onkeypress="doKeyPress(event)" onblur="onBlur(event)"
+        onunload="saveSession()" onload="restoreSession()" windowtype="hometab">
   <keyset>
     <key id="key_goHome" modifiers="accel" key="D" oncommand="window.close();"/>
     <key id="key_closeTab" modifiers="accel" key="W" oncommand="document.getElementById('tabmail').removeCurrentTab();"/>

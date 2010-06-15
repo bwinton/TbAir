@@ -47,6 +47,8 @@ Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
 Cu.import("resource:///modules/iteratorUtils.jsm");
 
+Cu.import("resource://hometab/modules/hometabSessionManager.js");
+
 let msgComposeService = Components.classes['@mozilla.org/messengercompose;1'].getService()
                                   .QueryInterface(Components.interfaces.nsIMsgComposeService);
 
@@ -366,7 +368,14 @@ var hometab = {
     ComposeMessage(Components.interfaces.nsIMsgCompType.ReplyToSender,
                    Components.interfaces.nsIMsgCompFormat.Default,
                    folder, [folderMessageURI]);
+  },
+  replyAllMessage: function(folderMessageURI, folderURI) {
+    let folder = MailUtils.getFolderForURI(folderURI, true);
+    ComposeMessage(Components.interfaces.nsIMsgCompType.ReplyAll,
+                   Components.interfaces.nsIMsgCompFormat.Default,
+                   folder, [folderMessageURI]);
   }
+
 };
 
 var homeTabType = {
@@ -463,7 +472,8 @@ var homeTabType = {
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].type == this.type &&
+          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+              tabInfo[selectedIndex].id &&
               tabInfo[selectedIndex].id == aFolder) {
             return selectedIndex;
           }
@@ -536,7 +546,8 @@ var homeTabType = {
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].type == this.type &&
+          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+              tabInfo[selectedIndex].id &&
               tabInfo[selectedIndex].id == aConversation) {
             return selectedIndex;
           }
@@ -557,7 +568,7 @@ var homeTabType = {
       },
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
         aTabmail.openTab("messageList", { id : aPersistedState.conversationId,
-                                          title : aTab.title,
+                                          title : aPersistedState.title,
                                           background: true });
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {
@@ -658,7 +669,7 @@ function doKeyPress(event) {
   try {
     if (! event.metaKey) return;
     let charString = String.fromCharCode(event.charCode);
-    counter = 1;
+    let counter = 1;
     for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
       let tabinfo = tabmail.tabInfo[i];
       if (tabinfo.mode.type == 'home' || tabinfo.mode.type == 'folderList') {
@@ -739,3 +750,22 @@ function onBlur(event) {
   doShortcuts(false);
 }
 
+//This saves the current session and stops the session manager service
+function saveSession() {
+  Application.console.log("saveSession");
+  let tabmail = document.getElementById('tabmail');
+  let tabsState = tabmail.persistTabs();
+  Application.console.log("tabsState: "+ tabsState.tabs.length);
+  if (tabsState)
+    hometabSessionManager.unloadingWindow(tabsState);
+}
+
+//This restores the session and starts a new session manager service
+function restoreSession() {
+  Application.console.log("restoreSession");
+  let tabsState = hometabSessionManager.loadingWindow();
+  let dontRestoreFirstTab = false;
+  Application.console.log("tabsState: " + tabsState.tabs.tabs.length);
+  if (tabsState)
+    document.getElementById("tabmail").restoreTabs(tabsState.tabs, dontRestoreFirstTab);
+}

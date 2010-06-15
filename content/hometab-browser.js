@@ -360,3 +360,8 @@ function replyMessage(event, element) {
   hometab.replyMessage(element.attr("folderMessageURI"),
                        element.attr("folderURI"));
 }
+
+function replyAllMessage(event, element) {
+  hometab.replyAllMessage(element.attr("folderMessageURI"),
+                       element.attr("folderURI"));
+}
