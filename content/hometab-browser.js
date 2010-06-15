@@ -270,9 +270,9 @@ function handleClick(element, event) {
 }
 
 function showMessage(element) {
-  let body = element.parent().find(".fullbody");
-  let synopsis = element.parent().find(".synopsis");
-  let actions = element.parent().find(".actionblock");
+  let body = element.parents("li.message").find(".fullbody");
+  let synopsis = element.parents("li.message").find(".synopsis");
+  let actions = element.parents("li.message").find(".actionblock");
   if (body.is(':visible')) {
     actions.hide();
     body.slideUp();
@@ -354,3 +354,9 @@ function deleteConversation(link) {
   }
 }
 
+//--- actions on messages
+
+function replyMessage(event, element) {
+  hometab.replyMessage(element.attr("folderMessageURI"),
+                       element.attr("folderURI"));
+}

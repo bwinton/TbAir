@@ -81,11 +81,11 @@
         </div>
         <div class="messageblock">
           <div class="fullbody" onclick="handleClick($(this), event);"/>
-          <div class="synopsis">${synopsis}</div>
+          <div class="synopsis" onclick="showMessage($(this));">${synopsis}</div>
         </div>
         <div class="actionblock">
           <div class="actions">
-            <button class="action reply">reply</button>
+            <button class="action reply" folderMessageURI="${folderMessageURI}" folderURI="${folderURI}" onclick="replyMessage(event, $(this));">reply</button>
         </div>
     </li>
   </script>

@@ -47,6 +47,19 @@ Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
 Cu.import("resource:///modules/iteratorUtils.jsm");
 
+let msgComposeService = Components.classes['@mozilla.org/messengercompose;1'].getService()
+                                  .QueryInterface(Components.interfaces.nsIMsgComposeService);
+
+let messenger = Components.classes["@mozilla.org/messenger;1"].createInstance()
+                          .QueryInterface(Components.interfaces.nsIMessenger);
+
+let msgWindow = Components.classes["@mozilla.org/messenger/msgwindow;1"].createInstance()
+                          .QueryInterface(Components.interfaces.nsIMsgWindow);
+
+let accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"]
+                               .getService(Components.interfaces.nsIMsgAccountManager)
+
+
 var hometab = {
 
   /**
@@ -337,6 +350,12 @@ var hometab = {
     return deduped;
   },
 
+  replyMessage: function(folderMessageURI, folderURI) {
+    let folder = MailUtils.getFolderForURI(folderURI, true);
+    ComposeMessage(Components.interfaces.nsIMsgCompType.ReplyToSender,
+                   Components.interfaces.nsIMsgCompFormat.Default,
+                   folder, [folderMessageURI]);
+  }
 };
 
 var homeTabType = {
