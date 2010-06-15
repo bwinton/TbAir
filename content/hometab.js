@@ -43,6 +43,7 @@ Cu.import("resource://app/modules/virtualFolderWrapper.js");
 
 // -- Import modules we need.
 Cu.import("resource://app/modules/gloda/public.js");
+Cu.import("resource:///modules/gloda/utils.js");
 Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
 Cu.import("resource:///modules/iteratorUtils.jsm");
@@ -374,8 +375,60 @@ var hometab = {
     ComposeMessage(Components.interfaces.nsIMsgCompType.ReplyAll,
                    Components.interfaces.nsIMsgCompFormat.Default,
                    folder, [folderMessageURI]);
-  }
+  },
 
+  composeMessage: function(email) {
+    Application.console.log("composeMessage: " + email);
+    let fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
+                           .createInstance(Components.interfaces.nsIMsgCompFields);
+    fields.to = email;
+    let params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
+                           .createInstance(Components.interfaces.nsIMsgComposeParams);
+    params.composeFields = fields;
+    params.type = Components.interfaces.nsIMsgCompType.New;
+    params.format = Components.interfaces.nsIMsgCompFormat.Default;
+    msgComposeService.OpenComposeWindowWithParams(null, params);
+  },
+
+  showContacts: function(aBackground) {
+    let tabmail = document.getElementById("tabmail");
+    tabmail.openTab("contacts", {
+      background: aBackground
+    });
+
+  },
+
+  showContactsInTab: function(aWin) {
+    Application.console.log("showContactsInTab");
+
+    let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
+    contactQuery.orderBy("-popularity").limit(50);
+    contactQuery.getCollection({
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      onQueryCompleted: function _onQueryCompleted(contacts) {
+        let others = [];
+        for each(let [,contact] in Iterator(contacts.items)) {
+          if (Gloda.myContact != contact) {
+            for each(let [,identity] in Iterator(contact.identities)) {
+              if ("email" == identity.kind) {
+                contact.avatar = "http://www.gravatar.com/avatar/" +
+                                 GlodaUtils.md5HashString(identity.value) +
+                                 "?d=monsterid&s=48&r=g";
+                break;
+              }
+            }
+            others.push(contact);
+          }
+        }
+        aWin.addContacts(Gloda.myContact, others);
+        aWin.setHeaderTitle(aWin.tab.title);
+      }});
+  }
 };
 
 var homeTabType = {
@@ -569,6 +622,82 @@ var homeTabType = {
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
         aTabmail.openTab("messageList", { id : aPersistedState.conversationId,
                                           title : aPersistedState.title,
+                                          background: true });
+      },
+      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function ml_doCommand(aCommand, aTab) {
+      },
+      onEvent: function ml_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function ml_getBrowser(aCommand, aTab) {
+        return aTab.browser;
+      },
+    },
+
+    // A tab for displaying your Gloda Contacts
+    contacts: {
+      type: "contacts",
+      isDefault: false,
+      contactsId : 0,
+
+      openTab: function ml_openTab(aTab, aArgs) {
+        let contact = aArgs.contact;
+        aTab.contact = contact || null;
+        aTab.title = (contact && contact.name)? contact.name : "Contacts";
+        window.title = aTab.title;
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "contacts"+this.contactsId);
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
+        aTab.browser.loadURI("chrome://hometab/content/contacts.html");
+        this.contactsId++;
+      },
+
+      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
+        hometab.showContactsInTab(contentWindow);
+      },
+
+      showTab: function ml_showTab(aTab) {
+        aTab.browser.setAttribute("type", "content-primary");
+      },
+      shouldSwitchTo: function onSwitchTo({contact: aContact}) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+              tabInfo[selectedIndex].contact &&
+              tabInfo[selectedIndex].contact == aContact) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
+      onTitleChanged: function ml_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function ml_closeTab(aTab) {
+        aTab.browser.destroy();
+      },
+      saveTabState: function ml_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
+      },
+      persistTab: function ml_persistTab(aTab) {
+        return { contactId: (aTab.contact)? aTab.contact.id : null };
+      },
+      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+        let contact = aPersistedState.contactId;
+        aTabmail.openTab("contacts", { contact : contact,
                                           background: true });
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {

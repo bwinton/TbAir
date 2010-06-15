@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
   -   Version: MPL 1.1/GPL 2.0/LGPL 2.1
   -
@@ -37,101 +38,47 @@
 
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:html="http://www.w3.org/1999/xhtml"
-      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      version="-//W3C//DTD XHTML 1.1//EN" xml:lang="en">
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    version="-//W3C//DTD XHTML 1.1//EN" xml:lang="en">
 <head>
   <!-- Themes -->
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/hometab.css" />
   <link rel="stylesheet" type="text/css"
-      href="chrome://hometab/skin/homeView.css" />
-
+      href="chrome://hometab/skin/contacts.css" />
 </head>
-<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
+<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('contacts')">
   <div class="header">
     <div class="title"></div>
-    <div class="search"><input type="text" class="search" onkeyup="filterFolders(event)"/></div>
+    <div class="search"><input id="filter" type="text" class="search" onkeyup="filterContacts(event)"/></div>
     <div class="actions"><button class="action options">&diams;</button></div>
   </div>
-
-  <br clear="all"/>
-
-  <div class="column"></div>
-
-  <div class="column">
-    <div class="portlet">
-      <div class="portlet-header" style="font-weight: bold;color: #5180D0;" onclick="showContacts(event);">Contacts</div>
-      <div class="portlet-content"></div>
-    </div>
-  </div>
-
-  <div class="column"></div>
-
-  <br clear="all"/>
-
-  <div id="results-box">
-    <div id="category-box">
-      <ol id="categories" onclick="updateTab(event)"/>
-    </div>
-    <div id="preview-box">
-      <div id="preview">
-        <ol class="folders filtered"/>
-      </div>
-    </div>
-  </div>
-
+  <ol class="contacts"/>
 </body>
-
   <!-- Libs -->
   <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/jquery.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/jquery.tmpl.js"></script>
-
-  <script type="application/javascript;version=1.8"
-          src="chrome://hometab/content/jquery.ui.core.js"></script>
-  <script type="application/javascript;version=1.8"
-          src="chrome://hometab/content/jquery.ui.widget.js"></script>
-
-  <script type="application/javascript;version=1.8"
-          src="chrome://hometab/content/jquery.ui.mouse.js"></script>
-  <script type="application/javascript;version=1.8"
-          src="chrome://hometab/content/jquery.ui.sortable.js"></script>
-
   <script type="application/javascript;version=1.8"
       src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
 
   <!-- Templates!  Woo! -->
-  <script id="categorytmpl" type="text/html">
-    <li class="category" id="${id}">${folder}</li>
-  </script>
-
-  <script id="foldertmpl" type="text/html">
-    <li class="folder" read="${read}" id="${id}"
-        onclick="showConversations(event, $(this))">
-      <span class="name">${name}</span>
-      <span class="count">${read}</span>
+  <script id="contacttmpl" type="text/html">
+    <li class="contact" id="${id}">
+      <div class="column left"><img class="avatar" src="${avatar}"/></div>
+      <div class="column right">
+        <div class="name">${name}</div>
+        <ol class="identities">
+          {{each(i,identity) identities}}
+          <li class="identity" kind="${identity.kind}" onclick="composeMessage($(this));">${identity.value}</li>
+          {{/each}}
+        </ol>
+      </div>
     </li>
   </script>
 
-  <script id="folderPortletTmpl" type="text/html">
-    <div class="portlet" read="${read}" dupe="${dupe}">
-      <div class="portlet-header" id="${id}" onclick="showConversations(event, $(this))">
-        <span class="name">${name}</span> <span class="count">${unread}</span> <span class="account">${serverName}</span>
-      </div>
-      <div class="portlet-content"></div>
-    </div>
-  </script>
-
-<!--
-        <ol class="conversations">
-          <li class="conversation" read="${read}" id="${id}" subject="${subject}">
-            <span class="from" onclick="showMessages($(this));">${message.from.contact.name}</span>
-            <span class="subject" onclick="showMessages($(this));">${message.conversation.subject}</span>
-          </li>
-        </ol>
--->
 </html>

@@ -161,6 +161,10 @@ function populateMessageBody(id, data) {
   }
 }
 
+function addContacts(me, contacts) {
+  $("#contacttmpl").render(contacts).appendTo(".contacts");
+}
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -208,6 +212,12 @@ function showMessages(event, element) {
                        background);
 }
 
+function showContacts(event) {
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showContacts(background);
+}
 
 function filterFolders(event) {
   try {
@@ -364,4 +374,12 @@ function replyMessage(event, element) {
 function replyAllMessage(event, element) {
   hometab.replyAllMessage(element.attr("folderMessageURI"),
                        element.attr("folderURI"));
+}
+
+//--- actions on contacts
+
+function composeMessage(element) {
+  if ("email" != element.attr("kind"))
+    return;
+  hometab.composeMessage(element.text())
 }
