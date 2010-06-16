@@ -219,22 +219,26 @@ function showContacts(event) {
   hometab.showContacts(background);
 }
 
+var specialFilters = [
+  function handleUnreadFilter(filter, elem) {
+    if (filter == ":unread") {
+      if (elem.attr("read") == "true")
+        elem.hide();
+      else
+        elem.show();
+     return;
+    }
+  },
+];
+
 function handleSpecialFilters(filter, elem) {
   if (filter[0] == ":") {
-    handleUnreadFilter(filter, elem);
+    for (let i in specialFilters) {
+      specialFilters[i](filter, elem);
+    }
     return true;
   }
   return false;
-}
-
-function handleUnreadFilter(filter, elem) {
-  if (filter == ":unread") {
-    if (elem.attr("read") == "true")
-      elem.hide();
-    else
-      elem.show();
-   return;
-  }
 }
 
 function filterFolders(event) {
