@@ -269,6 +269,22 @@ function filterMessages(event) {
   });
 }
 
+function filterContacts(event) {
+  try {
+    let filterNode = $(event.target);
+    var filter = filterNode.val(), count = 0;
+    $(".contact ").each(function () {
+      let matchString = $(this).find(".name").text() + $(this).find(".identity").text();;
+      if (matchString.search(new RegExp(filter, "i")) < 0)
+        $(this).hide();
+      else
+        $(this).show();
+    });
+  } catch (e) {
+    logException(e);
+  }
+}
+
 function handleClick(element, event) {
   if (event.target.tagName == "BLOCKQUOTE") {
     if (event.target.hasAttribute("shown")) {
