@@ -219,11 +219,31 @@ function showContacts(event) {
   hometab.showContacts(background);
 }
 
+function handleSpecialFilters(filter, elem) {
+  if (filter[0] == ":") {
+    handleUnreadFilter(filter, elem);
+    return true;
+  }
+  return false;
+}
+
+function handleUnreadFilter(filter, elem) {
+  if (filter == ":unread") {
+    if (elem.attr("read") == "true")
+      elem.hide();
+    else
+      elem.show();
+   return;
+  }
+}
+
 function filterFolders(event) {
   try {
     let filterNode = $(event.target);
     var filter = filterNode.val(), count = 0;
     $(".column .portlet").each(function () {
+      if (handleSpecialFilters(filter, $(this)))
+        return;
       let matchString = $(this).children('.portlet-header').text();
       if (matchString.search(new RegExp(filter, "i")) < 0)
         $(this).hide();
@@ -240,6 +260,8 @@ function filterConversations(event) {
   var filter = filterNode.val(), count = 0;
   try {
     $(".filtered:first li.conversation").each(function () {
+      if (handleSpecialFilters(filter, $(this)))
+        return;
       id = $(this).attr("id");
       if (id) { // somehow some nodes don't have IDs?
         let matchString = document.getElementById("cache").conversations[id];
@@ -260,6 +282,8 @@ function filterMessages(event) {
   let filterNode = $(event.target);
   var filter = filterNode.val(), count = 0;
   $(".filtered:first li").each(function () {
+    if (handleSpecialFilters(filter, $(this)))
+      return;
     let message = document.getElementById("cache").messages[$(this).attr("id")];
     let matchString = message.indexedBodyText + message.subject + message.from.contact.name;
     if (matchString.search(new RegExp(filter, "i")) < 0)
