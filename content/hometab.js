@@ -547,7 +547,7 @@ var homeTabType = {
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+          if (tabInfo[selectedIndex].mode.name == this.modes.folderList.type &&
               tabInfo[selectedIndex].id &&
               tabInfo[selectedIndex].id == aFolder) {
             return selectedIndex;
@@ -621,7 +621,7 @@ var homeTabType = {
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+          if (tabInfo[selectedIndex].mode.name == this.modes.messageList.type &&
               tabInfo[selectedIndex].id &&
               tabInfo[selectedIndex].id == aConversation) {
             return selectedIndex;
