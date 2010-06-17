@@ -183,7 +183,7 @@ var hometab = {
               seenConversations[id] = {
                   "id" : id,
                   "topic" : message,
-                  "read" : true,
+                  "read" : message.read,
                   "match" : message.conversation.subject,
                   "all": [],
                   "unread" : [],
