@@ -114,6 +114,8 @@ ol.conversations {
 .conversation .topic > .date {
   color: #888;
   text-transform: lowercase;
+  font-size: 10px;
+  margin-bottom: 2px;
 }
 
 .conversation .topic > .actions > .action:hover {
