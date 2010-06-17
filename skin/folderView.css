@@ -65,6 +65,12 @@ ol.conversations {
   overflow: hidden;
 }
 
+/* if the conversation is unread but the topic message is read we don't
+   show the body */
+.conversation[read=false] .topic[read=true] > .body {
+  display: none;
+}
+
 .conversation[read=true] .replies {
   display: none;
 }
