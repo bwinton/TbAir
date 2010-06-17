@@ -1,5 +1,8 @@
 body {
   background-color: #fafafa;
+  line-height: 1.5;
+  min-height: 100%;
+  height: 100%;
 }
 
 ol.conversations {
@@ -7,7 +10,10 @@ ol.conversations {
   padding: 0;
   margin: 0;
 /* XXX there's an extra 1px somewhere... */
-  width: 601px;
+  width: 600px;
+  min-height: 100%;
+  height: 100%;
+  border-right: 1px solid #ddd;
 }
 
 .column {
@@ -30,19 +36,20 @@ ol.conversations {
 }
 
 .avatar {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   background-color: #666;
+  margin-right: 5px;
 }
 
 .column.left .from {
-  color: #666;
+  color: #000;
   width: 140px;
+  font-size: 12px;
 }
 
 .conversation {
-  border-right: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   padding: 10px;
 }
 
@@ -57,10 +64,18 @@ ol.conversations {
   background-color: #F2F2F2;
 }
 
+.conversation[read=true] .from {
+  color: #000;
+}
+
+.conversation[read=true] .topic > .subject,
+.conversation[read=true] .topic > .body {
+  color: #666;
+}
+
 .conversation[read=true] .from,
 .conversation[read=true] .topic > .subject,
 .conversation[read=true] .topic > .body {
-  color: #888;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -169,7 +184,7 @@ ol.conversations {
 .conversation .replies > .reply > .from {
   color: #111;
   font-weight: bold;
-  display: inline;
+  display: inline-block;
 }
 
 .conversation .replies > .reply > .body {
