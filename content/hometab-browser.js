@@ -35,7 +35,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource:///modules/templateUtils.js");
 Components.utils.import("resource:///modules/errUtils.js");
 Components.utils.import("resource:///modules/gloda/utils.js");
 
@@ -63,56 +62,22 @@ function setHeaderTitle(title) {
   $(".header > .title").text(title);
 }
 
-function augmentMessage(message) {
-  message.friendlyDate = makeFriendlyDateAgo(message.date);
-  message.synopsis = (message.indexedBodyText || "").substr(0, 140);
-  message.avatar = "http://www.gravatar.com/avatar/" +
-                   GlodaUtils.md5HashString(message.from.value) +
-                   "?d=monsterid&s=24&r=g";
-}
-
 function addContent(conversations) {
-  let conversationsElem = $("ol.conversations");
   let conversationMap = {};
-  
-  // Augment the data - this could possibly be done on the first pass to save time
+
   for (let [,conversation] in Iterator(conversations)) {
     // We figure out what strings a conversation would match, and stash that
     // in a DOM node for use by the search field.  Ideally we'd do that on the
     // gloda objects, but for some reason that's not working for me.
     // In particular, conversation.messages is busted.  Is "conversation" not
     // a real GlodaConversation object?
-    
-    let substrings = [];
-    substrings.push(conversation.topic.subject);
-    substrings.push(conversation.topic.from.contact.name);
-    for (let [,message] in Iterator(conversation.messages)) {
-      for (let [,person] in Iterator(message.involves)) {
-        substrings.push(person.contact.name)
-      }
-    }
-    let matchString = substrings.join('');
-
-    conversationMap[conversation.id] = matchString;
-    conversation.from = conversation.topic.from;
-    conversation.subject = conversation.topic.subject;
-    conversation.synopsis = (conversation.topic.indexedBodyText || "").substr(0, 140);
-    conversation.date = makeFriendlyDateAgo(conversation.topic.date);
-    conversation.avatar = "http://www.gravatar.com/avatar/" +
-                          GlodaUtils.md5HashString(conversation.topic.from.value) +
-                          "?d=monsterid&s=24&r=g";
-
-    // Looping again isn't that bad (in big N terms) because we should have limited the
-    // number of messages previously to only unread
-    for (let [,message] in Iterator(conversation.messages)) {
-      augmentMessage(message);
-    }
+    conversationMap[conversation.id] = conversation.match;
   }
 
   // And render the template.
   $("#conversationtmpl").render(conversations).each(function(i, li) {
     li.conversation = conversations[i];
-    }).appendTo(conversationsElem);
+    }).appendTo($("ol.conversations"));
   // cache the gloda objects
   document.getElementById("cache").conversations = conversationMap;
 }
@@ -131,7 +96,6 @@ function addMessages(messages) {
   let messageMap = {};
   // Augment the data with styles.
   for (let mId in messages) {
-    augmentMessage(messages[mId]);
     messageMap[messages[mId].id] = messages[mId];
     markAsRead(messages[mId]); // should really happen on making it into viewport, but...
   }

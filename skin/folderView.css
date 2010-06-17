@@ -75,6 +75,10 @@ ol.conversations {
   overflow: hidden;
 }
 
+.conversation .attachments[has=false] {
+  display: none;
+}
+
 .conversation .topic {
   font-size: 12px;
   position: relative;

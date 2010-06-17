@@ -44,6 +44,7 @@ Cu.import("resource://app/modules/virtualFolderWrapper.js");
 // -- Import modules we need.
 Cu.import("resource://app/modules/gloda/public.js");
 Cu.import("resource:///modules/gloda/utils.js");
+Cu.import("resource:///modules/templateUtils.js");
 Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
 Cu.import("resource:///modules/iteratorUtils.jsm");
@@ -148,6 +149,7 @@ var hometab = {
 
   showConversationsInFolder: function show_ConversationsInFolder(aWin, aFolder) {
     //let t0 = new Date();
+    let self = this;
     aWin.setHeaderTitle(getFolderNameAndCount(aFolder));
     let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
@@ -176,19 +178,31 @@ var hometab = {
           let seenConversations = {};
           for (var [,message] in Iterator(messages.items)) {
             let id = message.conversationID;
+            self._augmentMessage(message);
             if (!(id in seenConversations)) {
               seenConversations[id] = {
                   "id" : id,
                   "topic" : message,
+                  "read" : true,
+                  "match" : message.conversation.subject,
                   "all": [],
-                  "read" : [],
-                  "unread" : []
+                  "unread" : [],
+                  "attachments" : false
                   };
             }
-            if (! message.read)
+            // only the unread messages
+            if (! message.read &&
+                // and not the topic message
+                message.id != seenConversations[id].topic.id &&
+                // and less than 3 unread messages total
+                seenConversations[id].unread.length < 3) {
+              seenConversations[id].read = false;
               seenConversations[id].unread.push(message);
-            else
-              seenConversations[id].read.push(message);
+            }
+
+            seenConversations[id].attachments = (typeof message.attachmentTypes != "undefined" && message.attachmentTypes.length > 0)
+            seenConversations[id].match += [person.contact.name for each([,person] in Iterator(message.involves))].join('')
+
             seenConversations[id].all.push(message);
 
             //This is rarely going to work out correctly as we're creating our
@@ -199,25 +213,8 @@ var hometab = {
             }
 
           }
-          for (var id in seenConversations) {
-            let conversation = seenConversations[id];
-
-            //Count unread before we possible remove the topic from the list
-            let unread = conversation.unread.length;
-
-            // Remove the topic message from the messages list
-            for each(let [i,message] in Iterator(conversation.unread))
-              if (message.id == conversation.topic.id) {
-                conversation.unread.splice(i,1);
-                break;
-              }
-
-            //We need these unread messages sorted opposite the conversations; oldest first
-            conversation.messages = [].concat(conversation.unread.splice(0,3))
-                                      .sort(function(a,b) { return a.date > b.date; });
-
-            conversation.read = (unread <= 0);
-            delete conversation.unread;
+          for each (let [,conversation] in Iterator(seenConversations)) {
+            self._augmentConversation(conversation);
             conversations.push(conversation);
           }
           aWin.addContent(conversations);
@@ -232,6 +229,16 @@ var hometab = {
           dump("\n");
         }
       }});
+  },
+
+  _augmentConversation: function(conversation) {
+    conversation.from = conversation.topic.from;
+    conversation.subject = conversation.topic.subject;
+    conversation.synopsis = (conversation.topic.indexedBodyText || "").substr(0, 140);
+    conversation.date = makeFriendlyDateAgo(conversation.topic.date);
+    conversation.avatar = "http://www.gravatar.com/avatar/" +
+                          GlodaUtils.md5HashString(conversation.topic.from.value) +
+                          "?d=monsterid&s=24&r=g";
   },
 
   showMessages: function showMessages(aId, aSubject, aBackground) {
@@ -317,6 +324,14 @@ var hometab = {
     }
   },
 
+  _augmentMessage: function (message) {
+    message.friendlyDate = makeFriendlyDateAgo(message.date);
+    message.synopsis = (message.indexedBodyText || "").substr(0, 140);
+    message.avatar = "http://www.gravatar.com/avatar/" +
+                     GlodaUtils.md5HashString(message.from.value) +
+                     "?d=monsterid&s=24&r=g";
+  },
+
   addMessages: function addMessages(aWin, aMessages) {
     aWin.addMessages(aMessages);
     for (var i in aMessages) {
@@ -346,6 +361,7 @@ var hometab = {
         aWin.tab.results = [];
         let items = self._removeDupes(messages.items);
         for each(var [,message] in Iterator(items))
+          self._augmentMessage(message);
           aWin.tab.results.push(message);
         self.addMessages(aWin, aWin.tab.results);
         aWin.setHeaderTitle(aWin.tab.title);

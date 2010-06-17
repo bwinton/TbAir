@@ -80,6 +80,7 @@
           <div class="date" style="visibility:hidden;">spacer</div>
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from">${from.contact.name}</div>
+          <img has="${attachments}" src="chrome://messenger/skin/icons/attachment-col.png" class="attachments"/>
         </div>
 
         <div class="column right">
@@ -93,7 +94,7 @@
             <div class="body" onclick="showMessages(event, $(this));">${synopsis}</div>
           </div>
           <ol class="messages replies" onclick="showMessages(event, $(this));">
-            {{each(i,message) messages}}
+            {{each(i,message) unread}}
               <li class="message reply" read="${message.read}">
                 <div class="from">${message.from.contact.name}</div>
                 <div class="date">${message.friendlyDate}</div>
