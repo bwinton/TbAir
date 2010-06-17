@@ -75,8 +75,28 @@ ol.conversations {
   overflow: hidden;
 }
 
-.conversation .attachments[has=false] {
-  display: none;
+.conversation .starred,
+.conversation .attachments {
+  width: 16px;
+  height: 16px;
+  background-attachment: scroll;
+  background-color: transparent;
+  background-position: top left;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin: 3px;
+}
+
+.conversation .starred[is=true] {
+  background-image: url("chrome://messenger/skin/icons/flaggedmail.png");
+}
+
+.conversation .starred[is=false] {
+  background-image: url("chrome://messenger/skin/icons/flagcol.png");
+}
+
+.conversation .attachments[has=true] {
+  background-image: url("chrome://messenger/skin/icons/attachment-col.png");
 }
 
 .conversation .topic {

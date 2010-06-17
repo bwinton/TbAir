@@ -80,7 +80,8 @@
           <div class="date" style="visibility:hidden;">spacer</div>
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from">${from.contact.name}</div>
-          <img has="${attachments}" src="chrome://messenger/skin/icons/attachment-col.png" class="attachments"/>
+          <div is="${starred}" class="starred"/>
+          <div has="${attachments}" class="attachments"/>
         </div>
 
         <div class="column right">

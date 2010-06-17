@@ -187,7 +187,8 @@ var hometab = {
                   "match" : message.conversation.subject,
                   "all": [],
                   "unread" : [],
-                  "attachments" : false
+                  "attachments" : false,
+                  "starred" : false
                   };
             }
             // only the unread messages
@@ -200,7 +201,12 @@ var hometab = {
               seenConversations[id].unread.push(message);
             }
 
-            seenConversations[id].attachments = (typeof message.attachmentTypes != "undefined" && message.attachmentTypes.length > 0)
+            if (!seenConversations[id].starred)
+              seenConversations[id].starred = message.starred;
+
+            if (!seenConversations[id].attachments)
+              seenConversations[id].attachments = (typeof message.attachmentTypes != "undefined" && message.attachmentTypes.length > 0)
+
             seenConversations[id].match += [person.contact.name for each([,person] in Iterator(message.involves))].join('')
 
             seenConversations[id].all.push(message);
