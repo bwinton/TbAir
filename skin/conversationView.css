@@ -163,3 +163,27 @@ BLOCKQUOTE[shown=true]:before {
   content: "hide quoted text";
   cursor: pointer;
 }
+
+li.message .attachments {
+  border-top: 1px solid #aaa;
+  list-style: none;
+  padding: 10px 0 0 0;
+  margin: 0;
+}
+
+li.message .attachments .attachment {
+  width: 150px;
+  border: 1px solid #ddd;
+  padding: 7px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+li.message .attachments .attachment .name {
+  text-decoration: underline;
+  color: #5180D0;
+}
+
+li.message .attachments .attachment .icon {
+  vertical-align: text-top;
+}

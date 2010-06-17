@@ -79,6 +79,19 @@
           <div class="fullbody" onclick="handleClick($(this), event);"/>
           <div class="synopsis" onclick="showMessage($(this));">${synopsis}</div>
         </div>
+        <ul class="attachments">
+        {{each(i,attachment) attachmentNames || []}}
+          <li type="${attachmentTypes[i]._type}"
+              subtype="${attachmentTypes[i].subType}"
+              category="${attachmentTypes[i].category}"
+              mimetype="${attachmentTypes[i].fullType}"
+              title="${attachmentTypes[i].categoryLabel}"
+              class="attachment">
+            <img class="icon" src="moz-icon://${attachment}?size=32&contentType=${attachmentTypes[i].fullType}"/>
+            <span class="name">${attachment}</span>
+          </li>
+        {{/each}}
+        </ul>
         <div class="actionblock">
           <div class="actions">
             <button class="action replyall" folderMessageURI="${folderMessageURI}" folderURI="${folderURI}" onclick="replyAllMessage(event, $(this));">reply all</button>
