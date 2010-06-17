@@ -182,3 +182,12 @@ ol.conversations {
   color: #888;
   display: inline;
 }
+
+.conversation .replies > .reply.more[count="0"] {
+  display: none;
+}
+
+.conversation .replies > .reply.more {
+  color: #5180D0;
+  text-align: center;
+}

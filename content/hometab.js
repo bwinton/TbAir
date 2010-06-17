@@ -194,9 +194,7 @@ var hometab = {
             // only the unread messages
             if (! message.read &&
                 // and not the topic message
-                message.id != seenConversations[id].topic.id &&
-                // and less than 3 unread messages total
-                seenConversations[id].unread.length < 3) {
+                message.id != seenConversations[id].topic.id) {
               seenConversations[id].read = false;
               seenConversations[id].unread.push(message);
             }
