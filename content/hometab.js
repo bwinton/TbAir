@@ -366,9 +366,10 @@ var hometab = {
       onQueryCompleted: function _onQueryCompleted(messages) {
         aWin.tab.results = [];
         let items = self._removeDupes(messages.items);
-        for each(var [,message] in Iterator(items))
+        for each(var [,message] in Iterator(items)) {
           self._augmentMessage(message);
           aWin.tab.results.push(message);
+        }
         self.addMessages(aWin, aWin.tab.results);
         aWin.setHeaderTitle(aWin.tab.title);
       }});
