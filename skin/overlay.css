@@ -11,7 +11,7 @@ tabbrowser#tabmail .tabmail-tabs > .tabs-stack > vbox > hbox {
 
 tabbrowser#tabmail .tabmail-tabs {
   background-image: -moz-linear-gradient(180deg, #fff 0%, #fff 5px, transparent 5px, transparent 100%),
-                    -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 3px, #dadfe8 3px, #dadfe8 100%);
+                    -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 4px, #dadfe8 4px, #dadfe8 100%);
   background-position: center, -5px 0;
   border-right: 1px solid #ddd;
   margin-bottom: -1px;
@@ -52,8 +52,8 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
   -moz-border-right-colors: #aaa;
   -moz-border-left-colors: #aaa;
   -moz-border-bottom-colors: #aaa;
-  margin: 3px 11px 3px 5px;
-  -moz-margin-end: 11px;
+  margin: 3px 9px 3px 5px;
+  -moz-margin-end: 9px;
   -moz-margin-start: 5px;
   border: 1px solid #aaa;
   height: 28px;
