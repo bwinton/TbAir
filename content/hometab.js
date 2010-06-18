@@ -242,7 +242,7 @@ var hometab = {
     conversation.date = makeFriendlyDateAgo(conversation.topic.date);
     conversation.avatar = "http://www.gravatar.com/avatar/" +
                           GlodaUtils.md5HashString(conversation.topic.from.value) +
-                          "?d=monsterid&s=24&r=g";
+                          "?d=monsterid&s=16&r=g";
   },
 
   showMessages: function showMessages(aId, aSubject, aBackground) {

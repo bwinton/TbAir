@@ -34,12 +34,20 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+/* <UNIVERSAL STYLES> */
+
+/*
+  This style sheet is included in every page and should only have references
+  to elements which are included in every page.  Each page has it's own sub-style
+  sheet where more specific style elements can be added.
+*/
+
 #body {
   font-family: sans-serif;
   font-weight: inherit;
   font-style: inherit;
   font-size: 11px;
-  line-height: 18px;
+  line-height: 1.5;
   margin: 0;
   outline: 0;
   padding: 0;
@@ -78,15 +86,6 @@
   -moz-box-pack: center;
   -moz-box-align: center;
 }
-/*
-input.search {
-  margin: 0 3px;
-  padding: 2px;
-  border: 1px solid #ccc;
-  -moz-box-shadow: inset #666 0 1px 2px;
-  -moz-border-radius: 3px;
-  color: #333;
-}*/
 
 input.search {
   -moz-border-radius:5px 5px 5px 5px;
@@ -124,11 +123,4 @@ button.action.options {
   display: none;
 }
 
-.portlet-header {
-  cursor: pointer;
-}
-
-.portlet-header:hover {
-  text-decoration: underline;
-}
-
+/* </UNIVERSAL STYLES> */

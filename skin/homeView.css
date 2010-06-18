@@ -34,6 +34,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+/* <HOME VIEW STYLES> */
+
+/*
+  This style sheet is specific to the home view page and should only include
+  references to elements on the home view page.  Universal styles should be in
+  the hometab.css file which is included in every page.
+*/
+
 .column {
   width: 280px;
   float: left;
@@ -57,7 +65,12 @@
 .portlet .portlet-header > .account { color: #666; margin-left: 1em; font-size: smaller; }
 
 .portlet-header { cursor: pointer; }
+.portlet-header:hover {
+  text-decoration: underline;
+}
 .portlet-content { padding: 7px; }
 
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; background-color: inherit; }
 .ui-sortable-placeholder * { visibility: hidden; }
+
+/* </HOME VIEW STYLES> */
