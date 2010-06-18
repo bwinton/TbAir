@@ -210,13 +210,22 @@ ol.conversations {
 }
 
 .conversation .replies > .reply {
-  border: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   background-color: #fafafa;
   color: #333;
-  margin: 3px 0 0;
+  margin: 0;
   padding: 5px;
   position:relative;
   line-height: 1.5;
+}
+
+/* we use the first child trick here instead of the last-child because the
+   last child is always the unread count even if it's not showing.
+*/
+.conversation .replies > .reply:first-child {
+  border-top: 1px solid #ddd;
 }
 
 .conversation .replies > .reply > .from {
