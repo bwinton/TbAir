@@ -61,9 +61,10 @@ body {
 
 ol.messages {
   width: 640px;
-  padding: 0;
-  margin: 0 0 40px 0;
+  margin: 0;
+  padding: 0 0 40px 0;
   list-style-type: none;
+  min-height: 100%;
   border-right: 1px solid #ddd;
 }
 
@@ -92,6 +93,16 @@ li.message .headerblock .from {
   vertical-align: top;
   overflow: hidden;
   color: #000;
+}
+
+li.message .headerblock .avatar {
+  height: 16px;
+  width: 16px;
+  margin-right: 5px;
+}
+
+li.message .headerblock .from {
+  font-size: 12px;
 }
 
 li.message .headerblock .from:empty:after {

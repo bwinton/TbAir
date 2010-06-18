@@ -43,27 +43,33 @@
 */
 
 #body {
-  line-height: 1.5;
+  line-height: 21px;
+  min-height: 100%;
+  width: 511px;
 }
 
 ol.conversations {
-  list-style: none;
-  padding: 0;
+  width: 511px;
   margin: 0;
-  width: 600px;
+  padding: 0 0 40px 0;
+  list-style-type: none;
+  min-height: 100%;
   border-right: 1px solid #ddd;
+  float: left;
 }
 
 .column {
   display: inline-block;
   vertical-align: top;
+  float: left;
+  padding: 0 10px;
 }
 .column.left {
   width: 170px;
 }
 .column.right {
 /*  full width (- .left) + ( - conversation paddings) */
-  width: 405px;
+  width: 340px;
 }
 
 .avatar,
@@ -82,13 +88,15 @@ ol.conversations {
 
 .column.left .from {
   color: #000;
-  width: 140px;
+  width: 125px;
+  display: inline-block;
   font-size: 12px;
 }
 
 .conversation {
   border-bottom: 1px solid #ddd;
-  padding: 10px;
+  padding: 5px 0;
+  float: left;
 }
 
 .conversation:last-child {

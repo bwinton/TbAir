@@ -42,19 +42,37 @@
   the hometab.css file which is included in every page.
 */
 
+#body {
+  width: 511px;
+}
+
 .column {
-  width: 280px;
+  width: 511px;
+  border-right: 1px solid #ddd;
+  margin: 0;
+  padding: 0;
+}
+
+.portletContainer {
   float: left;
-  min-height: 200px;
+  width: 511px;
+  min-height: 100%;
+  border-right: 1px solid #ddd;
 }
+
 .portlet {
-  margin: 10px;
-  width: 260px;
-  padding: 5px;
-  background-color: #fff;
-  border: 1px solid #CCCCCC;
-  -moz-border-radius: 3px;
+  -moz-border-radius:5px 5px 5px 5px;
+  background-color:#F2F2F2;
+  border:1px solid #DDDDDD;
+  color:#888888;
+  display:inline-block;
+  font-size:12px;
+  margin:10px;
+  padding:10px;
+  text-align:center;
+  width:235px;
 }
+
 .portlet[read="false"] .portlet-header > .name,
 .portlet[read="false"] .portlet-header > .count {
   font-weight: bold;

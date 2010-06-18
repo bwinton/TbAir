@@ -14,6 +14,7 @@ tabbrowser#tabmail .tabmail-tabs {
                     -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 3px, #dadfe8 3px, #dadfe8 100%);
   background-position: center, -5px 0;
   border-right: 1px solid #ddd;
+  margin-bottom: -1px;
 }
 
 tabbrowser#tabmail > tabbox {
@@ -60,6 +61,7 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
   text-align: left;
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 1px 0px #C8D0DE;
+  padding: 0 5px;
   background-color: #e6e6e6;
   background-image: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.025) 50%, rgba(0,0,0,0.025) 100%);
 }
@@ -75,6 +77,7 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="folder"][selected="true"]:ho
 
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
+
   background-color: #fff;
   background-image: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 100%);
 }
