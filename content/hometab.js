@@ -879,7 +879,7 @@ window.setTimeout(function() {
   document.getAnonymousElementByAttribute(tabmail, "anonid", "tabbox")
           .orient = "horizontal";
   //Make the tabs a little wider by default
-  tabmail.tabContainer.childNodes[0].minWidth = 200;
+  tabmail.tabContainer.childNodes[0].minWidth = 240;
 }, 0);
 
 var gAccelDown = false;
