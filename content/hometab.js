@@ -701,7 +701,7 @@ var homeTabType = {
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].mode.tabType == this.type &&
+          if (tabInfo[selectedIndex].mode.name == this.modes.contacts.type &&
               tabInfo[selectedIndex].contact &&
               tabInfo[selectedIndex].contact == aContact) {
             return selectedIndex;
