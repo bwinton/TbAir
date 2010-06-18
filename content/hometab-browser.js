@@ -183,6 +183,13 @@ function showContacts(event) {
   hometab.showContacts(background);
 }
 
+function showSource(event) {
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showSource(background);
+}
+
 var specialFilters = [
   function handleUnreadFilter(filter, elem) {
     if (filter == ":unread") {
@@ -301,7 +308,6 @@ function showMessage(element) {
     actions.fadeIn();
   }
 }
-
 
 //--- actions on conversations
 
