@@ -43,8 +43,8 @@
 */
 
 .header {
-  width: 100%;
-  border-right: 0;
+  width: 511px;
+  border-right: 1px solid #ddd;
 }
 
 ol.contacts {
@@ -53,18 +53,24 @@ ol.contacts {
   list-style-type: none;
   background-color: #fff;
   border-right: 1px solid #ddd;
+  width: 511px;
+  min-height: 100%;
+  padding-bottom: 40px;
+  float: left;
+  background-color: #fafafa;
 }
 
 li.contact {
-  margin: 5px;
   padding: 10px;
-  color: #333;
-  line-height: 1.5;
+  color: #000;
+  line-height: 21px;
   overflow: hidden;
-  width: 265px;
+  width: 511px;
   float: left;
-  border: 1px solid #ddd;
-  -moz-box-shadow: 1px 1px 2px #999;
+  border-width: 0 1px 1px 0;
+  border-color: #ddd;
+  border-style: solid;
+  background-color: #fff;
 }
 
 .column {
@@ -72,7 +78,7 @@ li.contact {
   vertical-align: top;
 }
 .column.left {
-  width: 58px;
+  width: 65px;
 }
 .column.right {
   width: 200px;

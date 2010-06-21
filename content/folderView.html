@@ -97,6 +97,7 @@
           <ol class="messages replies" onclick="showMessages(event, $(this));">
             {{each(i,message) unread.splice(0,2)}}
               <li class="message reply" read="${message.read}">
+                <div class="arrow"></div><div class="arrow2"></div>
                 <div class="from">${message.from.contact.name}</div>
                 <div class="date">${message.friendlyDate}</div>
                 <div class="body">${message.synopsis}</div>
