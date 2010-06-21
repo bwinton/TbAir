@@ -78,8 +78,8 @@
 
         <div class="column left">
           <div class="date" style="visibility:hidden;line-height:24px;">spacer</div>
-          <div class="avatar"><img src="${avatar}"/></div>
-          <div class="from">${from.contact.name}</div>
+          <div class="avatar"><img src="${topic.avatar}"/></div>
+          <div class="from">${topic.from.contact.name}</div>
           <div is="${starred}" class="starred"/>
           <div has="${attachments}" class="attachments"/>
         </div>
@@ -90,9 +90,9 @@
               <a class="action archive" onclick="archiveConversation($(this))">archive</a>
               <a class="action delete" onclick="deleteConversation($(this))">delete</a>
             </div>
-            <div class="date">${date}</div>
+            <div class="date">${topic.friendlyDate}</div>
             <div class="subject" onclick="showMessages(event, $(this));">${subject}</div>
-            <div class="body" onclick="showMessages(event, $(this));">${synopsis}</div>
+            <div class="body" onclick="showMessages(event, $(this));">${topic.synopsis}</div>
           </div>
           <ol class="messages replies" onclick="showMessages(event, $(this));">
             {{each(i,message) unread.splice(0,2)}}

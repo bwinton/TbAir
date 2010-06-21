@@ -218,7 +218,6 @@ var hometab = {
 
           }
           for each (let [,conversation] in Iterator(seenConversations)) {
-            self._augmentConversation(conversation);
             conversations.push(conversation);
           }
           aWin.addContent(conversations);
@@ -233,16 +232,6 @@ var hometab = {
           dump("\n");
         }
       }});
-  },
-
-  _augmentConversation: function(conversation) {
-    conversation.from = conversation.topic.from;
-    conversation.subject = conversation.topic.subject;
-    conversation.synopsis = (conversation.topic.indexedBodyText || "").substr(0, 140);
-    conversation.date = makeFriendlyDateAgo(conversation.topic.date);
-    conversation.avatar = "http://www.gravatar.com/avatar/" +
-                          GlodaUtils.md5HashString(conversation.topic.from.value) +
-                          "?d=monsterid&s=16&r=g";
   },
 
   showMessages: function showMessages(aId, aSubject, aBackground) {
@@ -333,7 +322,7 @@ var hometab = {
     message.synopsis = (message.indexedBodyText || "").substr(0, 140);
     message.avatar = "http://www.gravatar.com/avatar/" +
                      GlodaUtils.md5HashString(message.from.value) +
-                     "?d=monsterid&s=24&r=g";
+                     "?d=monsterid&s=16&r=g";
   },
 
   addMessages: function addMessages(aWin, aMessages) {
