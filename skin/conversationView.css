@@ -65,11 +65,15 @@ body {
   content: "\2026";
 }
 
+.subHeader {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
 ol.participants {
   margin: 0;
   padding: 10px;
   list-style-type: none;
-  border-bottom: 1px solid #ddd;
   color: #888;
   display: block;
 }
@@ -77,6 +81,7 @@ ol.participants {
 ol.participants li {
   display: inline;
   cursor: pointer;
+  color: #5180D0;
 }
 
 li.participant:hover {
@@ -90,9 +95,11 @@ li.participant:not(:last-child):after{
 .old {
   padding: 5px;
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
   color: #5180D0;
   cursor: pointer;
+  margin: 0 10px 10px 10px;
 
   /* we hide this by default and then show it if necessary */
   display: none;
@@ -108,12 +115,13 @@ ol.messages {
 
 li.message {
   margin: 0;
-  padding: 10px;
+  padding:  5px 10px 10px 10px;
   border-bottom: 1px solid #ddd;
   background-color: #fff;
   color: #333;
   line-height: 1.5;
   overflow: hidden;
+  position: relative;
 }
 
 li.message[read=true]:not(:last-child) {
@@ -125,8 +133,23 @@ li.message:last-child {
 }
 
 li.message .headerblock {
-  padding-bottom: 1em;
   cursor: pointer;
+}
+
+li.message .headerblock input.fullMessageDropdown  {
+  -moz-border-radius: 0 0 2px 2px;
+  background: -moz-linear-gradient(center bottom , #EEEEEE 0%, #FFFFFF 100%) repeat scroll 0 0 #FFFFFF;
+  border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+  border-right: 1px solid #CCCCCC;
+  border-style: none solid solid;
+  border-width: medium 1px 1px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  width: 32px;
 }
 
 li.message .headerblock .avatar,
@@ -159,11 +182,10 @@ li.message .headerblock .messageactions {
 }
 
 li.message .headerblock .date {
-  float: right;
   font-size: 11px;
   color: #888;
   font-weight: normal;
-  padding-left: 1em;
+  margin: 0 0 5px 0;
 }
 
 li.message[read=true] .messageblock {
@@ -198,7 +220,6 @@ li.message .messageblock .fullbody.quote.expanded {
 }
 
 li.message .actionblock {
-  float: right;
   vertical-align: bottom;
 }
 
