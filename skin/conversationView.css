@@ -54,6 +54,12 @@ body {
   width: 640px;
 }
 
+#body {
+  width: 640px;
+  min-height: 100%;
+  border-right: 1px solid #ddd;
+}
+
 .header .title:empty:after {
   /* ellipsis &#8230; */
   content: "\2026";
@@ -64,7 +70,6 @@ ol.messages {
   margin: 0;
   padding: 0 0 40px 0;
   list-style-type: none;
-  min-height: 100%;
   border-right: 1px solid #ddd;
 }
 

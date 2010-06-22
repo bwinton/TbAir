@@ -42,6 +42,13 @@
   the hometab.css file which is included in every page.
 */
 
+#body {
+  line-height: 21px;
+  min-height: 100%;
+  width: 511px;
+  border-right: 1px solid #ddd;
+}
+
 .header {
   width: 511px;
   border-right: 1px solid #ddd;
@@ -54,7 +61,6 @@ ol.contacts {
   background-color: #fff;
   border-right: 1px solid #ddd;
   width: 511px;
-  min-height: 100%;
   padding-bottom: 40px;
   float: left;
   background-color: #fafafa;
@@ -81,7 +87,7 @@ li.contact {
   width: 65px;
 }
 .column.right {
-  width: 200px;
+  width: 400px;
 }
 
 li.contact .avatar {

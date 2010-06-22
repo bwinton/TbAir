@@ -46,6 +46,7 @@
   line-height: 21px;
   min-height: 100%;
   width: 511px;
+  border-right: 1px solid #ddd;
 }
 
 ol.conversations {
@@ -53,7 +54,6 @@ ol.conversations {
   margin: 0;
   padding: 0 0 40px 0;
   list-style-type: none;
-  min-height: 100%;
   border-right: 1px solid #ddd;
   float: left;
 }
@@ -141,6 +141,7 @@ ol.conversations {
   width: 0;
   top: -16px;
   left: 10px;
+  display: none;
 }
 
 .arrow2 {
@@ -152,6 +153,12 @@ ol.conversations {
   width: 0;
   top: -15px;
   left: 10px;
+  display: none;
+}
+
+.message.reply:first-child > .arrow,
+.message.reply:first-child > .arrow2 {
+  display: block;
 }
 
 .conversation[read=true] .replies {
