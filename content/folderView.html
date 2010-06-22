@@ -72,7 +72,7 @@
 
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
-    <li class="conversation" read="${read}" id="${id}" subject="${subject}">
+    <li class="conversation" read="${read}" id="${id}" subject="${topic.conversation.subject}">
 
       <div class="columns">
 
@@ -91,7 +91,7 @@
               <a class="action delete" onclick="deleteConversation($(this))">delete</a>
             </div>
             <div class="date">${topic.friendlyDate}</div>
-            <div class="subject" onclick="showMessages(event, $(this));">${subject}</div>
+            <div class="subject" onclick="showMessages(event, $(this));">${topic.conversation.subject}</div>
             <div class="body" onclick="showMessages(event, $(this));">${topic.synopsis}</div>
           </div>
           <ol class="messages replies" onclick="showMessages(event, $(this));">
