@@ -72,7 +72,9 @@
 
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
-    <li class="conversation" read="${read}" id="${id}" subject="${topic.conversation.subject}">
+    <li class="conversation" read="${read}" id="${id}"
+        subject="${topic.conversation.subject}"
+        timestamp="${last.date.getTime()}">
 
       <div class="columns">
 
@@ -103,7 +105,8 @@
                 <div class="body">${message.synopsis}</div>
               </li>
             {{/each}}
-              <li count="${unread.length}" class="more reply" onclick="showMessages(event, $(this));">
+              <li count="${unread.length}" class="more reply"
+                  onclick="showMessages(event, $(this));">
               ${unread.length} more unread replies
               </li>
           </ol>

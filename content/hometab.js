@@ -147,93 +147,6 @@ var hometab = {
     });
   },
 
-  showConversationsInFolder: function show_ConversationsInFolder(aWin, aFolder) {
-    //let t0 = new Date();
-    let self = this;
-    aWin.setHeaderTitle(getFolderNameAndCount(aFolder));
-    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
-
-    if (aFolder.flags & Ci.nsMsgFolderFlags.Virtual) {
-      let vFolder = new VirtualFolderHelper.wrapVirtualFolder(aFolder)
-      query.folder.apply(query, vFolder.searchFolders);
-    }
-    else {
-      query.folder(aFolder);
-    }
-    query.orderBy("-date");
-    query.limit(50);
-    //let t1 = new Date();
-    query.getCollection({
-      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
-      },
-      onItemsModified: function _onItemsModified(aItems, aCollection) {
-      },
-      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
-      },
-      /* called when our database query completes */
-      onQueryCompleted: function _onQueryCompleted(messages) {
-        //let t2 = new Date();
-        try {
-          let conversations = [];
-          let seenConversations = {};
-          for (var [,message] in Iterator(messages.items)) {
-            let id = message.conversationID;
-            self._augmentMessage(message);
-            if (!(id in seenConversations)) {
-              seenConversations[id] = {
-                  "id" : id,
-                  "topic" : message,
-                  "read" : message.read,
-                  "match" : message.conversation.subject,
-                  "all": [],
-                  "unread" : [],
-                  "attachments" : false,
-                  "starred" : false
-                  };
-            }
-            // only the unread messages
-            if (! message.read &&
-                // and not the topic message
-                message.id != seenConversations[id].topic.id) {
-              seenConversations[id].read = false;
-              seenConversations[id].unread.push(message);
-            }
-
-            if (!seenConversations[id].starred)
-              seenConversations[id].starred = message.starred;
-
-            if (!seenConversations[id].attachments)
-              seenConversations[id].attachments = (typeof message.attachmentTypes != "undefined" && message.attachmentTypes.length > 0)
-
-            seenConversations[id].match += [person.contact.name for each([,person] in Iterator(message.involves))].join('')
-
-            seenConversations[id].all.push(message);
-
-            //This is rarely going to work out correctly as we're creating our
-            // own conversation mapping over a subset of messages.  Only if the
-            // actual topic is in the 50 message limit will this trick work
-            if (message.date < seenConversations[id].topic.date) {
-              seenConversations[id].topic = message;
-            }
-
-          }
-          for each (let [,conversation] in Iterator(seenConversations)) {
-            conversations.push(conversation);
-          }
-          aWin.addContent(conversations);
-          //let t3 = new Date();
-          //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
-        } catch (e) {
-          Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
-          Application.console.log(e.stack);
-
-          dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
-          dump(e.stack);
-          dump("\n");
-        }
-      }});
-  },
-
   showMessages: function showMessages(aId, aSubject, aBackground) {
     let tabmail = document.getElementById("tabmail");
     let tabInfo = tabmail.tabInfo;
@@ -370,7 +283,7 @@ var hometab = {
           aWin.tab.results.push(message);
         }
         self.addMessages(aWin, aWin.tab.results);
-        aWin.setHeaderTitle(aWin.tab.title);
+        aWin.setHeaderTitle(items[0].conversation.subject);
       }});
   },
 
@@ -517,14 +430,14 @@ var homeTabType = {
     folderList: {
       type: "folderList",
       isDefault: false,
+      listeners : {},
 
       openTab: function fl_openTab(aTab, aArgs) {
         let folder = MailUtils.getFolderForURI(aArgs.id, true);
         aTab.folder = folder;
-        aTab.title = getFolderNameAndCount(folder);
         aTab.tabNode.setAttribute("read", (folder.getNumUnread(false) <= 0));
         aTab.id = aArgs.id;
-        window.title = aTab.title;
+        aTab.title = folder.prettyName;
 
         // Clone the browser for our new tab.
         aTab.browser = document.getElementById("browser").cloneNode(true);
@@ -534,17 +447,33 @@ var homeTabType = {
         aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
+
+        this.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folder);
+
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
+
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
-        //let folder = MailUtils.getFolderForURI(contentWindow.tab.id, true);
-        hometab.showConversationsInFolder(contentWindow, contentWindow.tab.folder);
+      htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
+        let folder = aContentWindow.tab.folder;
+        //let t0 = new Date();
+        let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+
+        if (folder.flags & Ci.nsMsgFolderFlags.Virtual) {
+          let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+          query.folder.apply(query, vFolder.searchFolders);
+        }
+        else {
+          query.folder(folder);
+        }
+        query.orderBy("-date");
+        query.limit(50);
+        //let t1 = new Date();
+        query.getCollection(this.listeners[folder.URI]);
       },
 
       showTab: function fl_showTab(aTab) {
-        window.title = aTab.title = getFolderNameAndCount(aTab.folder);
-        aTab.tabNode.setAttribute("read", (aTab.folder.getNumUnread(false) <= 0));
+        window.title = aTab.title;
         aTab.browser.setAttribute("type", "content-primary");
       },
       shouldSwitchTo: function onSwitchTo({id: aFolder}) {
@@ -565,6 +494,7 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function fl_closeTab(aTab) {
+        delete this.listeners[aTab.id];
         aTab.browser.destroy();
       },
       saveTabState: function fl_saveTabState(aTab) {
@@ -807,6 +737,304 @@ var homeTabType = {
     },
   },
 };
+
+function folderCollectionListener(aWin, aTab, aFolder) {
+  this.aWin = aWin;
+  this.tab = aTab;
+  this.folder = aFolder;
+  this.conversations = {};
+  this.collection = null;
+  this.queryCompleted = false;
+}
+folderCollectionListener.prototype = {
+  // Return the unread count for conversations (which we've seen) in this folder
+  unread: function fcl_unread() {
+    return [conversation.unread for each([,conversation] in
+                                         Iterator(this.conversations))].length;
+  },
+  updateTitle: function fcl_updateTitle() {
+    let unread = this.unread();
+    let title = this.folder.prettyName + (unread > 0? " (" + unread + ")" : "");
+    this.tab.browser.contentWindow.setHeaderTitle(title);
+    this.tab.title = title;
+    document.getElementById("tabmail").setTabTitle(this.tab);
+    this.tab.tabNode.setAttribute("read", (unread <= 0));
+  },
+  onItemsAdded: function fcl_onItemsAdded(aItems, aCollection) {
+    //Application.console.log("onItemsAdded,aItems: " + aItems);
+    //Application.console.log("onItemsAdded,aCollection: " + aCollection.items);
+    if (!this.queryCompleted)
+      return;
+
+    //let t2 = new Date();
+    try {
+      let conversations = [];
+      for (var [,message] in Iterator(aItems)) {
+        let id = message.conversationID;
+        hometab._augmentMessage(message);
+        if (!(id in this.conversations)) {
+          this.conversations[id] = message.conversation;
+          this.conversations[id].topic = message;
+          this.conversations[id].last = message;
+          this.conversations[id].read = message.read;
+          this.conversations[id].match = message.conversation.subject;
+          this.conversations[id].all = [];
+          this.conversations[id].unread = [];
+          this.conversations[id].attachments = (typeof message.attachmentTypes != "undefined" &&
+                                                message.attachmentTypes.length > 0);
+          this.conversations[id].starred = message.starred;
+        }
+        //This won't exactly give us a unique list if there are many items from
+        // the same conversation.  It will just mean it's rendered more than once
+        conversations.push(this.conversations[id]);
+
+        let conversation = this.conversations[id];
+        this.conversations[id].unread = this.conversations[id].all.filter(function(m) { return !m.read &&
+                                                                                                m != conversation.topic; });
+        this.conversations[id].unread.sort(function(a,b) { return a.date > b.date; });
+
+        this.conversations[id].read = (this.conversations[id].unread.length <= 0 && this.conversations[id].topic.read)
+
+        this.conversations[id].starred = this.conversations[id].all.some(function(m) { return m.starred; });
+
+        // we're going to ignore if the person has removed attachments from
+        // previous conversations, that's just lame
+        if (!this.conversations[id].attachments)
+          this.conversations[id].attachments = (typeof message.attachmentTypes != "undefined" &&
+                                                message.attachmentTypes.length > 0)
+
+        this.conversations[id].match += [person.contact.name for each([,person] in
+                                                                      Iterator(message.involves))].join('');
+
+        this.conversations[id].all.push(message);
+
+        //This is rarely going to work out correctly as we're creating our
+        // own conversation mapping over a subset of messages.  Only if the
+        // actual topic is in the 50 message limit will this trick work
+        if (message.date < this.conversations[id].topic.date) {
+          let topic = this.conversations[id].topic;
+          this.conversations[id].topic = message;
+        }
+
+        //Set the last message up so we can easily access that
+        if (message.date > this.conversations[id].last.date) {
+          this.conversations[id].last = message;
+        }
+      }
+
+      this.aWin.updateConversations(conversations);
+      this.updateTitle();
+
+      //let t3 = new Date();
+      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
+    } catch (e) {
+      Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      Application.console.log(e.stack);
+
+      dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      dump(e.stack);
+      dump("\n");
+    }
+  },
+  onItemsModified: function fcl_onItemsModified(aItems, aCollection) {
+
+    if (!this.queryCompleted)
+      return;
+
+    //let t2 = new Date();
+    try {
+      let updatedConversations = [];
+      for (var [,message] in Iterator(aItems)) {
+        let id = message.conversationID;
+        hometab._augmentMessage(message);
+        if (!(id in this.conversations)) {
+          Application.console.log("YIKES! we shouldn't be getting new conversations in onItemsModified");
+        } else
+          updatedConversations.push(this.conversations[id])
+
+        let conversation = this.conversations[id];
+        this.conversations[id].unread = this.conversations[id].all.filter(function(m) { return !m.read &&
+                                                                                                m != conversation.topic; });
+        this.conversations[id].unread.sort(function(a,b) { return a.date > b.date; });
+
+        this.conversations[id].read = (this.conversations[id].unread.length <= 0 && this.conversations[id].topic.read)
+
+        this.conversations[id].starred = this.conversations[id].all.some(function(m) { return m.starred; });
+
+        // we're going to ignore if the person has removed attachments from
+        // previous conversations, that's just lame
+        if (!this.conversations[id].attachments)
+          this.conversations[id].attachments = (typeof message.attachmentTypes != "undefined" &&
+                                                message.attachmentTypes.length > 0)
+
+        //This is rarely going to work out correctly as we're creating our
+        // own conversation mapping over a subset of messages.  Only if the
+        // actual topic is in the 50 message limit will this trick work
+        if (message.date < this.conversations[id].topic.date) {
+          let topic = this.conversations[id].topic;
+          this.conversations[id].topic = message;
+        }
+
+        //Set the last message up so we can easily access that
+        if (message.date > this.conversations[id].last.date) {
+          this.conversations[id].last = message;
+        }
+      }
+
+      this.aWin.updateConversations(updatedConversations);
+      this.updateTitle();
+
+      //let t3 = new Date();
+      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
+    } catch (e) {
+      Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      Application.console.log(e.stack);
+
+      dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      dump(e.stack);
+      dump("\n");
+    }
+  },
+  onItemsRemoved: function fcl_onItemsRemoved(aItems, aCollection) {
+
+    //let t2 = new Date();
+    try {
+      let removedConversations = [];
+      let updatedConversations = [];
+      for (var [,message] in Iterator(aItems)) {
+        let id = message.conversationID;
+        if (!(id in this.conversations)) {
+          Application.console.log("YIKES! we shouldn't be getting empty conversations in onItemsRemoved");
+        } else {
+          // Remove the removed item (message) from our conversation container
+          this.conversations[id].all = this.conversations[id].all.filter(function(m) { return m != message; });
+          if (this.conversations[id].all.length <= 0)
+            removedConversations.push(this.conversations[id])
+          else
+            updatedConversations.push(this.conversations[id])
+        }
+
+        // if the conversation was unread and this message was unread recalculate the conversation
+        if (!this.conversations[id].read && !message.read) {
+          let conversation = this.conversations[id];
+          this.conversations[id].unread = this.conversations[id].all.filter(function(m) { return !m.read && m != conversation.topic; });
+          this.conversations[id].unread.sort(function(a,b) { return a.date > b.date; });
+          this.conversations[id].read = (this.conversations[id].unread.length <= 0 &&
+                                         this.conversations[id].topic.read)
+        }
+
+        // If the conversation was starred or this message was starred recalculate it
+        if (this.conversations[id].starred || message.starred)
+          this.conversations[id].starred = this.conversations[id].all.some(function(m) { return m.starred; });
+
+        // if this conversation had attachments and this message was one of them
+        // we need to check if there are any attachments in the conversation at this point
+        if (this.conversations[id].attachments && message.attachments.length > 0)
+          this.conversations[id].attachments = this.conversations[id].all.some(function(m) { return m.attachments.length > 0; });
+
+      }
+      this.aWin.updateConversations(updatedConversations);
+      this.aWin.removeConversations(removedConversations, this.conversations);
+      this.updateTitle();
+
+      //let t3 = new Date();
+      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
+    } catch (e) {
+      Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      Application.console.log(e.stack);
+
+      dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      dump(e.stack);
+      dump("\n");
+    }
+
+  },
+  onQueryCompleted: function fcl_onQueryCompleted(aCollection) {
+    // Turns out if you don't hold onto this collection then Gloda won't give you
+    // further events about the items in the query
+    this.collection = aCollection;
+    //let t2 = new Date();
+    try {
+      let conversations = [];
+      for (var [,message] in Iterator(aCollection.items)) {
+        let id = message.conversationID;
+        hometab._augmentMessage(message);
+        if (!(id in this.conversations)) {
+          this.conversations[id] = message.conversation;
+          this.conversations[id].topic = message;
+          this.conversations[id].last = message;
+          this.conversations[id].read = message.read;
+          this.conversations[id].match = message.conversation.subject;
+          this.conversations[id].all = [];
+          this.conversations[id].unread = [];
+          this.conversations[id].attachments = (message.attachments.length > 0);
+          this.conversations[id].starred = message.starred;
+          conversations.push(this.conversations[id]);
+        }
+        // only the unread messages
+        if (! message.read ) {
+          this.conversations[id].unread.push(message);
+        }
+
+        if (!this.conversations[id].starred)
+          this.conversations[id].starred = message.starred;
+
+        if (!this.conversations[id].attachments)
+          this.conversations[id].attachments = (message.attachments.length > 0);
+
+        this.conversations[id].match += [person.contact.name for each([,person] in
+                                                                      Iterator(message.involves))].join('');
+
+        this.conversations[id].all.push(message);
+
+        //This is rarely going to work out correctly as we're creating our
+        // own conversation mapping over a subset of messages.  Only if the
+        // actual topic is in the 50 message limit will this trick work
+        if (message.date < this.conversations[id].topic.date) {
+          this.conversations[id].topic = message;
+        }
+
+        //Set the last message up so we can easily access that
+        if (message.date > this.conversations[id].last.date) {
+          this.conversations[id].last = message;
+        }
+      }
+
+      for each(let [i,conversation] in Iterator(this.conversations)) {
+        //Mark the conversation read or not
+        conversation.read = (conversation.unread.length <= 0);
+
+        //Go through the unread and pull the topic message out
+        for each(let [i,msg] in Iterator(conversation.unread)) {
+          if (msg == conversation.topic) {
+            conversation.unread.splice(i,1);
+            break;
+          }
+        }
+
+        //Sort the unread list
+        conversation.unread.sort(function(a,b) { return a.date > b.date; });
+      }
+
+      //Let this listener begin working on new onItemsAdded calls
+      //XXX we might lose some items if there was a call while we were processing
+      this.queryCompleted = true;
+
+      this.aWin.addContent(conversations);
+      this.updateTitle();
+
+      //let t3 = new Date();
+      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
+    } catch (e) {
+      Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      Application.console.log(e.stack);
+
+      dump("\n\nCaught error in Conversations Query.  e="+e+"\n");
+      dump(e.stack);
+      dump("\n");
+    }
+  }
+}
 
 function getFolderNameAndCount(aFolder) {
   let unread = aFolder.getNumUnread(false);

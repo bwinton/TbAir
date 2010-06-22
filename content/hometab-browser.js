@@ -67,10 +67,7 @@ function addContent(conversations) {
 
   for (let [,conversation] in Iterator(conversations)) {
     // We figure out what strings a conversation would match, and stash that
-    // in a DOM node for use by the search field.  Ideally we'd do that on the
-    // gloda objects, but for some reason that's not working for me.
-    // In particular, conversation.messages is busted.  Is "conversation" not
-    // a real GlodaConversation object?
+    // in a DOM node for use by the search field.
     conversationMap[conversation.id] = conversation.match;
   }
 
@@ -78,6 +75,56 @@ function addContent(conversations) {
   $("#conversationtmpl").render(conversations).each(function(i, li) {
     li.conversation = conversations[i];
     }).appendTo($("ol.conversations"));
+  // cache the gloda objects
+  document.getElementById("cache").conversations = conversationMap;
+}
+
+function removeConversations(conversations, all) {
+  let conversationMap = {};
+
+  for (let [,conversation] in Iterator(conversations)) {
+    $("#"+ conversation.id).remove();
+  }
+
+  // Re-build the conversation map for searching
+  for (let [,conversation] in Iterator(all)) {
+    // We figure out what strings a conversation would match, and stash that
+    // in a DOM node for use by the search field.
+    conversationMap[conversation.id] = conversation.match;
+  }
+
+  // cache the gloda objects
+  document.getElementById("cache").conversations = conversationMap;
+}
+
+function updateConversations(conversations) {
+  let conversationMap = {};
+
+  for (let [,conversation] in Iterator(conversations)) {
+    // We figure out what strings a conversation would match, and stash that
+    // in a DOM node for use by the search field.
+    conversationMap[conversation.id] = conversation.match;
+
+    let oldConversation = $("#"+ conversation.id);
+    let newConversation = $("#conversationtmpl").render(conversation);
+    // This is a new conversation
+
+    if (oldConversation.length <= 0 || oldConversation.attr("timestamp") != newConversation.attr("timestamp")) {
+      $("ol.conversations").each(function() {
+        if($(this).attr("timestamp") < newConversation.attr("timestamp")) {
+          Application.console.log("removed: " + "li#"+ oldConversation.attr("timestamp"));
+          oldConversation.remove();
+          Application.console.log("added: " + "li#"+ newConversation.attr("timestamp"));
+          newConversation.insertBefore($(this))
+          return; // Leave this loop
+        }
+      })
+    // An existing conversation was modified somehow, just re-render it
+    } else {
+      oldConversation.replaceWith(newConversation);
+    }
+  }
+
   // cache the gloda objects
   document.getElementById("cache").conversations = conversationMap;
 }
@@ -91,16 +138,15 @@ function markAsRead(message) {
 }
 
 function addMessages(messages) {
-  let messagesElem = $("ol.messages");
-
   let messageMap = {};
   // Augment the data with styles.
-  for (let mId in messages) {
-    messageMap[messages[mId].id] = messages[mId];
-    markAsRead(messages[mId]); // should really happen on making it into viewport, but...
+  for each(let [i,message] in Iterator(messages)) {
+    messageMap[message.id] = message;
+    if(!message.read)
+      markAsRead(message); // should really happen on making it into viewport, but...
   }
   // And render the template.
-  $("#messagetmpl").render(messages).appendTo(messagesElem);
+  $("#messagetmpl").render(messages).appendTo($("ol.messages"));
   
   // And expand and show the last message.
   let lastMessage = $("#"+messages[messages.length-1].id);
@@ -257,6 +303,8 @@ function filterMessages(event) {
     if (handleSpecialFilters(filter, $(this)))
       return;
     let message = document.getElementById("cache").messages[$(this).attr("id")];
+    if (!message)
+      return;
     let matchString = message.indexedBodyText + message.subject + message.from.contact.name;
     if (matchString.search(new RegExp(filter, "i")) < 0)
       $(this).hide();
