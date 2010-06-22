@@ -65,6 +65,28 @@ body {
   content: "\2026";
 }
 
+ol.participants {
+  margin: 0;
+  padding: 10px;
+  list-style-type: none;
+  border-bottom: 1px solid #ddd;
+  color: #888;
+  display: block;
+}
+
+ol.participants li {
+  display: inline;
+  cursor: pointer;
+}
+
+li.participant:hover {
+  text-decoration: underline;
+}
+
+li.participant:not(:last-child):after{
+  content: ", ";
+}
+
 ol.messages {
   width: 640px;
   margin: 0;

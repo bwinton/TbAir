@@ -54,7 +54,8 @@
     <div class="search"><input type="text" class="search" onkeyup="filterMessages(event)"/></div>
     <div class="actions"><button class="action options">▾</button></div>
   </div>
-  <ol class="messages filtered"/>
+  <ol class="participants"></ol>
+  <ol class="messages filtered"></ol>
   <div id="cache" style="display: none"></div>
 </body>
   <!-- Libs -->
@@ -107,6 +108,10 @@
           </div>
         </div>
     </li>
+  </script>
+
+  <script id="participanttmpl" type="text/html">
+    <li class="participant" id="${id}"><span class="name">${contact.name}</span></li>
   </script>
 
 </html>

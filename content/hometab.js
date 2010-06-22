@@ -352,6 +352,8 @@ var hometab = {
         }
         self.addMessages(aWin, aWin.tab.results);
         aWin.setHeaderTitle(items[0].conversation.subject);
+        //We can assume this is the conversation topic even though it is not guaranteed
+        aWin.addParticipants(items[0].involves);
       }});
   },
 

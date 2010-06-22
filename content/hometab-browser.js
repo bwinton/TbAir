@@ -137,6 +137,10 @@ function markAsRead(message) {
   }
 }
 
+function addParticipants(involves) {
+  $("#participanttmpl").render(involves).appendTo($("ol.participants"));
+}
+
 function addMessages(messages) {
   let messageMap = {};
   // Augment the data with styles.
