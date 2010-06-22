@@ -448,7 +448,7 @@ var homeTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
 
-        this.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folder);
+        homeTabType.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folder);
 
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
 
@@ -469,7 +469,7 @@ var homeTabType = {
         query.orderBy("-date");
         query.limit(50);
         //let t1 = new Date();
-        query.getCollection(this.listeners[folder.URI]);
+        query.getCollection(homeTabType.modes.folderList.listeners[folder.URI]);
       },
 
       showTab: function fl_showTab(aTab) {
@@ -494,7 +494,7 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function fl_closeTab(aTab) {
-        delete this.listeners[aTab.id];
+        delete homeTabType.modes.folderList.listeners[aTab.id];
         aTab.browser.destroy();
       },
       saveTabState: function fl_saveTabState(aTab) {
