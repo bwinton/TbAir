@@ -157,8 +157,8 @@ function addMessages(messages) {
 
   // If we have read messages we'll hide them so lets show the load helper bar
   if (read > 0)
-    if (messages.length == 2)
-      // If we're only looking at two messages lets just show it
+    if (messages.length <= 2)
+      // If we're only looking at two or less messages lets just show them
       $("ol.messages li.message:first-child").fadeIn();
     else
     // Give a count of messages that aren't visible because they are read
