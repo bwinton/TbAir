@@ -143,20 +143,26 @@ function addParticipants(involves) {
 
 function addMessages(messages) {
   let messageMap = {};
+  let read = 0;
   // Augment the data with styles.
   for each(let [i,message] in Iterator(messages)) {
     messageMap[message.id] = message;
     if(!message.read)
       markAsRead(message); // should really happen on making it into viewport, but...
+    else
+      read++;
   }
   // And render the template.
   $("#messagetmpl").render(messages).appendTo($("ol.messages"));
-  
-  // And expand and show the last message.
-  let lastMessage = $("#"+messages[messages.length-1].id);
 
-  // XXX: This seems to mostly work, but not entirely for long threads.
-  lastMessage[0].scrollIntoView(true);
+  // If we have read messages we'll hide them so lets show the load helper bar
+  if (read > 0)
+    if (messages.length == 2)
+      // If we're only looking at two messages lets just show it
+      $("ol.messages li.message:first-child").fadeIn();
+    else
+    // Give a count of messages that aren't visible because they are read
+    $(".old").fadeIn().find(".count").text($("ol.messages li.message").not(":visible").length);
 
   // cache the gloda objects
   document.getElementById("cache").messages = messageMap;

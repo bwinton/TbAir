@@ -55,6 +55,7 @@
     <div class="actions"><button class="action options">▾</button></div>
   </div>
   <ol class="participants"></ol>
+  <div class="old" onclick="$(this).hide();$('ol.messages li.message[read=true]').fadeIn();">show older messages <span class="count"></span></div>
   <ol class="messages filtered"></ol>
   <div id="cache" style="display: none"></div>
 </body>

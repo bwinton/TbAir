@@ -87,6 +87,17 @@ li.participant:not(:last-child):after{
   content: ", ";
 }
 
+.old {
+  padding: 5px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  color: #5180D0;
+  cursor: pointer;
+
+  /* we hide this by default and then show it if necessary */
+  display: none;
+}
+
 ol.messages {
   width: 640px;
   margin: 0;
@@ -103,6 +114,10 @@ li.message {
   color: #333;
   line-height: 1.5;
   overflow: hidden;
+}
+
+li.message[read=true]:not(:last-child) {
+  display: none;
 }
 
 li.message:last-child {
