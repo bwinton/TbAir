@@ -124,20 +124,17 @@ li.message .headerblock .date {
   padding-left: 1em;
 }
 
-li.message[read=true] .messageblock .fullbody {
+li.message[read=true] .messageblock {
   display: none;
 }
 
-li.message[read=false] .messageblock .fullbody {
+li.message[read=false] .messageblock {
   display: block;
 }
 
-li.message[read=true] .messageblock .synopsis {
+/* For now we always want to show the last message of the conversation */
+li.message[read=true]:last-child .messageblock {
   display: block;
-}
-
-li.message[read=false] .messageblock .synopsis {
-  display: none;
 }
 
 li.message .messageblock .fullbody a.quoteToggle {
@@ -156,10 +153,6 @@ li.message .messageblock .fullbody.quote {
 
 li.message .messageblock .fullbody.quote.expanded {
   display: block;
-}
-
-li.message[read=true] .actionblock {
-  display: none;
 }
 
 li.message .actionblock {
