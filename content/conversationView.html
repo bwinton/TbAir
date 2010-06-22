@@ -69,7 +69,7 @@
 
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
-    <li class="message" read="${read}" id="${id}">
+    <li class="message" read="${read}" id="${id}" messageKey="${messageKey}">
         <div class="headerblock" onclick="$(this).next().slideToggle()">
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from name">${from.contact.name}</div>
@@ -84,6 +84,9 @@
                 category="${attachment.category}"
                 mimetype="${attachment.type.fullType}"
                 title="${attachment.categoryLabel}"
+                name="${attachment.name}"
+                url="${attachment.url}"
+                uri="${attachment.uri}"
                 class="attachment">
               <img class="icon"
                    src="moz-icon://${attachment.name}?size=32&contentType=${attachment.type.fullType}"/>

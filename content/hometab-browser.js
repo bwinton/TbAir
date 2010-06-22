@@ -168,6 +168,23 @@ function populateMessageBody(id, data) {
   }
 }
 
+function populateAttachment(aMessageKey, aAttachments) {
+  try {
+    let attachments = $(".message[messageKey='"+aMessageKey+"'] .attachments");
+    for each(let [,attachment] in Iterator(aAttachments)) {
+      let li = attachments.find("[name='"+attachment.name+"'][mimetype='"+attachment.fullType+"']");
+      li.attr({"url" : attachment.url, "uri" : attachment.uri,
+               "isExternal" : attachment.isExternal})
+    }
+  } catch (e) {
+    logException(e);
+  }
+}
+
+function openAttachment(element) {
+  hometab.openAttachment(element);
+}
+
 function addContacts(me, contacts) {
   $("#contacttmpl").render(contacts).appendTo(".contacts");
 }

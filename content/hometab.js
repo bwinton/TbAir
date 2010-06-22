@@ -44,6 +44,7 @@ Cu.import("resource://app/modules/virtualFolderWrapper.js");
 // -- Import modules we need.
 Cu.import("resource://app/modules/gloda/public.js");
 Cu.import("resource:///modules/gloda/utils.js");
+Cu.import("resource:///modules/gloda/mimemsg.js");
 Cu.import("resource:///modules/templateUtils.js");
 Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
@@ -230,6 +231,36 @@ var hometab = {
     }
   },
 
+  populateAttachment: function hometab_populateAttachment(aMsgHdr, aMimeMsg) {
+    //Get all the URLs for images
+    let attachments = new Array();
+    for (let [,attachment] in Iterator(aMimeMsg.allAttachments)) {
+      attachments.push({ name : attachment.name,
+                         url : attachment.url,
+                         uri : aMsgHdr.folder.getUriForMsg(aMsgHdr),
+                         fullType : attachment.contentType,
+                         isExternal : attachment.isExternal });
+    }
+    // we use the messageKey because it's the cheapest item that both the
+    // GlodaMessage and nsIMsgDBHdr have
+    this.populateAttachment(aMsgHdr.messageKey, attachments)
+  },
+
+  openAttachment: function(aAttachmentElement) {
+    //Application.console.log('aAttachmentElement.attr("mimetype"): ' + aAttachmentElement.attr("mimetype"));
+    //Application.console.log('aAttachmentElement.attr("url"): ' + aAttachmentElement.attr("url"));
+    //Application.console.log('aAttachmentElement.attr("name"): ' + aAttachmentElement.attr("name"));
+    //Application.console.log('aAttachmentElement.attr("uri"): ' + aAttachmentElement.attr("uri"));
+    //Application.console.log('aAttachmentElement.attr("isExternal"): ' + aAttachmentElement.attr("isExternal"));
+
+    messenger.setWindow(window, msgWindow);
+    messenger.openAttachment(aAttachmentElement.attr("mimetype"),
+                             aAttachmentElement.attr("url"),
+                             encodeURIComponent(aAttachmentElement.attr("name")),
+                             aAttachmentElement.attr("uri"),
+                             aAttachmentElement.attr("isExternal"));
+  },
+
   _augmentMessage: function (message) {
     message.friendlyDate = makeFriendlyDateAgo(message.date);
     message.synopsis = (message.indexedBodyText || "").substr(0, 140);
@@ -243,7 +274,8 @@ var hometab = {
                                     },
                              categoryLabel : message.attachmentTypes[i].categoryLabel,
                              category : message.attachmentTypes[i].category,
-                             url : null
+                             url : null, /* attachment location */
+                             uri : null  /* message location */
                            }
                            for each([i,attachment] in
                                     Iterator(message.attachmentNames || []))
@@ -251,10 +283,46 @@ var hometab = {
   },
 
   addMessages: function addMessages(aWin, aMessages) {
+    //Lay down the message structure
     aWin.addMessages(aMessages);
-    for (var i in aMessages) {
-      this.populateMessageBody(aWin, aMessages[i]);
+
+    let readMessages = [];
+    let unreadAttachments = [], readAttachments = [];
+    //First lets handle the unread messages
+    for each(let [i,message] in Iterator(aMessages)) {
+      if (!message.read) {
+        this.populateMessageBody(aWin, message);
+        if (message.attachments.length > 0)
+          unreadAttachments.push(message);
+      }
+      else {
+        readMessages.push(message);
+        if (message.attachments.length > 0)
+          readAttachments.push(message);
+      }
     }
+
+    // Now stream in the unread attachments
+    for each(let [i,message] in Iterator(unreadAttachments)) {
+      let msgHdr = message.folderMessage;
+      if (msgHdr)
+        MsgHdrToMimeMessage(msgHdr, aWin, this.populateAttachment,
+                            true /*Allow Download*/, {});
+    }
+
+    // Now stream in the read messages
+    for each(let [i,message] in Iterator(readMessages)) {
+      this.populateMessageBody(aWin, message);
+    }
+
+    // Finally grab all the attachments
+    for each(let [i,message] in Iterator(readAttachments)) {
+      let msgHdr = message.folderMessage;
+      if (msgHdr)
+        MsgHdrToMimeMessage(msgHdr, aWin, this.populateAttachment,
+                            true /*Allow Download*/, {});
+    }
+
   },
 
   showMessagesInConversation: function showMessagesInConversation(aWin) {
