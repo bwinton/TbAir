@@ -149,23 +149,11 @@ var hometab = {
   },
 
   showMessages: function showMessages(aId, aSubject, aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    let tabInfo = tabmail.tabInfo;
-    let tabContainer = tabmail.tabContainer;
-    let index = tabInfo.indexOf(tabmail.currentTabInfo);
-    tabmail.openTab("messageList", {
+    openSubTab("messageList", {
       id: aId,
       title: aSubject,
       background : aBackground
     });
-    // Move the new tab into position, if it's not already the last child.
-    if (index != tabContainer.children.length - 1) {
-      let last = tabInfo.pop();
-      tabInfo.splice(index+1, 0, last);
-      last = tabContainer.lastElementChild;
-      tabContainer.removeChild(last);
-      tabContainer.insertBefore(last, tabContainer.children[index+1]);
-    }
   },
 
   tempFolder: null,
@@ -247,18 +235,10 @@ var hometab = {
   },
 
   openAttachment: function(aAttachmentElement) {
-    let log = Application.console.log;
-    log("mimetype: " + aAttachmentElement.attr("mimetype"));
-    log("url: " + aAttachmentElement.attr("url"));
-    log("name: " + aAttachmentElement.attr("name"));
-    log("uri: " + aAttachmentElement.attr("uri"));
-    log("isExternal: " + aAttachmentElement.attr("isExternal"));
-
-    document.getElementById("tabmail")
-            .openTab("contentTab",
-                     {"contentPage" : aAttachmentElement.attr("url"),
-                      "title" : aAttachmentElement.attr("name"),
-                     });
+    openSubTab("contentTab", {
+      contentPage : aAttachmentElement.attr("url"),
+      title : aAttachmentElement.attr("name"),
+    });
   },
 
   _augmentMessage: function (message) {
@@ -449,20 +429,14 @@ var contentTabType = {
   perTabPanel: "vbox",
   lastBrowserId: 0,
 
-  get loadingTabString() {
-    delete this.loadingTabString;
-    return this.loadingTabString = document.getElementById("bundle_messenger")
-                                           .getString("loadingTab");
-  },
-
   modes: {
     contentTab: {
       type: "contentTab",
-      
+
       openTab: function ct_onTabOpened(aTab, aArgs) {
         if (!"contentPage" in aArgs)
           throw("contentPage must be specified");
-    
+
         // Clone the browser for our new tab.
         aTab.title = aArgs.title;
         aTab.browser = document.getElementById("browser").cloneNode(true);
@@ -471,187 +445,151 @@ var contentTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI(aArgs.contentPage);
-    
+
         this.lastBrowserId++;
+      },
+
+      shouldSwitchTo: function ct_onSwitchTo({contentPage: aContentPage}) {
+        let tabmail = document.getElementById("tabmail");
+        let tabInfo = tabmail.tabInfo;
+
+        // Remove any anchors - especially for the about: pages, we just want
+        // to re-use the same tab.
+        let regEx = new RegExp("#.*");
+
+        let contentUrl = aContentPage.replace(regEx, "");
+
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].mode.name == this.name &&
+              tabInfo[selectedIndex].browser.currentURI.spec
+                                    .replace(regEx, "") == contentUrl) {
+            // Ensure we go to the correct location on the page.
+            tabInfo[selectedIndex].browser
+                                  .setAttribute("src", aContentPage);
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
+
+      closeTab: function ct_onTabClosed(aTab) {},
+
+      saveTabState: function ct_onSaveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
+      },
+
+      showTab: function ct_onShowTab(aTab) {
+        aTab.browser.setAttribute("type", "content-primary");
+      },
+
+      persistTab: function ct_onPersistTab(aTab) {
+        if (aTab.browser.currentURI.spec == "about:blank")
+          return null;
+
+        return {
+          tabURI: aTab.browser.currentURI.spec,
+        };
+      },
+
+      restoreTab: function ct_onRestoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("contentTab", { contentPage: aPersistedState.tabURI,
+                                         background: true } );
+      },
+
+      supportsCommand: function ct_supportsCommand(aCommand, aTab) {
+        switch (aCommand) {
+          case "cmd_fullZoomReduce":
+          case "cmd_fullZoomEnlarge":
+          case "cmd_fullZoomReset":
+          case "cmd_fullZoomToggle":
+          case "cmd_find":
+          case "cmd_findAgain":
+          case "cmd_findPrevious":
+          case "cmd_printSetup":
+          case "cmd_print":
+          case "button_print":
+          case "cmd_stop":
+          case "cmd_reload":
+          // XXX print preview not currently supported - bug 497994 to implement.
+          // case "cmd_printpreview":
+            return true;
+          default:
+            return false;
+        }
+      },
+
+      isCommandEnabled: function ct_isCommandEnabled(aCommand, aTab) {
+        switch (aCommand) {
+          case "cmd_fullZoomReduce":
+          case "cmd_fullZoomEnlarge":
+          case "cmd_fullZoomReset":
+          case "cmd_fullZoomToggle":
+          case "cmd_find":
+          case "cmd_findAgain":
+          case "cmd_findPrevious":
+          case "cmd_printSetup":
+          case "cmd_print":
+          case "button_print":
+          // XXX print preview not currently supported - bug 497994 to implement.
+          // case "cmd_printpreview":
+            return true;
+          case "cmd_reload":
+            return aTab.reloadEnabled;
+          case "cmd_stop":
+            return aTab.busy;
+          default:
+            return false;
+        }
+      },
+
+      doCommand: function ct_isCommandEnabled(aCommand, aTab) {
+        switch (aCommand) {
+          case "cmd_fullZoomReduce":
+            ZoomManager.reduce();
+            break;
+          case "cmd_fullZoomEnlarge":
+            ZoomManager.enlarge();
+            break;
+          case "cmd_fullZoomReset":
+            ZoomManager.reset();
+            break;
+          case "cmd_fullZoomToggle":
+            ZoomManager.toggleZoom();
+            break;
+          case "cmd_find":
+            aTab.findbar.onFindCommand();
+            break;
+          case "cmd_findAgain":
+            aTab.findbar.onFindAgainCommand(false);
+            break;
+          case "cmd_findPrevious":
+            aTab.findbar.onFindAgainCommand(true);
+            break;
+          case "cmd_printSetup":
+            PrintUtils.showPageSetup();
+            break;
+          case "cmd_print":
+            PrintUtils.print();
+            break;
+          // XXX print preview not currently supported - bug 497994 to implement.
+          //case "cmd_printpreview":
+          //  PrintUtils.printPreview();
+          //  break;
+          case "cmd_stop":
+            aTab.browser.stop();
+            break;
+          case "cmd_reload":
+            aTab.browser.reload();
+            break;
+        }
+      },
+
+      getBrowser: function ct_getBrowser(aTab) {
+        return aTab.browser;
       },
     },
   },
-
-  shouldSwitchTo: function ct_onSwitchTo({contentPage: aContentPage}) {
-    let tabmail = document.getElementById("tabmail");
-    let tabInfo = tabmail.tabInfo;
-
-    // Remove any anchors - especially for the about: pages, we just want
-    // to re-use the same tab.
-    let regEx = new RegExp("#.*");
-
-    let contentUrl = aContentPage.replace(regEx, "");
-
-    for (let selectedIndex = 0; selectedIndex < tabInfo.length;
-         ++selectedIndex) {
-      if (tabInfo[selectedIndex].mode.name == this.name &&
-          tabInfo[selectedIndex].browser.currentURI.spec
-                                .replace(regEx, "") == contentUrl) {
-        // Ensure we go to the correct location on the page.
-        tabInfo[selectedIndex].browser
-                              .setAttribute("src", aContentPage);
-        return selectedIndex;
-      }
-    }
-    return -1;
-  },
-
-  closeTab: function ct_onTabClosed(aTab) {
-    aTab.browser.removeEventListener("DOMTitleChanged",
-                                     aTab.titleListener, true);
-    aTab.browser.removeEventListener("DOMWindowClose",
-                                     aTab.closeListener, true);
-    //aTab.browser.webProgress.removeProgressListener(aTab.filter);
-    //aTab.filter.removeProgressListener(aTab.progressListener);
-    //aTab.browser.destroy();
-  },
-  saveTabState: function ct_onSaveTabState(aTab) {
-    aTab.browser.setAttribute("type", "content-targetable");
-  },
-  showTab: function ct_onShowTab(aTab) {
-    aTab.browser.setAttribute("type", "content-primary");
-  },
-  persistTab: function ct_onPersistTab(aTab) {
-    if (aTab.browser.currentURI.spec == "about:blank")
-      return null;
-
-    let onClick = aTab.browser.getAttribute("onclick");
-
-    return {
-      tabURI: aTab.browser.currentURI.spec,
-      clickHandler: onClick ? onClick : null
-    };
-  },
-  restoreTab: function ct_onRestoreTab(aTabmail, aPersistedState) {
-    aTabmail.openTab("contentTab", { contentPage: aPersistedState.tabURI,
-                                     clickHandler: aPersistedState.clickHandler,
-                                     background: true } );
-  },
-  supportsCommand: function ct_supportsCommand(aCommand, aTab) {
-    switch (aCommand) {
-      case "cmd_fullZoomReduce":
-      case "cmd_fullZoomEnlarge":
-      case "cmd_fullZoomReset":
-      case "cmd_fullZoomToggle":
-      case "cmd_find":
-      case "cmd_findAgain":
-      case "cmd_findPrevious":
-      case "cmd_printSetup":
-      case "cmd_print":
-      case "button_print":
-      case "cmd_stop":
-      case "cmd_reload":
-      // XXX print preview not currently supported - bug 497994 to implement.
-      // case "cmd_printpreview":
-        return true;
-      default:
-        return false;
-    }
-  },
-  isCommandEnabled: function ct_isCommandEnabled(aCommand, aTab) {
-    switch (aCommand) {
-      case "cmd_fullZoomReduce":
-      case "cmd_fullZoomEnlarge":
-      case "cmd_fullZoomReset":
-      case "cmd_fullZoomToggle":
-      case "cmd_find":
-      case "cmd_findAgain":
-      case "cmd_findPrevious":
-      case "cmd_printSetup":
-      case "cmd_print":
-      case "button_print":
-      // XXX print preview not currently supported - bug 497994 to implement.
-      // case "cmd_printpreview":
-        return true;
-      case "cmd_reload":
-        return aTab.reloadEnabled;
-      case "cmd_stop":
-        return aTab.busy;
-      default:
-        return false;
-    }
-  },
-  doCommand: function ct_isCommandEnabled(aCommand, aTab) {
-    switch (aCommand) {
-      case "cmd_fullZoomReduce":
-        ZoomManager.reduce();
-        break;
-      case "cmd_fullZoomEnlarge":
-        ZoomManager.enlarge();
-        break;
-      case "cmd_fullZoomReset":
-        ZoomManager.reset();
-        break;
-      case "cmd_fullZoomToggle":
-        ZoomManager.toggleZoom();
-        break;
-      case "cmd_find":
-        aTab.findbar.onFindCommand();
-        break;
-      case "cmd_findAgain":
-        aTab.findbar.onFindAgainCommand(false);
-        break;
-      case "cmd_findPrevious":
-        aTab.findbar.onFindAgainCommand(true);
-        break;
-      case "cmd_printSetup":
-        PrintUtils.showPageSetup();
-        break;
-      case "cmd_print":
-        PrintUtils.print();
-        break;
-      // XXX print preview not currently supported - bug 497994 to implement.
-      //case "cmd_printpreview":
-      //  PrintUtils.printPreview();
-      //  break;
-      case "cmd_stop":
-        aTab.browser.stop();
-        break;
-      case "cmd_reload":
-        aTab.browser.reload();
-        break;
-    }
-  },
-  getBrowser: function ct_getBrowser(aTab) {
-    return aTab.browser;
-  },
-  // Internal function used to set up the title listener on a content tab.
-  _setUpTitleListener: function ct_setUpTitleListener(aTab) {
-    function ct_onDOMTitleChanged(aEvent) {
-      aTab.title = aTab.browser.contentTitle;
-      document.getElementById("tabmail").setTabTitle(aTab);
-    }
-    // Save the function we'll use as listener so we can remove it later.
-    aTab.titleListener = onDOMTitleChanged;
-    // Add the listener.
-    aTab.browser.addEventListener("DOMTitleChanged",
-                                  aTab.titleListener, true);
-  },
-  /**
-   * Internal function used to set up the close window listener on a content
-   * tab.
-   */
-  _setUpCloseWindowListener: function ct_setUpCloseWindowListener(aTab) {
-    function ct_onDOMWindowClose(aEvent) {
-      if (!aEvent.isTrusted)
-        return;
-
-      // Redirect any window.close events to closing the tab. As a 3-pane tab
-      // must be open, we don't need to worry about being the last tab open.
-      document.getElementById("tabmail").closeTab(aTab);
-      aEvent.preventDefault();
-    }
-    // Save the function we'll use as listener so we can remove it later.
-    aTab.closeListener = onDOMWindowClose;
-    // Add the listener.
-    aTab.browser.addEventListener("DOMWindowClose",
-                                  aTab.closeListener, true);
-  }
 };
 
 var homeTabType = {
@@ -1431,7 +1369,7 @@ function doShortcuts(show) {
   try {
     if (!show && !gAccelDown) return;
     let counter = 1;
-  
+
     window.clearTimeout(gKeyDownTimeout);
     gKeyDownTimeout = null;
     for (let i = 0; i < tabmail.tabContainer.childNodes.length; i++) {
@@ -1454,7 +1392,7 @@ function doShortcuts(show) {
       // switching, which results in shortcuts staying around after the meta key
       // is up (but in a different app).  This is a hack that gets around the
       // problem.
-      window.setTimeout(function() { doShortcuts(false);}, 2000); 
+      window.setTimeout(function() { doShortcuts(false);}, 2000);
     }
   } catch (e) {
     logException(e);
@@ -1496,4 +1434,20 @@ function restoreSession() {
   let dontRestoreFirstTab = false;
   if (tabsState)
     document.getElementById("tabmail").restoreTabs(tabsState.tabs, dontRestoreFirstTab);
+}
+
+function openSubTab(aType, aArgs) {
+  let tabmail = document.getElementById("tabmail");
+  let tabInfo = tabmail.tabInfo;
+  let tabContainer = tabmail.tabContainer;
+  let index = tabInfo.indexOf(tabmail.currentTabInfo);
+  tabmail.openTab(aType, aArgs);
+  // Move the new tab into position, if it's not already the last child.
+  if (index != tabContainer.children.length - 1) {
+    let last = tabInfo.pop();
+    tabInfo.splice(index+1, 0, last);
+    last = tabContainer.lastElementChild;
+    tabContainer.removeChild(last);
+    tabContainer.insertBefore(last, tabContainer.children[index+1]);
+  }
 }
