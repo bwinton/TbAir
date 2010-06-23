@@ -35,18 +35,45 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource:///modules/errUtils.js");
-Components.utils.import("resource:///modules/gloda/utils.js");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
 
-var gCopyService = Components.classes["@mozilla.org/messenger/messagecopyservice;1"]
-                     .getService(Components.interfaces.nsIMsgCopyService);
+Cu.import("resource:///modules/errUtils.js");
+Cu.import("resource:///modules/gloda/utils.js");
 
+var gCopyService = Cc["@mozilla.org/messenger/messagecopyservice;1"]
+                     .getService(Ci.nsIMsgCopyService);
+
+var log = Application.console.log;
 
 function setupHome() {
   $(".column").sortable({
     connectWith: '.column'
     });
   $(".column").disableSelection();
+
+  let pref = Cc["@mozilla.org/preferences-service;1"]
+               .getService(Ci.nsIPrefBranch);
+  let pref_name = "geo.wifi.protocol";
+  if (!pref.prefHasUserValue(pref_name))
+    pref.setIntPref(pref_name, 0);
+  let pref_name = "geo.wifi.uri";
+  if (!pref.prefHasUserValue(pref_name))
+    pref.setCharPref(pref_name, "https://www.google.com/loc/json");
+
+  var geolocation = Cc["@mozilla.org/geolocation;1"]
+                      .getService(Ci.nsIDOMGeoGeolocation);
+  geolocation.getCurrentPosition(
+    function ht_gotPosition(position) {
+      $("#location").html($("#locationTmpl").render({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude}));
+    },
+    function ht_gotError(e) {
+      log("GeoError: " + e.code + ": " + e.message);
+    });
 }
 
 function setFolders(folders) {
@@ -199,11 +226,6 @@ function openAttachment(element) {
 function addContacts(me, contacts) {
   $("#contacttmpl").render(contacts).appendTo(".contacts");
 }
-
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
 
 /**
  * addEventListener betrayals compel us to establish our link with the
@@ -409,9 +431,8 @@ function deleteConversation(link) {
       if (folderURI in folderMap) {
         folderMap[folderURI].messages.appendElement(msgHdr, false);
       } else {
-        let msgs = Components.classes["@mozilla.org/array;1"].
-          createInstance(Components.interfaces.nsIMutableArray);
-        
+        let msgs = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+
         let folderDict = {
           'URI': folderURI,
           'folder': msgHdr.folder,

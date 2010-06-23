@@ -51,6 +51,7 @@
 <body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
   <div class="header">
     <div class="title"></div>
+    <div id="location"></div>
     <div class="search"><input type="text" class="search" onkeyup="filterFolders(event)"/></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
@@ -141,4 +142,10 @@
           </li>
         </ol>
 -->
+
+  <script id="locationTmpl" type="text/html">
+    <a href="http://maps.google.com/maps?z=16&output=embed&q=You+are+here@${lat},${lon}">lat:
+     ${lat}<br/>lon: ${lon}</a>
+  </script>
+
 </html>
