@@ -299,7 +299,7 @@ var specialFilters = [
 ];
 
 function handleSpecialFilters(filter, elem) {
-  if (filter[0] == ":") {
+  if (filter && filter[0] == ":") {
     for (let i in specialFilters) {
       specialFilters[i](filter, elem);
     }
@@ -321,6 +321,12 @@ function filterFolders(event) {
       else
         $(this).show();
     });
+    if (event.keyCode == event.DOM_VK_RETURN) {
+      let items = $(".column .portlet:visible");
+      if (items.length == 1) {
+        showConversations(event, items.children(".portlet-header"));
+      }
+    }
   } catch (e) {
     logException(e);
   }
@@ -344,6 +350,12 @@ function filterConversations(event) {
         }
       }
     });
+    if (event.keyCode == event.DOM_VK_RETURN) {
+      let items = $(".column .topic:visible");
+      if (items.length == 1) {
+        showMessages(event, items.children(".subject"));
+      }
+    }
   } catch (e) {
     logException(e);
   }
