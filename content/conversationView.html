@@ -52,7 +52,7 @@
   <div class="header">
     <div class="title"></div>
     <div class="search"><input type="text" class="search" onkeyup="filterMessages(event)"/></div>
-    <div class="actions"><button class="action options">▾</button></div>
+    <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
   <div class="subHeader">
     <ol class="participants">between </ol>
@@ -75,7 +75,7 @@
   <script id="messagetmpl" type="text/html">
     <li class="message" read="${read}" id="${id}" messageKey="${messageKey}">
         <div class="headerblock" onclick="$(this).next().slideToggle()">  
-          <input type="button" value="▾" class="fullMessageDropdown">
+          <input type="button" value="&#x25BE" class="fullMessageDropdown">
           <div class="date">${friendlyDate}</div>
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from name">${from.contact.name} <span class="add"></span></div>
