@@ -92,7 +92,8 @@
                 name="${attachment.name}"
                 url="${attachment.url}"
                 uri="${attachment.uri}"
-                class="attachment">
+                class="attachment"
+                onclick="openAttachment($(this))">
               <img class="icon"
                    src="moz-icon://${attachment.name}?size=32&contentType=${attachment.type.fullType}"/>
               <span class="name">${attachment.name}</span>

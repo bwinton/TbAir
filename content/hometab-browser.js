@@ -192,6 +192,7 @@ function populateAttachment(aMessageKey, aAttachments) {
 }
 
 function openAttachment(element) {
+  //document.location = element.attr("url");
   hometab.openAttachment(element);
 }
 
