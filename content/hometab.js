@@ -219,6 +219,11 @@ var hometab = {
     }
   },
 
+  _isRealAttachment: function hometab_isRealAttachment(attachment) {
+    let FAKE_ATTACHMENT_NAMES = { "signature.asc" : true }
+    return attachment.isRealAttachment && ! (attachment.name in FAKE_ATTACHMENT_NAMES);
+  },
+
   populateAttachment: function hometab_populateAttachment(aMsgHdr, aMimeMsg) {
     //Get all the URLs for images
     let attachments = new Array();
@@ -227,7 +232,8 @@ var hometab = {
                          url : attachment.url,
                          uri : aMsgHdr.folder.getUriForMsg(aMsgHdr),
                          fullType : attachment.contentType,
-                         isExternal : attachment.isExternal });
+                         isExternal : attachment.isExternal,
+                         isReal : hometab._isRealAttachment(attachment) });
     }
     // we use the messageKey because it's the cheapest item that both the
     // GlodaMessage and nsIMsgDBHdr have

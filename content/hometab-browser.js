@@ -210,8 +210,11 @@ function populateAttachment(aMessageKey, aAttachments) {
     let attachments = $(".message[messageKey='"+aMessageKey+"'] .attachments");
     for each(let [,attachment] in Iterator(aAttachments)) {
       let li = attachments.find("[name='"+attachment.name+"'][mimetype='"+attachment.fullType+"']");
-      li.attr({"url" : attachment.url, "uri" : attachment.uri,
-               "isExternal" : attachment.isExternal})
+      if (!attachment.isReal)
+        li.remove()
+      else
+        li.attr({"url" : attachment.url, "uri" : attachment.uri,
+                 "isExternal" : attachment.isExternal})
     }
   } catch (e) {
     logException(e);
