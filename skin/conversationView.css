@@ -47,6 +47,8 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, Sans-serif;
   font-size: 12px;
   position: relative; 
+  margin: 10px 0 0 0;
+  padding: 0;
 }
 
 /* expand the header width more to accomidate a larger message reader size */
@@ -155,15 +157,20 @@ li.message .headerblock input.fullMessageDropdown  {
 li.message .headerblock .avatar,
 li.message .headerblock .from {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
   overflow: hidden;
   color: #000;
 }
 
 li.message .headerblock .avatar {
-  height: 16px;
-  width: 16px;
+  height: 24px;
+  width: 24px;
   margin-right: 5px;
+}
+
+li.message .headerblock .avatar img {
+  height: 24px;
+  width: 24px;
 }
 
 li.message .headerblock .from {
