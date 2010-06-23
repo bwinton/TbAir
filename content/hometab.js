@@ -976,8 +976,10 @@ function folderCollectionListener(aWin, aTab, aFolder) {
 folderCollectionListener.prototype = {
   // Return the unread count for conversations (which we've seen) in this folder
   unread: function fcl_unread() {
-    return [conversation.unread for each([,conversation] in
-                                         Iterator(this.conversations))].length;
+    return [conversation.read for each([,conversation] in
+                                      Iterator(this.conversations))
+                                      if (!conversation.read)
+            ].length;
   },
   updateTitle: function fcl_updateTitle() {
     let unread = this.unread();
