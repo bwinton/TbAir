@@ -226,6 +226,10 @@ li.message .messageblock .fullbody.quote.expanded {
   display: block;
 }
 
+li.message .messageblock .fullbody > pre > fieldset {
+  border: none;
+}
+
 li.message .actionblock {
   vertical-align: bottom;
 }
