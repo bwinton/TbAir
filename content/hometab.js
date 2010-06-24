@@ -388,8 +388,6 @@ var hometab = {
   },
 
   showContactsInTab: function(aWin) {
-    Application.console.log("showContactsInTab");
-
     let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
     contactQuery.orderBy("-popularity").limit(50);
     contactQuery.getCollection({
@@ -612,13 +610,10 @@ var homeTabType = {
       },
 
       openTab: function ht_openTab(aTab, aArgs) {
-        aTab.title = aArgs.title;
-        aTab.id = "Home";
-        window.title = aTab.title;
       },
 
-      htmlLoadHandler: function ht_htmlLoadHandler(doc) {
-        hometab.showFolders(doc);
+      htmlLoadHandler: function ht_htmlLoadHandler(aContentWindow) {
+        hometab.showFolders(aContentWindow);
       },
 
       showTab: function ht_showTab(aTab) {
@@ -672,14 +667,14 @@ var homeTabType = {
         aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
-
         homeTabType.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folder);
 
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
-
       },
 
       htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
+
         let folder = aContentWindow.tab.folder;
         //let t0 = new Date();
         let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
@@ -768,8 +763,9 @@ var homeTabType = {
         aTab.browser.loadURI("chrome://hometab/content/conversationView.html");
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
-        hometab.showMessagesInConversation(contentWindow);
+      htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
+        hometab.showMessagesInConversation(aContentWindow);
       },
 
       showTab: function ml_showTab(aTab) {
@@ -845,8 +841,9 @@ var homeTabType = {
         this.contactsId++;
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(contentWindow) {
-        hometab.showContactsInTab(contentWindow);
+      htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
+        hometab.showContactsInTab(aContentWindow);
       },
 
       showTab: function ml_showTab(aTab) {
@@ -914,6 +911,7 @@ var homeTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/source.html");
+        contentWindow.tab.tabNode.setAttribute("loaded", true);
       },
 
       showTab: function ml_showTab(aTab) {
