@@ -184,11 +184,11 @@ ol.conversations {
 }
 
 .conversation .starred[is=true] {
-  background-image: url("chrome://messenger/skin/icons/flaggedmail.png");
+  background-image: url("chrome://hometab/skin/starred.png");
 }
 
 .conversation .starred[is=false] {
-  background-image: url("chrome://messenger/skin/icons/flagcol.png");
+  background-image: url("chrome://hometab/skin/not-starred.png");
 }
 
 .conversation .attachments[has=true] {
