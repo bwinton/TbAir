@@ -105,9 +105,7 @@ var hometab = {
   showFolders: function showFolders(doc) {
     doc.setupHome();
     let content = [];
-    const outFolderFlagMask = Ci.nsMsgFolderFlags.SentMail |
-                              Ci.nsMsgFolderFlags.Drafts |
-                              Ci.nsMsgFolderFlags.Queue |
+    const outFolderFlagMask = Ci.nsMsgFolderFlags.Queue |
                               Ci.nsMsgFolderFlags.Templates |
                               Ci.nsMsgFolderFlags.Newsgroup;
 
@@ -1293,6 +1291,22 @@ function sortFolderByNameFunc(a,b) {
 
   if (/^Starred/.test(a.name)) rv -= 1;
   if (/^Starred/.test(b.name)) rv += 1;
+  if (rv) return rv;
+
+  if (/^Drafts/.test(a.name)) rv -= 1;
+  if (/^Drafts/.test(b.name)) rv += 1;
+  if (rv) return rv;
+
+  if (/^Sent/.test(a.name)) rv -= 1;
+  if (/^Sent/.test(b.name)) rv += 1;
+  if (rv) return rv;
+
+  if (/^Spam/.test(a.name)) rv -= 1;
+  if (/^Spam/.test(b.name)) rv += 1;
+  if (rv) return rv;
+
+  if (/^Trash/.test(a.name)) rv -= 1;
+  if (/^Trash/.test(b.name)) rv += 1;
   if (rv) return rv;
 
   if (a.name < b.name) return -1;
