@@ -309,7 +309,7 @@ var hometab = {
 
   },
 
-  showMessagesInConversation: function showMessagesInConversation(aWin) {
+  showMessagesInConversation: function ht_showMessagesInConversation(aWin) {
     let id = aWin.tab.id;
     if (aWin.tab.results != null) {
       this.addMessages(aWin, aWin.tab.results);
@@ -373,7 +373,7 @@ var hometab = {
                    folder, [folderMessageURI]);
   },
 
-  composeMessage: function(email) {
+  composeMessage: function ht_composeMessage(email) {
     Application.console.log("composeMessage: " + email);
     let fields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
                            .createInstance(Components.interfaces.nsIMsgCompFields);
@@ -386,7 +386,7 @@ var hometab = {
     msgComposeService.OpenComposeWindowWithParams(null, params);
   },
 
-  showContacts: function(aBackground) {
+  showContacts: function ht_showContacts(aBackground) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("contacts", {
       background: aBackground
@@ -394,7 +394,7 @@ var hometab = {
 
   },
 
-  showContactsInTab: function(aWin) {
+  showContactsInTab: function ht_showContactsInTab(aWin) {
     let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
     contactQuery.orderBy("-popularity").limit(50);
     contactQuery.getCollection({
@@ -424,7 +424,12 @@ var hometab = {
       }});
   },
 
-  showSource: function show_Source(aBackground) {
+  showDocuments: function ht_showDocuments(aBackground) {
+    let tabmail = document.getElementById("tabmail");
+    tabmail.openTab("documents", { background: aBackground });
+  },
+
+  showSource: function ht_showSource(aBackground) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("source", { background: aBackground });
   }
@@ -830,7 +835,7 @@ var homeTabType = {
       isDefault: false,
       contactsId : 0,
 
-      openTab: function ml_openTab(aTab, aArgs) {
+      openTab: function ct_openTab(aTab, aArgs) {
         let contact = aArgs.contact;
         aTab.contact = contact || null;
         aTab.title = (contact && contact.name)? contact.name : "Contacts";
@@ -848,15 +853,15 @@ var homeTabType = {
         this.contactsId++;
       },
 
-      htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
+      htmlLoadHandler: function ct_htmlLoadHandler(aContentWindow) {
         aContentWindow.tab.tabNode.setAttribute("loaded", true);
         hometab.showContactsInTab(aContentWindow);
       },
 
-      showTab: function ml_showTab(aTab) {
+      showTab: function ct_showTab(aTab) {
         aTab.browser.setAttribute("type", "content-primary");
       },
-      shouldSwitchTo: function onSwitchTo({contact: aContact}) {
+      shouldSwitchTo: function ct_onSwitchTo({contact: aContact}) {
         let tabInfo = document.getElementById("tabmail").tabInfo;
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
@@ -869,34 +874,104 @@ var homeTabType = {
         }
         return -1;
       },
-      onTitleChanged: function ml_onTitleChanged(aTab) {
+      onTitleChanged: function ct_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
-      closeTab: function ml_closeTab(aTab) {
+      closeTab: function ct_closeTab(aTab) {
         aTab.browser.destroy();
       },
-      saveTabState: function ml_saveTabState(aTab) {
+      saveTabState: function ct_saveTabState(aTab) {
         aTab.browser.setAttribute("type", "content-targetable");
       },
-      persistTab: function ml_persistTab(aTab) {
+      persistTab: function ct_persistTab(aTab) {
         return { contactId: (aTab.contact)? aTab.contact.id : null };
       },
-      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      restoreTab: function ct_restoreTab(aTabmail, aPersistedState) {
         let contact = aPersistedState.contactId;
         aTabmail.openTab("contacts", { contact : contact,
                                           background: true });
       },
-      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+      supportsCommand: function ct_supportsCommand(aCommand, aTab) {
         return false;
       },
-      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+      isCommandEnabled: function ct_isCommandEnabled(aCommand, aTab) {
         return false;
       },
-      doCommand: function ml_doCommand(aCommand, aTab) {
+      doCommand: function ct_doCommand(aCommand, aTab) {
       },
-      onEvent: function ml_onEvent(aEvent, aTab) {
+      onEvent: function ct_onEvent(aEvent, aTab) {
       },
-      getBrowser: function ml_getBrowser(aCommand, aTab) {
+      getBrowser: function ct_getBrowser(aCommand, aTab) {
+        return aTab.browser;
+      },
+    },
+
+    // A tab for displaying the user's documents
+    documents: {
+      type: "documents",
+      isDefault: false,
+
+      openTab: function dc_openTab(aTab, aArgs) {
+        window.title = aTab.title = "Your Documents.";
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "documents");
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
+        let pref = Cc["@mozilla.org/preferences-service;1"]
+                     .getService(Ci.nsIPrefBranch);
+        let pref_name = "extensions.hometab.documents.provider";
+        if (!pref.prefHasUserValue(pref_name))
+          pref.setCharPref(pref_name, "box.net");
+        aTab.browser.contentWindow.provider = pref.getCharPref(pref_name);
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
+        aTab.browser.loadURI("chrome://hometab/content/documents.html");
+      },
+
+      showTab: function dc_showTab(aTab) {
+        aTab.browser.setAttribute("type", "content-primary");
+      },
+      shouldSwitchTo: function dc_onSwitchTo() {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          // There can be only 1
+          if (tabInfo[selectedIndex].mode.name == this.modes.documents.type) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
+      onTitleChanged: function dc_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function dc_closeTab(aTab) {
+        aTab.browser.destroy();
+      },
+      saveTabState: function dc_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
+      },
+      persistTab: function dc_persistTab(aTab) {
+        return { };
+      },
+      restoreTab: function dc_restoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("documents", { background: true });
+      },
+      supportsCommand: function dc_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function dc_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function dc_doCommand(aCommand, aTab) {
+      },
+      onEvent: function dc_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function dc_getBrowser(aCommand, aTab) {
         return aTab.browser;
       },
     },
@@ -906,7 +981,7 @@ var homeTabType = {
       type: "source",
       isDefault: false,
 
-      openTab: function ml_openTab(aTab, aArgs) {
+      openTab: function sr_openTab(aTab, aArgs) {
         window.title = aTab.title = "Home Tab Source Control";
 
         // Clone the browser for our new tab.
@@ -921,10 +996,10 @@ var homeTabType = {
         aTab.tabNode.setAttribute("loaded", true);
       },
 
-      showTab: function ml_showTab(aTab) {
+      showTab: function sr_showTab(aTab) {
         aTab.browser.setAttribute("type", "content-primary");
       },
-      shouldSwitchTo: function onSwitchTo({contact: aContact}) {
+      shouldSwitchTo: function sr_onSwitchTo() {
         let tabInfo = document.getElementById("tabmail").tabInfo;
 
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
@@ -936,32 +1011,32 @@ var homeTabType = {
         }
         return -1;
       },
-      onTitleChanged: function ml_onTitleChanged(aTab) {
+      onTitleChanged: function sr_onTitleChanged(aTab) {
         window.title = aTab.title;
       },
-      closeTab: function ml_closeTab(aTab) {
+      closeTab: function sr_closeTab(aTab) {
         aTab.browser.destroy();
       },
-      saveTabState: function ml_saveTabState(aTab) {
+      saveTabState: function sr_saveTabState(aTab) {
         aTab.browser.setAttribute("type", "content-targetable");
       },
-      persistTab: function ml_persistTab(aTab) {
+      persistTab: function sr_persistTab(aTab) {
         return { };
       },
-      restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
+      restoreTab: function sr_restoreTab(aTabmail, aPersistedState) {
         aTabmail.openTab("source", { background: true });
       },
-      supportsCommand: function ml_supportsCommand(aCommand, aTab) {
+      supportsCommand: function sr_supportsCommand(aCommand, aTab) {
         return false;
       },
-      isCommandEnabled: function ml_isCommandEnabled(aCommand, aTab) {
+      isCommandEnabled: function sr_isCommandEnabled(aCommand, aTab) {
         return false;
       },
-      doCommand: function ml_doCommand(aCommand, aTab) {
+      doCommand: function sr_doCommand(aCommand, aTab) {
       },
-      onEvent: function ml_onEvent(aEvent, aTab) {
+      onEvent: function sr_onEvent(aEvent, aTab) {
       },
-      getBrowser: function ml_getBrowser(aCommand, aTab) {
+      getBrowser: function sr_getBrowser(aCommand, aTab) {
         return aTab.browser;
       },
     },

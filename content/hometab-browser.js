@@ -262,7 +262,8 @@ function reachOutAndTouchFrame(aMode) {
 
   hometab = parentWin.hometab;
   let homeTabType = parentWin.homeTabType;
-  homeTabType.modes[aMode].htmlLoadHandler(this);
+  if (homeTabType.modes[aMode].htmlLoadHandler)
+    homeTabType.modes[aMode].htmlLoadHandler(this);
 }
 
 function showConversations(event, element) {
@@ -288,6 +289,13 @@ function showContacts(event) {
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
   hometab.showContacts(background);
+}
+
+function showDocuments(event) {
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showDocuments(background);
 }
 
 function showSource(event) {

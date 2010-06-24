@@ -52,7 +52,8 @@
   <div class="header">
     <div class="title"></div>
     <div id="location"></div>
-    <div class="search"><input type="text" class="search" onkeyup="filterFolders(event)"/></div>
+    <div class="search"><input type="text" class="search"
+         onkeyup="filterFolders(event)"/></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
 
@@ -63,13 +64,21 @@
 
     <div class="column">
       <div class="portlet">
-        <div class="portlet-header" style="font-weight: bold;color: #5180D0;" onclick="showContacts(event);">Contacts</div>
+        <div class="portlet-header special"
+             onclick="showContacts(event);">Contacts</div>
         <div class="portlet-content"></div>
       </div>
     </div>
 
     <div class="portlet">
-      <div class="portlet-header" style="font-weight: bold;color: #5180D0;" onclick="showSource(event);">Source Control</div>
+      <div class="portlet-header special"
+           onclick="showDocuments(event);">Documents</div>
+      <div class="portlet-content"></div>
+    </div>
+
+    <div class="portlet">
+      <div class="portlet-header special"
+           onclick="showSource(event);">Source Control</div>
       <div class="portlet-content">This will not be shipped by default :)</div>
     </div>
 
@@ -127,8 +136,11 @@
 
   <script id="folderPortletTmpl" type="text/html">
     <div class="portlet" read="${read}" dupe="${dupe}">
-      <div class="portlet-header" id="${id}" onclick="showConversations(event, $(this))">
-        <span class="name">${name}</span> <span class="count">${unread}</span> <span class="account">${serverName}</span>
+      <div class="portlet-header" id="${id}"
+           onclick="showConversations(event, $(this))">
+        <span class="name">${name}</span>
+        <span class="count">${unread}</span>
+        <span class="account">${serverName}</span>
       </div>
       <div class="portlet-content"></div>
     </div>
@@ -136,16 +148,23 @@
 
 <!--
         <ol class="conversations">
-          <li class="conversation" read="${read}" id="${id}" subject="${subject}">
-            <span class="from" onclick="showMessages($(this));">${message.from.contact.name}</span>
-            <span class="subject" onclick="showMessages($(this));">${message.conversation.subject}</span>
+          <li class="conversation" read="${read}" id="${id}"
+              subject="${subject}">
+            <span class="from"
+                  onclick="showMessages($(this));"
+              >${message.from.contact.name}</span>
+            <span class="subject"
+                  onclick="showMessages($(this));"
+              >${message.conversation.subject}</span>
           </li>
         </ol>
 -->
 
   <script id="locationTmpl" type="text/html">
-    <a onclick="hometab.openAttachment($(this))" url="http://maps.google.com/maps?z=16&output=embed&q=coffee+shops+near:${lat},${lon}"name="Coffee Shops Near You">lat:
-     ${lat}<br/>lon: ${lon}</a>
+    <a onclick="hometab.openAttachment($(this))"
+       url="http://maps.google.com/maps?z=16&output=embed&q=coffee+shops+near:${lat},${lon}"
+       name="Coffee Shops Near You">lat: ${lat}
+       <br/>lon: ${lon}</a>
   </script>
 
 </html>
