@@ -164,7 +164,18 @@ function markAsRead(message) {
   }
 }
 
-function addParticipants(involves) {
+function addParticipants(aTopic, aInvolves) {
+  let involves = [];
+  if ("mailingLists" in aTopic && aTopic.mailingLists.length > 0) {
+    let list = aTopic.mailingLists.pop();
+    $("#participanttmpl").render(list).appendTo($("ol.lists"));
+    $("div.lists").show();
+    // this message involves is about everyone in the conversation
+    involves = [id for each(id in aInvolves) if (id != list)];
+  } else {
+    // non list messages only show the people from the topic
+    involves = aTopic.involves;
+  }
   $("#participanttmpl").render(involves).appendTo($("ol.participants"));
 }
 

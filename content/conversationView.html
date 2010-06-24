@@ -55,7 +55,10 @@
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
   <div class="subHeader">
-    <ol class="participants">between </ol>
+    <div class="involves">
+      <div class="lists"><span class="title">list: </span><ol class="lists"></ol></div>
+      <div class="participants"><span class="title">between: </span><ol class="participants"></ol></div>
+    </div>
     <div class="old" onclick="$(this).hide();$('ol.messages li.message[read=true]').fadeIn();">show older messages <span class="count"></span></div>
   </div>
   <ol class="messages filtered"></ol>
