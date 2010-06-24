@@ -262,8 +262,7 @@ function reachOutAndTouchFrame(aMode) {
 
   hometab = parentWin.hometab;
   let homeTabType = parentWin.homeTabType;
-  if (homeTabType.modes[aMode].htmlLoadHandler)
-    homeTabType.modes[aMode].htmlLoadHandler(this);
+  homeTabType.modes[aMode].htmlLoadHandler(this);
 }
 
 function showConversations(event, element) {

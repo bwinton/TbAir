@@ -460,6 +460,7 @@ var contentTabType = {
                                                              "content-primary");
         aTab.browser.loadURI(aArgs.contentPage);
 
+        aTab.tabNode.setAttribute("loaded", true);
         this.lastBrowserId++;
       },
 
@@ -929,6 +930,10 @@ var homeTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/documents.html");
+      },
+
+      htmlLoadHandler: function dc_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
       },
 
       showTab: function dc_showTab(aTab) {

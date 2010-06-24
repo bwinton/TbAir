@@ -143,9 +143,9 @@ var docs = {
   },
 
   callApi: function dc_callApi(aMethod, aArgs, aSuccessCb) {
-    url = this.baseUrl + "?action=" + aMethod +
-          "&api_key=" + this.apiKey +
-          "&auth_token=" + this.authkey;
+    let url = this.baseUrl + "?action=" + aMethod +
+              "&api_key=" + this.apiKey +
+              "&auth_token=" + this.authkey;
     for (var name in aArgs)
     {
       url += "&" + name + "=" + encodeURIComponent(aArgs[name]);
