@@ -918,7 +918,7 @@ var homeTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/source.html");
-        contentWindow.tab.tabNode.setAttribute("loaded", true);
+        aTab.tabNode.setAttribute("loaded", true);
       },
 
       showTab: function ml_showTab(aTab) {
