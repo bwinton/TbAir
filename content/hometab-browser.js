@@ -483,7 +483,7 @@ function deleteConversation(link) {
                                           false /* deleteStorage */,
                                           true /* isMove */,
                                           null /* copyservicelistener */,
-                                          true /* allowUndo */);
+                                          false /* allowUndo */);
     }
   } catch (e) {
     logException(e);
