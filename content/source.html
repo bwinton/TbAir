@@ -55,7 +55,7 @@
   }
   </style>
 </head>
-<body id="body" dir="&locale.dir;">
+<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('source')">
   <div class="header">
     <div class="title"></div>
     <div class="search"><input id="filter" type="text" class="search" onkeyup="filterSource(event)"/></div>
@@ -127,7 +127,9 @@
         <div class="column right">
           <div class="topic" read="${read}">
             <div class="date">${date}</div>
-            <a style="display:block;" href="${url}" class="body">${synopsis}</a>
+            <div url="${url}" name="${synopsis}"
+                 onclick="hometab.openAttachment($(this))"
+                 class="body">${synopsis}</a>
           </div>
         </div>
 

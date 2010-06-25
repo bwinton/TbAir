@@ -998,7 +998,10 @@ var homeTabType = {
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/source.html");
-        aTab.tabNode.setAttribute("loaded", true);
+      },
+
+      htmlLoadHandler: function dc_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
       },
 
       showTab: function sr_showTab(aTab) {
