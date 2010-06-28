@@ -51,12 +51,36 @@
 <body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
   <div class="header">
     <div class="title"></div>
-    <div id="location"></div>
+    <!--<div id="location"></div>-->
     <div class="search"><input type="text" class="search"
          onkeyup="filterFolders(event)"/></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
 
+  <div class="folderNav">
+    <button class="action folder">compose</button>
+    <button class="action folder">folders &#x25BE</button>
+  </div>
+  
+  <div class="homeWrapper hbox">
+    <div class="homeMenu boxFlex1">
+      <li class="menuInbox">inbox</li>
+      <li class="menuStarred">starred</li>
+      <li class="menuDrafts">drafts</li>
+      <li class="menuSpam">spam</li>
+      <li class="menuTrash">trash</li>
+    </div>
+  
+    <div class="features boxFlex0">
+      <li class="menuImages">recent images</li>
+      <li class="menuFilm">recent videos</li>
+      <li class="menuLinks">recent links</li>
+      <li class="menuAttach">recent attachments</li>
+      <li class="menuMaps">geolocation</li>
+    </div>
+  </div>
+
+  <!-- og shit
   <div class="portletContainer">
     <br clear="all"/>
 
@@ -97,6 +121,7 @@
       </div>
     </div>
   </div>
+  -->
 
 </body>
 
