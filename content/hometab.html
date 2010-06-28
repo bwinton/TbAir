@@ -58,8 +58,10 @@
   </div>
 
   <div class="folderNav">
-    <button class="action folder">compose</button>
-    <button class="action folder">folders &#x25BE</button>
+    <li class="folderList"><span class="folderTitle">folders &#x25BE</span>
+      <ul class="column">
+      </ul>
+    </li>
   </div>
   
   <div class="homeWrapper hbox">
@@ -80,7 +82,7 @@
       <li class="menuFilm">recent videos</li>
       <li class="menuLinks">recent links</li>
       <li class="menuAttach">recent attachments</li>
-      <li id="location" class="menuMaps">geolocation</li>
+      <li id="location" class="menuMaps">...</li>
     </div>
   </div>
 
@@ -192,7 +194,7 @@
   <script id="locationTmpl" type="text/html">
     <a onclick="hometab.openAttachment($(this))"
        url="http://maps.google.com/maps?z=16&output=embed&q=coffee+shops+near:${lat},${lon}"
-       name="Coffee Shops Near You">geolocation</a>
+       name="Coffee Shops Near You">geolocation <!--lat: ${lat} lon: ${lon}--></a>
   </script>
 
 </html>

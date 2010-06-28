@@ -50,9 +50,43 @@
   width: 100%;
 }
 
-.column {
-  margin: 0;
+li.folderList {
+  position: absolute;
+  top: 3px;
+  display: inline-block;
+  border: 1px solid transparent;
+  -moz-border-radius: 5px 5px 0 0;
+}
+
+.folderTitle {
+  line-height: 32px;
+  padding-left: 10px;
+  display: block;
+}
+
+li.folderList:hover {
+  background: #f2f2f2;
+  border: 1px solid #aaa;
+  color: #333;
+  -moz-box-shadow: 0 3px 5px #ddd;
+}
+
+li.folderList:hover ul.column {
+  display: block;
+}
+
+ul.column {
+  display: none;
+  width: 255px;
   padding: 0;
+  margin: 0;
+}
+
+.portlet {
+  padding: 5px 10px;
+  display: block;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
 }
 
 .folderNav {
@@ -63,6 +97,8 @@
   border-bottom: 1px solid #ddd;
   font-size: 12px;
   color: #888;
+  height: 40px;
+  position: relative;
 }
 
 button.action.folder {
@@ -166,25 +202,14 @@ button.action.folder {
 }
 
 .portletContainer {
-  float: left;
   width: 511px;
-  background-color: #fff;
+  background-color: red;
   border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   margin-bottom: 40px;
 }
 
 .portlet {
-  -moz-border-radius: 5px 5px 5px 5px;
-  background-color: #F2F2F2;
-  border: 1px solid #DDDDDD;
-  color: #888888;
-  display: inline-block;
-  font-size: 12px;
-  margin: 10px;
-  padding: 10px;
-  text-align: center;
-  width: 235px;
 }
 
 .portlet[read="false"] .portlet-header > .name,
@@ -198,15 +223,14 @@ button.action.folder {
 
 .portlet .portlet-header > .account {
   color: #666;
-  margin-left: 1em;
-  font-size: smaller;
+  font-size: 12px;
 }
 
 .portlet-header { cursor: pointer; }
 .portlet-header:hover {
   text-decoration: underline;
 }
-.portlet-content { padding: 7px; }
+.portlet-content { padding: 0px; }
 
 .ui-sortable-placeholder {
   border: 1px dotted black;
