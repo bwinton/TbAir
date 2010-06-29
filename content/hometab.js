@@ -611,14 +611,14 @@ var contentTabType = {
 function getFoldersForURI(aUri) {
   if (/^special:/.test(aUri)) {
     let specials = {
-      "inbox": nsMsgFolderFlags.Inbox,
+      "special:inbox": nsMsgFolderFlags.Inbox,
       //[nsMsgFolderFlags.???, "starred", false, true],
-      "drafts": nsMsgFolderFlags.Drafts,
-      "spam": nsMsgFolderFlags.Junk,
-      "trash": nsMsgFolderFlags.Trash,
+      "special:drafts": nsMsgFolderFlags.Drafts,
+      "special:spam": nsMsgFolderFlags.Junk,
+      "special:trash": nsMsgFolderFlags.Trash,
     };
 
-    let flag = specials["special:"+aUri];
+    let flag = specials[aUri];
     let acctMgr = Cc["@mozilla.org/messenger/account-manager;1"]
                      .getService(Ci.nsIMsgAccountManager);
     let accounts = [a for each
@@ -634,16 +634,14 @@ function getFoldersForURI(aUri) {
     });
 
     let folders = [];
-    //_allFoldersWithFlag
     for each (acct in accounts) {
       let foldersWithFlag = acct.incomingServer
                                 .rootFolder
                                 .getFoldersWithFlags(flag);
-      if (foldersWithFlag.length > 0) {
+      if (foldersWithFlag.length > 0)
         for each (folderWithFlag in fixIterator(foldersWithFlag.enumerate(),
                                                 Ci.nsIMsgFolder))
           folders.push(folderWithFlag);
-      }
     }
     return folders;
   }
