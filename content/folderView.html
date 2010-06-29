@@ -78,11 +78,11 @@
 
       <div class="columns">
 
-        <div class="column left">
+        <div class="column left hbox">
           <div class="date" style="visibility:hidden;line-height:24px;">spacer</div>
-          <div class="avatar"><img src="${topic.avatar}"/></div>
-          <div class="from">${topic.from.contact.name}</div>
-          <div is="${starred}" class="starred"/>
+          <div class="avatar boxFlex0"><img src="${topic.avatar}"/></div>
+          <div class="from boxFlex1">${topic.from.contact.name}</div>
+          <br><div is="${starred}" class="starred"/>
           <div has="${attachments}" class="attachments"/>
         </div>
 

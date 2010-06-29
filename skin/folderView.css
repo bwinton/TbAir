@@ -45,17 +45,27 @@
 #body {
   line-height: 21px;
   min-height: 100%;
-  width: 511px;
-  border-right: 1px solid #ddd;
+  border-right: none;
+  margin-right: 255px;
+  width: 100%;
+}
+
+.header {
+  width: 100%;
+  border-right: none;
 }
 
 ol.conversations {
-  width: 511px;
   margin: 0;
   padding: 0 0 40px 0;
   list-style-type: none;
-  border-right: 1px solid #ddd;
+  border-right: none;
   float: left;
+  width: 100%;
+}
+
+li.conversation {
+  width: 100%;
 }
 
 .column {
@@ -65,11 +75,11 @@ ol.conversations {
   padding: 0 10px;
 }
 .column.left {
-  width: 170px;
+  width: 25%;
 }
 .column.right {
 /*  full width (- .left) + ( - conversation paddings) */
-  width: 340px;
+  width: 75%;
 }
 
 .avatar,
@@ -88,7 +98,9 @@ ol.conversations {
 
 .column.left .from {
   color: #000;
-  width: 125px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  width: 75%;
   display: inline-block;
   font-size: 12px;
 }

@@ -53,13 +53,14 @@ body {
 
 /* expand the header width more to accomidate a larger message reader size */
 .header {
-  width: 640px;
+  width: 100%;
+  border-right: none;
 }
 
 #body {
-  width: 640px;
+  width: 100%;
   min-height: 100%;
-  border-right: 1px solid #ddd;
+  
 }
 
 .header .title:empty:after {
@@ -120,11 +121,11 @@ li.participant:not(:last-child):after{
 }
 
 ol.messages {
-  width: 640px;
+  width: 100%;
   margin: 0;
   padding: 0 0 40px 0;
   list-style-type: none;
-  border-right: 1px solid #ddd;
+  
 }
 
 li.message {

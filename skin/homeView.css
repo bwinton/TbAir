@@ -89,6 +89,10 @@ ul.column {
   background-color: #fff;
 }
 
+.portlet:hover {
+  background-color: #f2f2f2;
+}
+
 .folderNav {
   width: 100%;
   display: block;
@@ -207,9 +211,6 @@ button.action.folder {
   border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   margin-bottom: 40px;
-}
-
-.portlet {
 }
 
 .portlet[read="false"] .portlet-header > .name,

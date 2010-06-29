@@ -63,6 +63,7 @@
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background-color: #fafafa;
+  min-width: 511px;
 }
 
 .header {
