@@ -66,14 +66,15 @@
   
   <div class="homeWrapper hbox">
     <div class="homeMenu boxFlex1">
-      <li class="menuInbox" id="mailbox://nobody@smart%20mailboxes/Inbox"
+      <li class="menuInbox" id="special:inbox"
           onclick="showConversations(event, $(this))">inbox</li>
-      <li class="menuStarred">starred</li>
-      <li class="menuDrafts" id="mailbox://nobody@smart%20mailboxes/Drafts"
+      <li class="menuStarred" id="special:starred"
+          onclick="showConversations(event, $(this))">starred</li>
+      <li class="menuDrafts" id="special:drafts"
           onclick="showConversations(event, $(this))">drafts</li>
-      <li class="menuSpam" id="mailbox://nobody@smart%20mailboxes/Junk"
+      <li class="menuSpam" id="special:spam"
           onclick="showConversations(event, $(this))">spam</li>
-      <li class="menuTrash" id="mailbox://nobody@smart%20mailboxes/Trash"
+      <li class="menuTrash" id="special:trash"
           onclick="showConversations(event, $(this))">trash</li>
     </div>
   

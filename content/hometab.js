@@ -96,7 +96,7 @@ var hometab = {
    * @param folders  the array to add the folders to.
    */
   addSubFolders : function addSubFolders (folder, folders) {
-    for each (let f in fixIterator(folder.subFolders, Components.interfaces.nsIMsgFolder)) {
+    for each (let f in fixIterator(folder.subFolders, Ci.nsIMsgFolder)) {
       folders.push(f);
       this.addSubFolders(f, folders);
     }
@@ -607,6 +607,59 @@ var contentTabType = {
   },
 };
 
+
+function getFoldersForURI(aUri) {
+  if (/^special:/.test(aUri)) {
+    let specials = {
+      "inbox": nsMsgFolderFlags.Inbox,
+      //[nsMsgFolderFlags.???, "starred", false, true],
+      "drafts": nsMsgFolderFlags.Drafts,
+      "spam": nsMsgFolderFlags.Junk,
+      "trash": nsMsgFolderFlags.Trash,
+    };
+
+    let flag = specials["special:"+aUri];
+    let acctMgr = Cc["@mozilla.org/messenger/account-manager;1"]
+                     .getService(Ci.nsIMsgAccountManager);
+    let accounts = [a for each
+                    (a in fixIterator(acctMgr.accounts, Ci.nsIMsgAccount))];
+    // Bug 41133 workaround
+    accounts = accounts.filter(function fix(a){ return a.incomingServer; });
+
+    // Only show IMAP accounts
+    accounts = accounts.filter(function isNotDeferred(a) {
+      let server = a.incomingServer;
+      return server instanceof Ci.nsIImapIncomingServer &&
+             !server.deferredToAccount;
+    });
+
+    let folders = [];
+    //_allFoldersWithFlag
+    for each (acct in accounts) {
+      let foldersWithFlag = acct.incomingServer
+                                .rootFolder
+                                .getFoldersWithFlags(flag);
+      if (foldersWithFlag.length > 0) {
+        for each (folderWithFlag in fixIterator(foldersWithFlag.enumerate(),
+                                                Ci.nsIMsgFolder))
+          folders.push(folderWithFlag);
+      }
+    }
+    return folders;
+  }
+
+  // It's not a special folder.
+  let folder = MailUtils.getFolderForURI(aUri, true);
+  if (folder.flags & Ci.nsMsgFolderFlags.Virtual) {
+    let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
+    return [a for each
+             (a in fixIterator(vFolder.searchFolders, Ci.nsIMsgFolder))];
+  }
+  else {
+    return [folder];
+  }
+};
+
 var homeTabType = {
   // TabType attributes
   name: "HomeTab",
@@ -666,21 +719,25 @@ var homeTabType = {
       listeners : {},
 
       openTab: function fl_openTab(aTab, aArgs) {
-        let folder = MailUtils.getFolderForURI(aArgs.id, true);
-        aTab.folder = folder;
-        aTab.tabNode.setAttribute("read", (folder.getNumUnread(false) <= 0));
         aTab.id = aArgs.id;
-        aTab.title = folder.prettyName;
+        let folders = getFoldersForURI(aArgs.id);
+        let unread = 0;
+        for each (folder in folders)
+          unread += folder.getNumUnread(false);
+        aTab.tabNode.setAttribute("read", unread <= 0);
+        aTab.title = "Unknown";
+        if (folders.length)
+          aTab.title = folders[0].QueryInterface(Ci.nsIMsgFolder).prettyName;
 
         // Clone the browser for our new tab.
         aTab.browser = document.getElementById("browser").cloneNode(true);
         aTab.browser.setAttribute("id", "folderList"+aTab.id);
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
-        aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.contentWindow.title = aTab.title;
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
-        homeTabType.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folder);
+        homeTabType.modes.folderList.listeners[aArgs.id] = new folderCollectionListener(aTab.browser.contentWindow, aTab, folders);
 
         aTab.browser.loadURI("chrome://hometab/content/folderView.html");
       },
@@ -688,21 +745,14 @@ var homeTabType = {
       htmlLoadHandler: function ml_htmlLoadHandler(aContentWindow) {
         aContentWindow.tab.tabNode.setAttribute("loaded", true);
 
-        let folder = aContentWindow.tab.folder;
-        //let t0 = new Date();
+        let folders = getFoldersForURI(aContentWindow.tab.id, true);
         let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
 
-        if (folder.flags & Ci.nsMsgFolderFlags.Virtual) {
-          let vFolder = new VirtualFolderHelper.wrapVirtualFolder(folder)
-          query.folder.apply(query, vFolder.searchFolders);
-        }
-        else {
-          query.folder(folder);
-        }
+        query.folder.apply(query, folders);
         query.orderBy("-date");
         query.limit(50);
-        //let t1 = new Date();
-        query.getCollection(homeTabType.modes.folderList.listeners[folder.URI]);
+        query.getCollection(homeTabType.modes.folderList
+                                       .listeners[aContentWindow.tab.id]);
       },
 
       showTab: function fl_showTab(aTab) {
@@ -1048,16 +1098,17 @@ var homeTabType = {
   },
 };
 
-function folderCollectionListener(aWin, aTab, aFolder) {
+function folderCollectionListener(aWin, aTab, aFolders) {
   this.aWin = aWin;
   this.tab = aTab;
-  this.folder = aFolder;
+  this.folders = aFolders;
   this.conversations = {};
   this.collection = null;
   this.queryCompleted = false;
 }
 folderCollectionListener.prototype = {
-  // Return the unread count for conversations (which we've seen) in this folder
+  // Return the unread count for conversations (which we've seen) in these
+  // folders.
   unread: function fcl_unread() {
     return [conversation.read for each([,conversation] in
                                       Iterator(this.conversations))
@@ -1066,7 +1117,10 @@ folderCollectionListener.prototype = {
   },
   updateTitle: function fcl_updateTitle() {
     let unread = this.unread();
-    let title = this.folder.prettyName + (unread > 0? " (" + unread + ")" : "");
+    let title = "Unknown";
+    if (this.folders.length)
+      title = this.folders[0].QueryInterface(Ci.nsIMsgFolder).prettyName +
+        (unread > 0 ? " (" + unread + ")" : "");
     this.tab.browser.contentWindow.setHeaderTitle(title);
     this.tab.title = title;
     document.getElementById("tabmail").setTabTitle(this.tab);
@@ -1078,7 +1132,6 @@ folderCollectionListener.prototype = {
     if (!this.queryCompleted)
       return;
 
-    //let t2 = new Date();
     try {
       let conversations = [];
       for (var [,message] in Iterator(aItems)) {
@@ -1137,8 +1190,6 @@ folderCollectionListener.prototype = {
       this.aWin.updateConversations(conversations);
       this.updateTitle();
 
-      //let t3 = new Date();
-      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
     } catch (e) {
       Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
       Application.console.log(e.stack);
@@ -1153,7 +1204,6 @@ folderCollectionListener.prototype = {
     if (!this.queryCompleted)
       return;
 
-    //let t2 = new Date();
     try {
       let updatedConversations = [];
       for (var [,message] in Iterator(aItems)) {
@@ -1196,8 +1246,6 @@ folderCollectionListener.prototype = {
       this.aWin.updateConversations(updatedConversations);
       this.updateTitle();
 
-      //let t3 = new Date();
-      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
     } catch (e) {
       Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
       Application.console.log(e.stack);
@@ -1209,7 +1257,6 @@ folderCollectionListener.prototype = {
   },
   onItemsRemoved: function fcl_onItemsRemoved(aItems, aCollection) {
 
-    //let t2 = new Date();
     try {
       let removedConversations = [];
       let updatedConversations = [];
@@ -1249,8 +1296,6 @@ folderCollectionListener.prototype = {
       this.aWin.removeConversations(removedConversations, this.conversations);
       this.updateTitle();
 
-      //let t3 = new Date();
-      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
     } catch (e) {
       Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
       Application.console.log(e.stack);
@@ -1265,7 +1310,6 @@ folderCollectionListener.prototype = {
     // Turns out if you don't hold onto this collection then Gloda won't give you
     // further events about the items in the query
     this.collection = aCollection;
-    //let t2 = new Date();
     try {
       let conversations = [];
       for (var [,message] in Iterator(aCollection.items)) {
@@ -1335,8 +1379,6 @@ folderCollectionListener.prototype = {
       this.aWin.addContent(conversations);
       this.updateTitle();
 
-      //let t3 = new Date();
-      //dump("Called showConversationsInFolder: "+(t1-t0)+"/"+(t2-t1)+"/"+(t3-t2)+"\n");
     } catch (e) {
       Application.console.log("\n\nCaught error in Conversations Query.  e="+e+"\n");
       Application.console.log(e.stack);
