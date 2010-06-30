@@ -82,26 +82,18 @@ li.conversation {
   width: 75%;
 }
 
-.avatar,
-.column.left .from {
-  display: inline-block;
-  vertical-align: top;
-  overflow: hidden;
-}
-
 .avatar {
   width: 16px;
   height: 16px;
   background-color: #666;
-  margin-right: 5px;
+  margin-right: 10px;
+  float: left;
 }
 
 .column.left .from {
   color: #000;
   white-space: nowrap;
   overflow-x: hidden;
-  width: 75%;
-  display: inline-block;
   font-size: 12px;
 }
 
