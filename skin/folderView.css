@@ -95,6 +95,12 @@ li.conversation {
   white-space: nowrap;
   overflow-x: hidden;
   font-size: 12px;
+  vertical-align: baseline;
+}
+
+.column.left .metaInfo {
+  float: left;
+  clear: both;
 }
 
 .conversation {

@@ -291,16 +291,17 @@ BLOCKQUOTE[shown=true]:before {
 }
 
 li.message .attachments {
-  background-color: #efefef;
+  background-color: #fafafa;
   list-style: none;
   padding: 0;
-  margin: 10px;
-  -moz-border-radius: 3px;
+  margin: 10px 0;
+  -moz-border-radius: 5px;
+  border: 1px solid #ddd;
 }
 
 li.message .attachments .attachment {
-  width: 150px;
-  border: 1px solid #aaa;
+  width: 25%;
+  border: 1px solid #ddd;
   background-color: #fff;
   margin: 7px;
   padding: 7px;
@@ -314,7 +315,7 @@ li.message .attachments .attachment .name {
 }
 
 li.message .attachments .attachment .icon {
-  vertical-align: text-top;
+  float: right;
 }
 
 /* </CONVERSATION VIEW STYLES> */

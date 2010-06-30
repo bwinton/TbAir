@@ -82,8 +82,10 @@
           <div class="date" style="visibility:hidden;line-height:24px;">spacer</div>
           <div class="avatar boxFlex0"><img src="${topic.avatar}"/></div>
           <div class="from boxFlex1">${topic.from.contact.name}</div>
-          <br><div is="${starred}" class="starred"/>
-          <div has="${attachments}" class="attachments"/>
+          <div class="metaInfo">  
+            <div is="${starred}" class="starred"/>
+            <div has="${attachments}" class="attachments"/>
+          </div>  
         </div>
 
         <div class="column right">

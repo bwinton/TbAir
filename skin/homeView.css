@@ -80,6 +80,9 @@ ul.column {
   width: 255px;
   padding: 0;
   margin: 0;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .portlet {

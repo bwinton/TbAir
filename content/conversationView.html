@@ -97,9 +97,10 @@
                 uri="${attachment.uri}"
                 class="attachment"
                 onclick="openAttachment($(this))">
+              <span class="name">${attachment.name}</span>
               <img class="icon"
                    src="moz-icon://${attachment.name}?size=32&contentType=${attachment.type.fullType}"/>
-              <span class="name">${attachment.name}</span>
+              
             </li>
           {{/each}}
           </ul>
