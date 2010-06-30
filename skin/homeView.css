@@ -58,6 +58,10 @@ li.folderList {
   -moz-border-radius: 5px 5px 0 0;
 }
 
+li.folderList .search {
+  display: none;
+}
+
 .folderTitle {
   line-height: 32px;
   padding-left: 10px;
@@ -69,6 +73,13 @@ li.folderList:hover {
   border: 1px solid #aaa;
   color: #333;
   -moz-box-shadow: 0 3px 5px #ddd;
+}
+
+li.folderList:hover .search {
+  display: block;
+  position: absolute;
+  top: 4px;
+  right: 9px;
 }
 
 li.folderList:hover ul.column {
