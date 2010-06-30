@@ -136,6 +136,7 @@ li.conversation {
 .conversation[read=true] .topic > .body {
   white-space: nowrap;
   overflow: hidden;
+  -moz-binding: url('ellipsis.xml#ellipsis');  
 }
 
 /* if the conversation is unread but the topic message is read we don't
