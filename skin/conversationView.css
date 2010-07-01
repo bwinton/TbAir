@@ -296,7 +296,6 @@ li.message .attachments {
   padding: 0;
   margin: 10px 0;
   -moz-border-radius: 5px;
-  border: 1px solid #ddd;
 }
 
 li.message .attachments .attachment {

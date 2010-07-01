@@ -48,6 +48,7 @@
 
 .header {
   width: 100%;
+  border-right: none;
 }
 
 li.folderList {
@@ -91,9 +92,10 @@ ul.column {
   width: 255px;
   padding: 0;
   margin: 0;
-  max-height: 350px;
+  max-height: 450px;
   overflow-y: auto;
   overflow-x: hidden;
+  border-top: 1px solid #ddd;
 }
 
 .portlet {
@@ -101,6 +103,10 @@ ul.column {
   display: block;
   border-top: 1px solid #ddd;
   background-color: #fff;
+}
+
+.portlet:first-child {
+  border-top: none;
 }
 
 .portlet:hover {
