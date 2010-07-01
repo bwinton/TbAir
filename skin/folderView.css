@@ -83,11 +83,17 @@ li.conversation {
 }
 
 .avatar {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   background-color: #666;
   margin-right: 10px;
+  margin-top: -5px;
   float: left;
+}
+
+.avatar img {
+  width: 24px;
+  height: 24px;
 }
 
 .column.left .from {

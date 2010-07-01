@@ -250,7 +250,7 @@ var hometab = {
     message.synopsis = (message.indexedBodyText || "").substr(0, 140);
     message.avatar = "http://www.gravatar.com/avatar/" +
                      GlodaUtils.md5HashString(message.from.value) +
-                     "?d=monsterid&s=16&r=g";
+                     "?d=identicon&s=24&r=g";
     message.attachments = [{ name: attachment,
                              type : { type : message.attachmentTypes[i]._type,
                                       subType : message.attachmentTypes[i].subType,

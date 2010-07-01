@@ -296,25 +296,30 @@ li.message .attachments {
   padding: 0;
   margin: 10px 0;
   -moz-border-radius: 5px;
+  width: 100%;
 }
 
 li.message .attachments .attachment {
   width: 25%;
   border: 1px solid #ddd;
   background-color: #fff;
-  margin: 7px;
-  padding: 7px;
   display: inline-block;
   cursor: pointer;
+  margin: 5px;
+  padding: 5px;
 }
 
-li.message .attachments .attachment .name {
+li.message .attachments .attachment span.name {
   text-decoration: underline;
   color: #5180D0;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-li.message .attachments .attachment .icon {
+li.message .attachments .attachment img.icon {
   float: right;
+  display: inline-block;
 }
 
 /* </CONVERSATION VIEW STYLES> */
