@@ -72,27 +72,29 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
-.involves {
+.subHeader > .involves {
   padding: 10px;
   margin: 0;
   color: #888;
 }
 
-/* this is shown only as necessary (if isList) */
-div.lists {
+/* these are toggled on only as necessary  */
+div.list,
+div.list > div.involving,
+div.group,
+div.direct div.from,
+div.direct div.to {
   display: none;
 }
 
-ol.participants,
-ol.lists {
+ol.participants {
   margin: 0;
   padding: 0;
   list-style-type: none;
   display: inline;
 }
 
-ol.participants li,
-ol.lists  li {
+ol.participants li {
   display: inline;
   cursor: pointer;
   color: #5180D0;

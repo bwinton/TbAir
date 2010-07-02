@@ -56,8 +56,16 @@
   </div>
   <div class="subHeader">
     <div class="involves">
-      <div class="lists"><span class="title">list: </span><ol class="lists"></ol></div>
-      <div class="participants"><span class="title">between: </span><ol class="participants"></ol></div>
+      <!-- only 1 of these high level groups should be toggled on at a time -->
+      <div class="list">
+        <div class="to"><span class="title">list: </span><ol class="participants"></ol></div>
+        <div class="involving"><span class="title">involving: </span><ol class="participants"></ol></div>
+      </div>
+      <div class="group"><span class="title">between: </span><ol class="participants"></ol></div>
+      <div class="direct">
+        <div class="from"><span class="title">from: </span><ol class="participants"></ol></div>
+        <div class="to"><span class="title">to: </span><ol class="participants"></ol></div>
+      </div>
     </div>
     <div class="old" onclick="$(this).hide();$('ol.messages li.message[read=true]').fadeIn();">show older messages <span class="count"></span></div>
   </div>

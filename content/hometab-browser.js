@@ -164,19 +164,42 @@ function markAsRead(message) {
   }
 }
 
-function addParticipants(aTopic, aInvolves) {
+function addParticipants(aTopic, aMyIdentites, aIsListConversation, aListConversationInvolves) {
   let involves = [];
-  if ("mailingLists" in aTopic && aTopic.mailingLists.length > 0) {
+
+  if (aIsListConversation) {
     let list = aTopic.mailingLists.pop();
-    $("#participanttmpl").render(list).appendTo($("ol.lists"));
-    $("div.lists").show();
-    // this message involves is about everyone in the conversation
-    involves = [id for each(id in aInvolves) if (id != list)];
+    $("#participanttmpl").render(list).appendTo($(".list .to ol.participants"));
+    $("div.list").show();
+    involves = [id for each (id in aListConversationInvolves)];
+    if (involves.length > 1) {
+      // this message involves is about everyone in the conversation
+      $("#participanttmpl").render(involves).appendTo($(".list .involving ol.participants"));
+      $("div.list > div.involving").show();
+    }
+
   } else {
-    // non list messages only show the people from the topic
     involves = aTopic.involves;
+
+    if ( aTopic.toMe && ! aTopic.fromMe && aTopic.involves.length == 2 ) {
+      Application.console.log("A Message to you!");
+      involves = aTopic.involves.filter(function removeMe(id) { return ! (id.id in aMyIdentites); });
+      $("#participanttmpl").render(involves).appendTo($(".direct .from ol.participants"));
+      $("div.direct .from").show();
+    } else if ( aTopic.fromMe ) {
+      involves = aTopic.involves.filter(function removeMe(id) { return ! (id.id in aMyIdentites); });
+      Application.console.log("A Message from you!");
+      $("#participanttmpl").render(involves).appendTo($(".direct .to ol.participants"));
+      $("div.direct .to").show();
+
+    } else {
+      aTopic.involves.forEach(function labelMe(id) { if (id.id in aMyIdentites) id.contact.name = "me"; });
+      // non list messages only show the people from the topic
+      $("#participanttmpl").render(involves).appendTo($(".group ol.participants"));
+      $("div.group").show();
+    }
+
   }
-  $("#participanttmpl").render(involves).appendTo($("ol.participants"));
 }
 
 function addMessages(messages) {

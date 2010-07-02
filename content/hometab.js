@@ -330,21 +330,23 @@ var hometab = {
       onQueryCompleted: function _onQueryCompleted(messages) {
         aWin.tab.results = [];
         let items = self._removeDupes(messages.items);
-        let involves = {};
+        let listInvolves = {};
         let isList = ("mailingLists" in items[0] && items[0].mailingLists.length > 0)
         for each(var [,message] in Iterator(items)) {
           self._augmentMessage(message);
-          // because this could slow things down a bit we only do it for list messages
+          // collect all the participant identities for this list conversation
           if (isList) {
-            for each(let id in message.involves)
-              involves[id.id] = id;
+            let list = items[0].mailingLists[0];
+            if (message.from.id != list.id) {
+              listInvolves[message.from.id] = message.from;
+            }
           }
           aWin.tab.results.push(message);
         }
         self.addMessages(aWin, aWin.tab.results);
         aWin.setHeaderTitle(items[0].conversation.subject);
         //We can assume this is the conversation topic even though it is not guaranteed
-        aWin.addParticipants(items[0], involves);
+        aWin.addParticipants(items[0], Gloda.myIdentities, isList, listInvolves);
       }});
   },
 
