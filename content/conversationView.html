@@ -79,9 +79,8 @@
     <li class="message" read="${read}" id="${id}" messageKey="${messageKey}">
         <div class="headerblock" onclick="$(this).next().slideToggle()">  
           <input type="button" value="&#x25BE" class="fullMessageDropdown">
-          <div class="date">${friendlyDate}</div>
           <div class="avatar"><img src="${avatar}"/></div>
-          <div class="from name">${from.contact.name} <span class="add"></span></div>
+          <div class="from name">${from.contact.name} <span class="add"></span> <span class="date">${friendlyDate}</span></div>
         </div>
         <div class="messageblock">
           <div class="fullbody" onclick="handleClick($(this), event);"/>

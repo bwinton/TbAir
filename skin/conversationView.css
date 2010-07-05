@@ -149,6 +149,8 @@ li.message:last-child {
 
 li.message .headerblock {
   cursor: pointer;
+  margin-top: 5px;
+  height: 24px;
 }
 
 li.message .headerblock input.fullMessageDropdown  {
@@ -170,15 +172,13 @@ li.message .headerblock input.fullMessageDropdown  {
 li.message .headerblock .avatar,
 li.message .headerblock .from {
   display: inline-block;
-  vertical-align: middle;
   overflow: hidden;
   color: #000;
 }
 
 li.message .headerblock .avatar {
-  height: 24px;
-  width: 24px;
   margin-right: 5px;
+  vertical-align: top;
 }
 
 li.message .headerblock .avatar img {
@@ -188,6 +188,7 @@ li.message .headerblock .avatar img {
 
 li.message .headerblock .from {
   font-size: 12px;
+  line-height: 24px;
 }
 
 li.message .headerblock .from:empty:after {
@@ -202,10 +203,11 @@ li.message .headerblock .messageactions {
 }
 
 li.message .headerblock .date {
-  font-size: 11px;
   color: #888;
   font-weight: normal;
   margin: 0 0 5px 0;
+  display: inline-block;
+  vertical-align: baseline;
 }
 
 li.message[read=true] .messageblock {
