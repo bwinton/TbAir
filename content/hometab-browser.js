@@ -435,6 +435,29 @@ function filterContacts(event) {
   }
 }
 
+function filterSource(event) {
+  try {
+    let filterNode = $(event.target);
+    var filter = filterNode.val(), count = 0;
+    $(".column.left").each(function () {
+      let matchString = $(this).children(".from").text() +
+                        $(this).next().find(".body").text();
+      if filter.length == 0 || (matchString.search(new RegExp(filter, "i")) < 0)
+        $(this).closest(".conversation").hide();
+      else
+        $(this).closest(".conversation").show();
+    });
+    if (event.keyCode == event.DOM_VK_RETURN) {
+      let items = $(".column .topic:visible");
+      if (items.length == 1) {
+        items.find(".body").trigger("click");
+      }
+    }
+  } catch (e) {
+    logException(e);
+  }
+}
+
 function handleClick(element, event) {
   if (event.target.tagName == "BLOCKQUOTE") {
     if (event.target.hasAttribute("shown")) {
