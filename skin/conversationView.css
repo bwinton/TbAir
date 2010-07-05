@@ -246,7 +246,8 @@ li.message .messageblock .fullbody > pre > fieldset {
 }
 
 li.message .actionblock {
-  vertical-align: bottom;
+  display: block;
+  clear: both;
 }
 
 li.message .actionblock .actions button {

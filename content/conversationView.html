@@ -77,7 +77,7 @@
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
     <li class="message" read="${read}" id="${id}" messageKey="${messageKey}">
-        <div class="headerblock" onclick="$(this).next().slideToggle()">  
+        <div class="headerblock" onclick="$(this).next().slideToggle(200)">  
           <input type="button" value="&#x25BE" class="fullMessageDropdown">
           <div class="avatar"><img src="${avatar}"/></div>
           <div class="from name">${from.contact.name} <span class="add"></span> <span class="date">${friendlyDate}</span></div>
