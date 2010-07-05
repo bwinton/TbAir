@@ -92,7 +92,7 @@ ul.column {
   width: 255px;
   padding: 0;
   margin: 0;
-  max-height: 450px;
+  max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
   border-top: 1px solid #ddd;
