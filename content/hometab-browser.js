@@ -442,7 +442,8 @@ function filterSource(event) {
     $(".column.left").each(function () {
       let matchString = $(this).children(".from").text() +
                         $(this).next().find(".body").text();
-      if filter.length == 0 || (matchString.search(new RegExp(filter, "i")) < 0)
+      if ((filter.length == 0) ||
+          (matchString.search(new RegExp(filter, "i")) < 0))
         $(this).closest(".conversation").hide();
       else
         $(this).closest(".conversation").show();
