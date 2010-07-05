@@ -48,11 +48,12 @@
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/folderView.css" />
 
+
 </head>
 <body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('folderList')">
   <div class="header">
     <div class="title"></div>
-    <div class="search"><input type="text" class="search" onkeyup="filterConversations(event)"/></div>
+    <div class="search"><input type="text" class="search" onkeyup="filterConversations(event)" placeholder="filter messages"/></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
   <ol class="conversations filtered"></ol>
@@ -78,12 +79,14 @@
 
       <div class="columns">
 
-        <div class="column left">
+        <div class="column left hbox">
           <div class="date" style="visibility:hidden;line-height:24px;">spacer</div>
-          <div class="avatar"><img src="${topic.avatar}"/></div>
-          <div class="from">${topic.from.contact.name}</div>
-          <div is="${starred}" class="starred"/>
-          <div has="${attachments}" class="attachments"/>
+          <div class="avatar boxFlex0"><img src="${topic.avatar}"/></div>
+          <div class="from boxFlex1">${topic.from.contact.name}</div>
+          <div class="metaInfo">  
+            <div is="${starred}" class="starred"/>
+            <div has="${attachments}" class="attachments"/>
+          </div>  
         </div>
 
         <div class="column right">

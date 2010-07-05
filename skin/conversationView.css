@@ -53,13 +53,14 @@ body {
 
 /* expand the header width more to accomidate a larger message reader size */
 .header {
-  width: 640px;
+  width: 100%;
+  border-right: none;
 }
 
 #body {
-  width: 640px;
+  width: 100%;
   min-height: 100%;
-  border-right: 1px solid #ddd;
+  
 }
 
 .header .title:empty:after {
@@ -122,11 +123,11 @@ li.participant:not(:last-child):after{
 }
 
 ol.messages {
-  width: 640px;
+  width: 100%;
   margin: 0;
   padding: 0 0 40px 0;
   list-style-type: none;
-  border-right: 1px solid #ddd;
+  
 }
 
 li.message {
@@ -150,6 +151,8 @@ li.message:last-child {
 
 li.message .headerblock {
   cursor: pointer;
+  margin-top: 5px;
+  height: 24px;
 }
 
 li.message .headerblock input.fullMessageDropdown  {
@@ -171,15 +174,13 @@ li.message .headerblock input.fullMessageDropdown  {
 li.message .headerblock .avatar,
 li.message .headerblock .from {
   display: inline-block;
-  vertical-align: middle;
   overflow: hidden;
   color: #000;
 }
 
 li.message .headerblock .avatar {
-  height: 24px;
-  width: 24px;
   margin-right: 5px;
+  vertical-align: top;
 }
 
 li.message .headerblock .avatar img {
@@ -189,6 +190,7 @@ li.message .headerblock .avatar img {
 
 li.message .headerblock .from {
   font-size: 12px;
+  line-height: 24px;
 }
 
 li.message .headerblock .from:empty:after {
@@ -203,10 +205,11 @@ li.message .headerblock .messageactions {
 }
 
 li.message .headerblock .date {
-  font-size: 11px;
   color: #888;
   font-weight: normal;
   margin: 0 0 5px 0;
+  display: inline-block;
+  vertical-align: baseline;
 }
 
 li.message[read=true] .messageblock {
@@ -245,7 +248,8 @@ li.message .messageblock .fullbody > pre > fieldset {
 }
 
 li.message .actionblock {
-  vertical-align: bottom;
+  display: block;
+  clear: both;
 }
 
 li.message .actionblock .actions button {
@@ -292,30 +296,35 @@ BLOCKQUOTE[shown=true]:before {
 }
 
 li.message .attachments {
-  background-color: #efefef;
+  background-color: #fafafa;
   list-style: none;
   padding: 0;
-  margin: 10px;
-  -moz-border-radius: 3px;
+  margin: 10px 0;
+  -moz-border-radius: 5px;
+  width: 100%;
 }
 
 li.message .attachments .attachment {
-  width: 150px;
-  border: 1px solid #aaa;
+  width: 25%;
+  border: 1px solid #ddd;
   background-color: #fff;
-  margin: 7px;
-  padding: 7px;
   display: inline-block;
   cursor: pointer;
+  margin: 5px;
+  padding: 5px;
 }
 
-li.message .attachments .attachment .name {
+li.message .attachments .attachment span.name {
   text-decoration: underline;
   color: #5180D0;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-li.message .attachments .attachment .icon {
-  vertical-align: text-top;
+li.message .attachments .attachment img.icon {
+  float: right;
+  display: inline-block;
 }
 
 /* </CONVERSATION VIEW STYLES> */

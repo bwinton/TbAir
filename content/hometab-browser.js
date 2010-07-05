@@ -380,7 +380,7 @@ function filterConversations(event) {
     $(".filtered:first li.conversation").each(function () {
       if (handleSpecialFilters(filter, $(this)))
         return;
-      id = $(this).attr("id");
+      let id = $(this).attr("id");
       if (id) { // somehow some nodes don't have IDs?
         let matchString = document.getElementById("cache").conversations[id];
         if (matchString) {

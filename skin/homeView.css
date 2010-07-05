@@ -43,37 +43,194 @@
 */
 
 #body {
-  width: 511px;
   min-height: 100%;
-  border-right: 1px solid #ddd;
 }
 
-.column {
-  width: 511px;
-  margin: 0;
+.header {
+  width: 100%;
+  border-right: none;
+}
+
+li.folderList {
+  position: absolute;
+  top: 3px;
+  display: inline-block;
+  border: 1px solid transparent;
+  -moz-border-radius: 5px 5px 0 0;
+}
+
+li.folderList .search {
+  display: none;
+}
+
+.folderTitle {
+  line-height: 32px;
+  padding-left: 10px;
+  display: block;
+}
+
+li.folderList:hover {
+  background: #f2f2f2;
+  border: 1px solid #aaa;
+  color: #333;
+  -moz-box-shadow: 0 3px 5px #ddd;
+}
+
+li.folderList:hover .search {
+  display: block;
+  position: absolute;
+  top: 4px;
+  right: 9px;
+}
+
+li.folderList:hover ul.column {
+  display: block;
+}
+
+ul.column {
+  display: none;
+  width: 255px;
   padding: 0;
-}
-
-.portletContainer {
-  float: left;
-  width: 511px;
-  background-color: #fff;
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 40px;
+  margin: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-top: 1px solid #ddd;
 }
 
 .portlet {
-  -moz-border-radius: 5px 5px 5px 5px;
-  background-color: #F2F2F2;
-  border: 1px solid #DDDDDD;
-  color: #888888;
-  display: inline-block;
-  font-size: 12px;
-  margin: 10px;
+  padding: 5px 10px;
+  display: block;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.portlet:first-child {
+  border-top: none;
+}
+
+.portlet:hover {
+  background-color: #f2f2f2;
+}
+
+.folderNav {
+  width: 100%;
+  display: block;
   padding: 10px;
-  text-align: center;
-  width: 235px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #ddd;
+  font-size: 12px;
+  color: #888;
+  height: 40px;
+  position: relative;
+}
+
+button.action.folder {
+  padding: 2px 5px;
+}
+
+.homeWrapper {  
+  width: 100%;
+  background-color: #fff;
+  font-size: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.homeWrapper .homeMenu {
+  min-height: 100%;
+  background-color: #fff;
+}
+
+.homeWrapper .features {
+  width: 255px;
+  border-left: 1px solid #ddd;
+  background-color: #f2f2f2;
+  background-image: -moz-linear-gradient(left, #FFFFFF 0%, #FFFFFF 5px, transparent 5px, transparent 100%),
+                    -moz-linear-gradient(left, #ddd 0%, #ddd 100%);
+  background-position: center center, 4px center;                     
+}
+
+.homeWrapper .homeMenu li,
+.homeWrapper .features li {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  background-position: right center;
+  background-repeat: no-repeat;
+  -moz-box-sizing: border-box;
+}
+
+.homeWrapper .homeMenu li {
+  background-position: 10px center;
+  padding-left: 70px;
+}
+
+.homeWrapper .features li {
+  margin-left: 6px;
+  background-color: #f2f2f2;
+}
+
+.homeWrapper .homeMenu li:last-child,
+.homeWrapper .features li:last-child {
+  border-bottom: none;
+}
+
+.homeWrapper .homeMenu li.menuInbox {
+  background-image: url("i/sm-inbox.png");
+}
+
+.homeWrapper .homeMenu li.menuStarred {
+  background-image: url("i/sm-starred.png");
+}
+
+.homeWrapper .homeMenu li.menuDrafts {
+  background-image: url("i/sm-drafts.png");
+}
+
+.homeWrapper .homeMenu li.menuSpam {
+  background-image: url("i/sm-spam.png");
+}
+
+.homeWrapper .homeMenu li.menuTrash {
+  background-image: url("i/sm-trash.png");
+}
+
+.homeWrapper .homeMenu li:hover,
+.homeWrapper .features li:hover {
+  cursor: pointer;
+  background-color: #fafafa;
+}
+
+.homeWrapper .features li {
+  margin-left: 6px;
+  background-color: #f2f2f2;
+}
+
+.homeWrapper .features li.menuImages {
+    background-image: url("i/sm-image.png");
+}
+
+.homeWrapper .features li.menuFilm {
+    background-image: url("i/sm-film.png");
+}
+
+.homeWrapper .features li.menuMaps {
+    background-image: url("i/sm-maps.png");
+}
+
+.homeWrapper .features li.menuLinks {
+    background-image: url("i/sm-link.png");
+}
+
+.homeWrapper .features li.menuAttach {
+    background-image: url("i/sm-attach.png");
+}
+
+.portletContainer {
+  width: 511px;
+  background-color: red;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 40px;
 }
 
 .portlet[read="false"] .portlet-header > .name,
@@ -87,15 +244,14 @@
 
 .portlet .portlet-header > .account {
   color: #666;
-  margin-left: 1em;
-  font-size: smaller;
+  font-size: 12px;
 }
 
 .portlet-header { cursor: pointer; }
 .portlet-header:hover {
   text-decoration: underline;
 }
-.portlet-content { padding: 7px; }
+.portlet-content { padding: 0px; }
 
 .ui-sortable-placeholder {
   border: 1px dotted black;

@@ -63,6 +63,8 @@
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   background-color: #fafafa;
+  min-width: 511px;
+  overflow-y: scroll;
 }
 
 .header {
@@ -99,23 +101,33 @@ input.search {
   background-color:#FFFFFF;
   border:1px solid #CCCCCC;
   color:#333333;
-  padding:1px 5px;
-  width:100px;
+  padding: 1px 5px 1px 18px;
+  width: 200px;
   -moz-box-shadow:0 1px 0 #FFFFFF;
   display:inline;
   font-weight:normal;
   margin: 0 -10px 0 0;
+  background-image: url("chrome://hometab/skin/filter.png");
+  background-position: 4px center;
+  background-repeat: no-repeat;
 }
 
-button.action.options {
+li.folderList input.search {
+  width: 150px;
+}
+
+button.action {
   -moz-appearance: none;
   -moz-border-radius: 2px;
   padding: 0;
   margin: 0;
-  width: 32px;
   color: #333;
   border: 1px solid #CCCCCC;
   background: -moz-linear-gradient(center bottom , #EEEEEE 0%, #FFFFFF 100%) repeat scroll 0 0 #FFFFFF;
+}
+
+button.action.options {
+  width: 32px;
 }
 
 .count:before {
@@ -131,3 +143,109 @@ button.action.options {
 }
 
 /* </UNIVERSAL STYLES> */
+
+/* START hbox/vbox normalization from http://alex.dojotoolkit.org/2009/08/css-3-progress/ */
+/* hbox and vbox classes */
+ 
+.hbox {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-align: stretch;
+ 
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-align: stretch;
+ 
+	display: box;
+	box-orient: horizontal;
+	box-align: stretch;
+}
+ 
+.hbox > * {
+	-webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	box-flex: 0;
+	display: block;
+}
+ 
+.vbox {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-align: stretch;
+ 
+	display: -moz-box;
+	-moz-box-orient: vertical;
+	-moz-box-align: stretch;
+ 
+	display: box;
+	box-orient: vertical;
+	box-align: stretch;
+}
+ 
+.vbox > * {
+	-webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	box-flex: 0;
+	display: block;
+}
+ 
+.spacer {
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;
+}
+ 
+.reverse {
+	-webkit-box-direction: reverse;
+	-moz-box-direction: reverse;
+	box-direction: reverse;
+}
+ 
+.boxFlex0 {
+	-webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	box-flex: 0;
+}
+ 
+.boxFlex1, .boxFlex {
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;
+}
+ 
+.boxFlex2 {
+	-webkit-box-flex: 2;
+	-moz-box-flex: 2;
+	box-flex: 2;
+}
+ 
+.boxGroup1 {
+	-webkit-box-flex-group: 1;
+	-moz-box-flex-group: 1;
+	box-flex-group: 1;
+}
+ 
+.boxGroup2 {
+	-webkit-box-flex-group: 2;
+	-moz-box-flex-group: 2;
+	box-flex-group: 2;
+}
+ 
+.start {
+	-webkit-box-pack: start;
+	-moz-box-pack: start;
+	box-pack: start;
+}
+ 
+.end {
+	-webkit-box-pack: end;
+	-moz-box-pack: end;
+	box-pack: end;
+}
+ 
+.center {
+	-webkit-box-pack: center;
+	-moz-box-pack: center;
+	box-pack: center;
+}
+/* END hbox/vbox normalization from http://alex.dojotoolkit.org/2009/08/css-3-progress/ */

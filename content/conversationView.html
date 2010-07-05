@@ -85,11 +85,10 @@
   <!-- Templates!  Woo! -->
   <script id="messagetmpl" type="text/html">
     <li class="message" read="${read}" id="${id}" messageKey="${messageKey}">
-        <div class="headerblock" onclick="$(this).next().slideToggle()">  
+        <div class="headerblock" onclick="$(this).next().slideToggle(200)">  
           <input type="button" value="&#x25BE" class="fullMessageDropdown">
-          <div class="date">${friendlyDate}</div>
           <div class="avatar"><img src="${avatar}"/></div>
-          <div class="from name">${from.contact.name} <span class="add"></span></div>
+          <div class="from name">${from.contact.name} <span class="add"></span> <span class="date">${friendlyDate}</span></div>
         </div>
         <div class="messageblock">
           <div class="fullbody" onclick="handleClick($(this), event);"/>
@@ -103,11 +102,11 @@
                 name="${attachment.name}"
                 url="${attachment.url}"
                 uri="${attachment.uri}"
-                class="attachment"
+                class="attachment hbox"
                 onclick="openAttachment($(this))">
-              <img class="icon"
-                   src="moz-icon://${attachment.name}?size=32&contentType=${attachment.type.fullType}"/>
-              <span class="name">${attachment.name}</span>
+              <span class="name boxFlex1">${attachment.name}</span>
+              <img class="icon boxFlex0" thundsrc="moz-icon://${attachment.name}?size=32&contentType=${attachment.type.fullType}"/>
+              
             </li>
           {{/each}}
           </ul>
