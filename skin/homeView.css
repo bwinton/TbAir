@@ -57,6 +57,7 @@ li.folderList {
   display: inline-block;
   border: 1px solid transparent;
   -moz-border-radius: 5px 5px 0 0;
+  z-index: 1;
 }
 
 li.folderList .search {
@@ -117,7 +118,7 @@ ul.column {
   width: 100%;
   display: block;
   padding: 10px;
-  background-color: #fafafa;
+  background-color: #fff;
   border-bottom: 1px solid #ddd;
   font-size: 12px;
   color: #888;
@@ -134,6 +135,8 @@ button.action.folder {
   background-color: #fff;
   font-size: 12px;
   border-bottom: 1px solid #ddd;
+  -moz-box-shadow: -3px -1px 3px #eee;
+  position: relative;
 }
 
 .homeWrapper .homeMenu {

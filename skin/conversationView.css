@@ -132,13 +132,14 @@ ol.messages {
 
 li.message {
   margin: 0;
-  padding:  5px 10px 10px 10px;
+  padding:  10px 10px 10px 10px;
   border-bottom: 1px solid #ddd;
   background-color: #fff;
   color: #333;
   line-height: 1.5;
   overflow: hidden;
   position: relative;
+  -moz-box-shadow: -3px -1px 3px #eee;
 }
 
 li.message[read=true]:not(:last-child) {
@@ -151,7 +152,6 @@ li.message:last-child {
 
 li.message .headerblock {
   cursor: pointer;
-  margin-top: 5px;
   height: 24px;
 }
 

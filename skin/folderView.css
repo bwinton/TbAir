@@ -66,6 +66,8 @@ ol.conversations {
 
 li.conversation {
   width: 100%;
+  border-top: 1px solid #fff;
+  background-image: -moz-linear-gradient(center top , transparent 0%, transparent 50%, transparent 50%, rgba(0, 0, 0, 0.020) 100%);
 }
 
 .column {
@@ -121,6 +123,7 @@ li.conversation {
 
 .conversation[read=false] {
   background-color: #fff;
+  background-image: none;
 }
 .conversation[read=true] {
   background-color: #F2F2F2;
