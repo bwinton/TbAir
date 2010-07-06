@@ -228,6 +228,10 @@ button.action.folder {
     background-image: url("i/sm-attach.png");
 }
 
+.homeWrapper .features li.menuSource {
+    background-image: url("i/sm-commits.png");
+}
+
 .portletContainer {
   width: 511px;
   background-color: red;
