@@ -122,6 +122,10 @@ var hometab = {
                     unread: (_unread || ""),
                     dupe : false,
                     id: folder.URI};
+        if ((!folder.isSpecialFolder(nsMsgFolderFlags.Inbox, false)) &&
+             (folder.flags & Ci.nsMsgFolderFlags.Favorite)) {
+          doc.folderMgr.addFaveFolder(data);
+        }
         if (folder.name in seenFolderNames) {
           let prevData = seenFolderNames[folder.name];
           if (prevData)
@@ -135,9 +139,9 @@ var hometab = {
       }
     }
     doc.setHeaderTitle("Home")
-    doc.setFolders(sortFolderItems(content));
+    doc.folderMgr.setFolders(sortFolderItems(content));
   },
-
+  
   showConversations: function show_Conversations(aId, aBackground) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("folderList", {
@@ -747,6 +751,7 @@ var homeTabType = {
 
         let folders = getFoldersForURI(aContentWindow.tab.id, true);
         let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+        aContentWindow.updateHeart(aContentWindow.tab.id);
 
         query.folder.apply(query, folders);
         query.orderBy("-date");

@@ -55,6 +55,11 @@
   border-right: none;
 }
 
+#love {
+  padding-left: 6px;
+  padding-top: 8px;
+}
+
 ol.conversations {
   margin: 0;
   padding: 0 0 40px 0;

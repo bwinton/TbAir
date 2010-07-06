@@ -197,6 +197,11 @@ button.action.folder {
   background-image: url("i/sm-trash.png");
 }
 
+.homeWrapper .homeMenu li.favorite {
+  background-image: url("i/sm-hearted.png");
+  background-position: 20px 10px;
+}
+
 .homeWrapper .homeMenu li:hover,
 .homeWrapper .features li:hover {
   cursor: pointer;

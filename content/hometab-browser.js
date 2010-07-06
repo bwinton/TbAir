@@ -42,6 +42,7 @@ const Cu = Components.utils;
 
 Cu.import("resource:///modules/errUtils.js");
 Cu.import("resource:///modules/gloda/utils.js");
+Cu.import("resource://app/modules/MailUtils.js");
 
 var gCopyService = Cc["@mozilla.org/messenger/messagecopyservice;1"]
                      .getService(Ci.nsIMsgCopyService);
@@ -76,17 +77,88 @@ function setupHome() {
     });
 }
 
-function setFolders(folders) {
-  let even = (folders.length / $(".column").length) + 1;
-  // And render the template.
-  $(".column").each(function() {
-    $("#folderPortletTmpl").render(folders.splice(0, even)).appendTo($(this))
-  })
-  ;
+var folderMgr = {
+
+  setFolders: function(folders) {
+    let even = (folders.length / $(".column").length) + 1;
+    // And render the template.
+    $(".column").each(function() {
+      $("#folderPortletTmpl").render(folders.splice(0, even)).appendTo($(this))
+    })
+    ;
+    let observerService = Components.classes["@mozilla.org/observer-service;1"]
+                          .getService(Components.interfaces.nsIObserverService);
+    observerService.addObserver(this, "favorite-folder-removed", false);
+    observerService.addObserver(this, "favorite-folder-added", false);
+    
+    // XXX we really do want to removeObservers when the window closes.
+  },
+
+  observe : function(aSubject, aTopic, aData) {
+    let URI = aData;
+    if (aTopic == 'favorite-folder-added') {
+      this.addFavoriteFolder(URI);
+    } else {
+      this.removeFavoriteFolder(URI);
+    }
+  },
+
+  removeFavoriteFolder: function(URI) {
+    // Why doesn't this work? It fails silently AFAICT XXX
+    $("#" + URI).remove();
+  },
+  
+  addFavoriteFolder: function(URI) {
+    let folder = MailUtils.getFolderForURI(URI, true);
+    let _unread = folder.getNumUnread(false);
+    let data = {name: folder.name,
+                serverName: folder.server.prettyName,
+                read: (_unread <= 0),
+                unread: (_unread || ""),
+                dupe : false,
+                id: folder.URI};
+    this.addFaveFolder(data);
+  },
+  addFaveFolder: function(folderData) {
+    $("#foldertmpl").render(folderData).appendTo($(".homeMenu")).attr("id", folderData['id']);
+  }
 }
 
 function setHeaderTitle(title) {
   $(".header > .title").text(title);
+}
+
+function updateHeart(aUri) {
+  $("#love").attr('uri', aUri); // stash away for toggleHeart
+  let URI = $("#love").attr('uri');
+  let folder = MailUtils.getFolderForURI(aUri, true);
+  if (folder) {
+    if (folder.flags & Ci.nsMsgFolderFlags.Favorite) {
+      $("#unhearted").hide();
+      $("#hearted").show();
+    } else {
+      $("#hearted").hide();
+      $("#unhearted").show();
+    }
+  } else {
+    $("#hearted").hide();
+    $("#unhearted").hide();
+  }
+}
+
+function toggleHeart() {
+  let URI = $("#love").attr("uri");
+  let folder = MailUtils.getFolderForURI(URI, true);
+  let observerService = Components.classes["@mozilla.org/observer-service;1"]
+                        .getService(Components.interfaces.nsIObserverService);
+  if (folder.flags & Ci.nsMsgFolderFlags.Favorite) {
+    folder.flags &= ~Ci.nsMsgFolderFlags.Favorite;
+    observerService.notifyObservers(null, "favorite-folder-removed", URI);
+  } else {
+    folder.flags |= Ci.nsMsgFolderFlags.Favorite;
+    observerService.notifyObservers(null, "favorite-folder-added", URI);
+  }
+  updateHeart(URI);
 }
 
 function addContent(conversations) {
