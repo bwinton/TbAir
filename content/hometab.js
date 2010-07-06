@@ -52,17 +52,17 @@ Cu.import("resource:///modules/iteratorUtils.jsm");
 
 Cu.import("resource://hometab/modules/hometabSessionManager.js");
 
-let msgComposeService = Components.classes['@mozilla.org/messengercompose;1'].getService()
-                                  .QueryInterface(Components.interfaces.nsIMsgComposeService);
+let msgComposeService = Cc["@mozilla.org/messengercompose;1"].getService()
+                           .QueryInterface(Ci.nsIMsgComposeService);
 
-let messenger = Components.classes["@mozilla.org/messenger;1"].createInstance()
-                          .QueryInterface(Components.interfaces.nsIMessenger);
+let messenger = Cc["@mozilla.org/messenger;1"].createInstance()
+                   .QueryInterface(Ci.nsIMessenger);
 
-let msgWindow = Components.classes["@mozilla.org/messenger/msgwindow;1"].createInstance()
-                          .QueryInterface(Components.interfaces.nsIMsgWindow);
+let msgWindow = Cc["@mozilla.org/messenger/msgwindow;1"].createInstance()
+                   .QueryInterface(Ci.nsIMsgWindow);
 
-let accountManager = Components.classes["@mozilla.org/messenger/account-manager;1"]
-                               .getService(Components.interfaces.nsIMsgAccountManager)
+let accountManager = Cc["@mozilla.org/messenger/account-manager;1"]
+                        .getService(Ci.nsIMsgAccountManager)
 
 
 var hometab = {
