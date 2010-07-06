@@ -50,11 +50,6 @@ var gCopyService = Cc["@mozilla.org/messenger/messagecopyservice;1"]
 var log = Application.console.log;
 
 function setupHome() {
-  $(".column").sortable({
-    connectWith: '.column'
-    });
-  $(".column").disableSelection();
-
   let pref = Cc["@mozilla.org/preferences-service;1"]
                .getService(Ci.nsIPrefBranch);
   let pref_name = "geo.wifi.protocol";
@@ -336,6 +331,27 @@ function addContacts(me, contacts) {
   $("#contacttmpl").render(contacts).appendTo(".contacts");
 }
 
+function addAttachments(attachments) {
+  $("#attachmenttmpl").render(attachments).appendTo($("ol.attachments"));
+}
+
+function thumbnailAttachments(aMessageKey, aAttachments) {
+  try {
+    for each(let [,attachment] in Iterator(aAttachments)) {
+      let li = $(".attachment[messageKey='"+aMessageKey+"'][name='"+attachment.name+"']");
+      li.attr("url", attachment.url);
+      li.find(".name").attr("url",  attachment.url);
+      li.find("img").attr("url",  attachment.url);
+      if ((/^image\//).test(attachment.fullType)) {
+        // We can get fancy like the attachments tab later
+        li.find("img").attr("src", attachment.url).addClass("thumbnailed");
+      }
+    }
+  } catch (e) {
+    logException(e);
+  }
+}
+
 /**
  * addEventListener betrayals compel us to establish our link with the
  *  outside world from inside.  NeilAway suggests the problem might have
@@ -390,6 +406,13 @@ function showDocuments(event) {
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
   hometab.showDocuments(background);
+}
+
+function showAttachments(event) {
+  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+  // XXX: The middle button is not being detected correctly right now
+  let background = event.metaKey || (event.button == 1);
+  hometab.showAttachments(background);
 }
 
 function showSource(event) {
@@ -497,6 +520,22 @@ function filterContacts(event) {
     var filter = filterNode.val(), count = 0;
     $(".contact ").each(function () {
       let matchString = $(this).find(".name").text() + $(this).find(".identity").text();;
+      if (matchString.search(new RegExp(filter, "i")) < 0)
+        $(this).hide();
+      else
+        $(this).show();
+    });
+  } catch (e) {
+    logException(e);
+  }
+}
+
+function filterAttachments(event) {
+  try {
+    let filterNode = $(event.target);
+    var filter = filterNode.val(), count = 0;
+    $(".attachment ").each(function () {
+      let matchString = $(this).text();
       if (matchString.search(new RegExp(filter, "i")) < 0)
         $(this).hide();
       else

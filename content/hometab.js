@@ -437,6 +437,82 @@ var hometab = {
     tabmail.openTab("documents", { background: aBackground });
   },
 
+  showAttachments: function ht_showAttachments(aBackground) {
+    let tabmail = document.getElementById("tabmail");
+    tabmail.openTab("attachments", { background: aBackground });
+  },
+
+  showAttachmentsInTab: function ht_showAttachmentsInTab(aWin) {
+    aWin.setHeaderTitle(aWin.tab.title);
+    let self = this;
+    let query = Gloda.newQuery(Gloda.NOUN_MESSAGE);
+
+    query.orderBy("-date");
+    query.limit(50);
+    query.attachmentTypes();
+
+    query.getCollection({
+      IGNORED_ATTACHMENT_NAMES : ["signature.asc"],
+      onItemsAdded: function _onItemsAdded(aItems, aCollection) {
+      },
+      onItemsModified: function _onItemsModified(aItems, aCollection) {
+      },
+      onItemsRemoved: function _onItemsRemoved(aItems, aCollection) {
+      },
+      /* called when our database query completes */
+      onQueryCompleted: function _onQueryCompleted(aCollection) {
+        let attachments = [];
+        let items = self._removeDupes(aCollection.items);
+
+        for (let [index,glodaMsg] in Iterator(items)) {
+          if (!glodaMsg.attachmentTypes)
+            continue;
+          for (var i=0; i < glodaMsg.attachmentTypes.length; i++) {
+            let mimetype = glodaMsg.attachmentTypes[i];
+            let name = glodaMsg.attachmentNames[i];
+
+            //Ignore the signature.asc and other crappy attachments
+            if (this.IGNORED_ATTACHMENT_NAMES.some(function(e) { return e == name; }))
+              continue;
+
+            let src = "moz-icon://" + name + "?size=64&contentType=" + mimetype.fullType;
+            let messageId = glodaMsg.headerMessageID;
+            let folderURI = glodaMsg.folderURI;
+
+            attachments.push({ glodaMsg : glodaMsg, mimetype : mimetype,
+                               name : name, src : src });
+
+          }
+        }
+        aWin.addAttachments(attachments);
+        for each(let [i,glodaMsg] in Iterator(items)) {
+          let msgHdr = glodaMsg.folderMessage;
+          if (msgHdr)
+            MsgHdrToMimeMessage(msgHdr, aWin /* this */,
+                                self.thumbnailAttachments,
+                                true /*Allow Download*/, {});
+        }
+
+      }});
+  },
+
+  thumbnailAttachments: function ht_thumbnailAttachment(aMsgHdr, aMimeMsg) {
+    let folderURI = aMsgHdr.folder.getUriForMsg(aMsgHdr);
+    //Get all the URLs for images
+    let attachments = new Array();
+    for (let [,attachment] in Iterator(aMimeMsg.allAttachments)) {
+      attachments.push({ name : attachment.name,
+                         url : attachment.url,
+                         uri : folderURI,
+                         fullType : attachment.contentType,
+                         isExternal : attachment.isExternal,
+                         isReal : hometab._isRealAttachment(attachment) });
+    }
+    // we use the messageKey because it's the cheapest item that both the
+    // GlodaMessage and nsIMsgDBHdr have
+    this.thumbnailAttachments(aMsgHdr.messageKey, attachments)
+  },
+
   showSource: function ht_showSource(aBackground) {
     let tabmail = document.getElementById("tabmail");
     tabmail.openTab("source", { background: aBackground });
@@ -1034,6 +1110,75 @@ var homeTabType = {
       onEvent: function dc_onEvent(aEvent, aTab) {
       },
       getBrowser: function dc_getBrowser(aCommand, aTab) {
+        return aTab.browser;
+      },
+    },
+
+    // A tab for displaying our hometab revision control messages
+    attachments: {
+      type: "attachments",
+      isDefault: false,
+
+      openTab: function sr_openTab(aTab, aArgs) {
+        window.title = aTab.title = "Attachments";
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "attachments");
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
+        aTab.browser.loadURI("chrome://hometab/content/attachments.html");
+      },
+
+      htmlLoadHandler: function dc_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
+        hometab.showAttachmentsInTab(aContentWindow);
+      },
+
+      showTab: function sr_showTab(aTab) {
+        aTab.browser.setAttribute("type", "content-primary");
+      },
+      shouldSwitchTo: function sr_onSwitchTo() {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          // There can be only 1
+          if (tabInfo[selectedIndex].mode.name == this.modes.attachments.type) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
+      onTitleChanged: function sr_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function sr_closeTab(aTab) {
+        aTab.browser.destroy();
+      },
+      saveTabState: function sr_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
+      },
+      persistTab: function sr_persistTab(aTab) {
+        return { };
+      },
+      restoreTab: function sr_restoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("attachments", { background: true });
+      },
+      supportsCommand: function sr_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function sr_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function sr_doCommand(aCommand, aTab) {
+      },
+      onEvent: function sr_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function sr_getBrowser(aCommand, aTab) {
         return aTab.browser;
       },
     },
