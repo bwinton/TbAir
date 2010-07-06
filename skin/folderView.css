@@ -44,15 +44,8 @@
 
 #body {
   line-height: 21px;
-  min-height: 100%;
   border-right: none;
   margin-right: 255px;
-  width: 100%;
-}
-
-.header {
-  width: 100%;
-  border-right: none;
 }
 
 #love {

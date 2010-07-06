@@ -51,18 +51,6 @@ body {
   padding: 0;
 }
 
-/* expand the header width more to accomidate a larger message reader size */
-.header {
-  width: 100%;
-  border-right: none;
-}
-
-#body {
-  width: 100%;
-  min-height: 100%;
-  
-}
-
 .header .title:empty:after {
   /* ellipsis &#8230; */
   content: "\2026";

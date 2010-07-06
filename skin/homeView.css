@@ -42,15 +42,6 @@
   the hometab.css file which is included in every page.
 */
 
-#body {
-  min-height: 100%;
-}
-
-.header {
-  width: 100%;
-  border-right: none;
-}
-
 li.folderList {
   position: absolute;
   top: 3px;
