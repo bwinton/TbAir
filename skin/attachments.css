@@ -1,0 +1,83 @@
+
+ol.attachments {
+  margin: 0;
+  padding: 0 0 40px 0;
+  list-style-type: none;
+  border-right: none;
+  width: 100%;
+  background-color: #fff;
+}
+
+.attachment{
+  display: inline-block;
+  width: 370px;
+  height: 100px;
+  margin: 7px 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.column {
+  display: inline-block;
+  vertical-align: top;
+  float: left;
+  padding: 0 10px;
+}
+
+.column.left {
+  width: 25%;
+}
+
+.column.right {
+  width: 75%;
+}
+
+.attachment img {
+  max-width: 64px;
+  max-height: 64px;
+  border: 0;
+  margin: 0 11px 22px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.attachment img.thumbnailed {
+  -moz-box-shadow: 2px 3px 5px 1px #666;
+  cursor: pointer;
+}
+
+.attachment .name {
+  cursor: pointer;
+}
+
+.attachment .name,
+.attachment .subject {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.attachment .subject {
+  color: #666;
+}
+
+.attachment .sender,
+.attachment .folder {
+  cursor: pointer;
+}
+
+.attachment .sender {
+  color: rgb(52, 101, 164);
+}
+.attachment .folder {
+  color: rgb(52, 101, 164);
+}
+.attachment .folder {
+  color: #ba9e16;
+}
+
+.attachment .name:hover,
+.attachment .sender:hover,
+.attachment .folder:hover {
+  text-decoration: underline;
+}
