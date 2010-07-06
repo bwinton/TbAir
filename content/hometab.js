@@ -695,11 +695,11 @@ var contentTabType = {
 function getFoldersForURI(aUri) {
   if (/^special:/.test(aUri)) {
     let specials = {
-      "special:inbox": nsMsgFolderFlags.Inbox,
+      "special:inbox": Ci.nsMsgFolderFlags.Inbox,
       //[nsMsgFolderFlags.???, "starred", false, true],
-      "special:drafts": nsMsgFolderFlags.Drafts,
-      "special:spam": nsMsgFolderFlags.Junk,
-      "special:trash": nsMsgFolderFlags.Trash,
+      "special:drafts": Ci.nsMsgFolderFlags.Drafts,
+      "special:spam": Ci.nsMsgFolderFlags.Junk,
+      "special:trash": Ci.nsMsgFolderFlags.Trash,
     };
 
     let flag = specials[aUri];

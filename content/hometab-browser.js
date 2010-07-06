@@ -99,8 +99,8 @@ var folderMgr = {
   },
 
   removeFavoriteFolder: function(URI) {
-    // Why doesn't this work? It fails silently AFAICT XXX
-    $("#" + URI).remove();
+    let node = document.getElementById(encodeURI(URI));
+    node.parentNode.removeChild(node);
   },
   
   addFavoriteFolder: function(URI) {
@@ -115,7 +115,7 @@ var folderMgr = {
     this.addFaveFolder(data);
   },
   addFaveFolder: function(folderData) {
-    $("#foldertmpl").render(folderData).appendTo($(".homeMenu")).attr("id", folderData['id']);
+    $("#foldertmpl").render(folderData).appendTo($(".homeMenu")).attr("id", encodeURI(folderData['id']));
   }
 }
 
