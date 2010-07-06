@@ -114,7 +114,7 @@ var hometab = {
       if (!folder.isSpecialFolder(outFolderFlagMask, true) &&
           (folder.server && folder.server.type != "rss") &&
           (folder.server && folder.server.type != "nntp") &&
-          (!folder.isServer && folder.getTotalMessages(true) > 0)) {
+          (!folder.isServer))  {
         let _unread = folder.getNumUnread(false);
         let data = {name: folder.name,
                     serverName: folder.server.prettyName,
@@ -126,16 +126,18 @@ var hometab = {
              (folder.flags & Ci.nsMsgFolderFlags.Favorite)) {
           doc.folderMgr.addFaveFolder(data);
         }
-        if (folder.name in seenFolderNames) {
-          let prevData = seenFolderNames[folder.name];
-          if (prevData)
-            prevData.dupe = true;
-          data.dupe = true;
+        if (folder.getTotalMessages(true) > 0) {
+          if (folder.name in seenFolderNames) {
+            let prevData = seenFolderNames[folder.name];
+            if (prevData)
+              prevData.dupe = true;
+            data.dupe = true;
+          }
+          else {
+            seenFolderNames[folder.name] = data;
+          }
+          content.push(data);
         }
-        else {
-          seenFolderNames[folder.name] = data;
-        }
-        content.push(data);
       }
     }
     doc.setHeaderTitle("Home")
