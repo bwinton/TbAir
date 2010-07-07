@@ -88,6 +88,10 @@ var hometab = {
     return folders;
   },
 
+  get tabmail() {
+    return document.getElementById("tabmail");
+  },
+
   /**
    * This is a recursive function to add all subfolders to the array. It
    * assumes that the passed in folder itself has already been added.
@@ -142,22 +146,6 @@ var hometab = {
     }
     doc.setHeaderTitle("Home")
     doc.folderMgr.setFolders(sortFolderItems(content));
-  },
-  
-  showConversations: function show_Conversations(aId, aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("folderList", {
-      id: aId,
-      background: aBackground
-    });
-  },
-
-  showMessages: function showMessages(aId, aSubject, aBackground) {
-    openSubTab("messageList", {
-      id: aId,
-      title: aSubject,
-      background : aBackground
-    });
   },
 
   tempFolder: null,

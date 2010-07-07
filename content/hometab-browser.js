@@ -380,8 +380,26 @@ function showConversations(event, element) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showConversations(element.attr("id"),
-                            background);
+  log("tabmail=" + hometab.tabmail);
+  hometab.tabmail.openTab("folderList", {
+    id: element.attr("id"),
+    background: background
+  });
+}
+
+function openSubTab(aType, aArgs) {
+  let tabInfo = hometab.tabmail.tabInfo;
+  let tabContainer = hometab.tabmail.tabContainer;
+  let index = tabInfo.indexOf(hometab.tabmail.currentTabInfo);
+  hometab.tabmail.openTab(aType, aArgs);
+  // Move the new tab into position, if it's not already the last child.
+  if (index != tabContainer.children.length - 1) {
+    let last = tabInfo.pop();
+    tabInfo.splice(index+1, 0, last);
+    last = tabContainer.lastElementChild;
+    tabContainer.removeChild(last);
+    tabContainer.insertBefore(last, tabContainer.children[index+1]);
+  }
 }
 
 function showMessages(event, element) {
@@ -389,9 +407,11 @@ function showMessages(event, element) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showMessages(el.attr("id"),
-                       el.attr("subject"),
-                       background);
+  openSubTab("messageList", {
+    id: el.attr("id"),
+    title: el.attr("subject"),
+    background : background
+  });
 }
 
 function showContacts(event) {
