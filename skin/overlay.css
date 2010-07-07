@@ -9,26 +9,27 @@ tabbrowser#tabmail .tabmail-tabs > .tabs-stack > vbox > hbox {
   -moz-box-orient: vertical;
 }
 
+tabbrowser#tabmail .tab-drop-indicator-bar {
+  display: none;
+}
+
 tabbrowser#tabmail .tabmail-tabs {
   background-image: -moz-linear-gradient(180deg, #fff 0%, #fff 5px, transparent 5px, transparent 100%),
-                    -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 4px, #dadfe8 4px, #dadfe8 100%);
-  background-position: center, -5px 0;
-  border-right: 1px solid #ddd;
-  margin-bottom: -1px;
+                    -moz-linear-gradient(180deg, #bbb 0%, #bbb 1px, #C8D0DE 1px, #dadfe8 4px, #dadfe8 4px, #dadfe8 100%) !important;
+  background-position: center, -5px 0 !important;
+  border-right: 1px solid #ddd !important;
 }
 
 tabbrowser#tabmail > tabbox {
   margin: 0;
 }
 
-tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
-  border: none;
-  margin: 0;
-  padding: 0;
+tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-box {
+  display: none;
 }
 
 tabbrowser#tabmail .tabmail-tabs .tabs-alltabs-button {
-  background: none;
+  display: none;
 }
 
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[read="true"] .tab-text {
@@ -52,13 +53,14 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[selected="true"]:hover {
   -moz-border-right-colors: #aaa;
   -moz-border-left-colors: #aaa;
   -moz-border-bottom-colors: #aaa;
-  margin: 3px 9px 3px 5px;
-  -moz-margin-end: 9px;
-  -moz-margin-start: 5px;
+  margin: 3px 9px 3px 5px !important;
+  -moz-margin-end: 9px !important;
+  -moz-margin-start: 5px !important;
   border: 1px solid #aaa;
   height: 28px;
   color: #333;
   text-align: left;
+  font-weight: normal;
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 1px 0px #C8D0DE;
   padding: 0 5px;
