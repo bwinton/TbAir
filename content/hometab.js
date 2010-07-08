@@ -1140,74 +1140,6 @@ var homeTabType = {
         return aTab.browser;
       },
     },
-
-    // A tab for displaying our hometab revision control messages
-    source: {
-      type: "source",
-      isDefault: false,
-
-      openTab: function sr_openTab(aTab, aArgs) {
-        window.title = aTab.title = "Home Tab Source Control";
-
-        // Clone the browser for our new tab.
-        aTab.browser = document.getElementById("browser").cloneNode(true);
-        aTab.browser.setAttribute("id", "source");
-        aTab.panel.appendChild(aTab.browser);
-        aTab.browser.contentWindow.tab = aTab;
-        aTab.browser.contentWindow.title = aArgs.title;
-        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
-                                                             "content-primary");
-        aTab.browser.loadURI("chrome://hometab/content/source.html");
-      },
-
-      htmlLoadHandler: function dc_htmlLoadHandler(aContentWindow) {
-        aContentWindow.tab.tabNode.setAttribute("loaded", true);
-      },
-
-      showTab: function sr_showTab(aTab) {
-        aTab.browser.setAttribute("type", "content-primary");
-      },
-      shouldSwitchTo: function sr_onSwitchTo() {
-        let tabInfo = document.getElementById("tabmail").tabInfo;
-
-        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
-             ++selectedIndex) {
-          // There can be only 1
-          if (tabInfo[selectedIndex].mode.name == this.modes.source.type) {
-            return selectedIndex;
-          }
-        }
-        return -1;
-      },
-      onTitleChanged: function sr_onTitleChanged(aTab) {
-        window.title = aTab.title;
-      },
-      closeTab: function sr_closeTab(aTab) {
-        aTab.browser.destroy();
-      },
-      saveTabState: function sr_saveTabState(aTab) {
-        aTab.browser.setAttribute("type", "content-targetable");
-      },
-      persistTab: function sr_persistTab(aTab) {
-        return { };
-      },
-      restoreTab: function sr_restoreTab(aTabmail, aPersistedState) {
-        aTabmail.openTab("source", { background: true });
-      },
-      supportsCommand: function sr_supportsCommand(aCommand, aTab) {
-        return false;
-      },
-      isCommandEnabled: function sr_isCommandEnabled(aCommand, aTab) {
-        return false;
-      },
-      doCommand: function sr_doCommand(aCommand, aTab) {
-      },
-      onEvent: function sr_onEvent(aEvent, aTab) {
-      },
-      getBrowser: function sr_getBrowser(aCommand, aTab) {
-        return aTab.browser;
-      },
-    },
   },
 };
 
@@ -1581,6 +1513,11 @@ function CreateToolbarTooltip(document, event)
 var gStatusBar = document.getElementById("statusbar-icon");
 
 var tabmail = document.getElementById("tabmail");
+
+// Add in the other tab types.
+Cu.import("chrome://hometab/content/tabs/source-tab.js");
+source.init(homeTabType, window);
+
 tabmail.registerTabType(homeTabType);
 tabmail.registerTabType(contentTabType);
 tabmail.openFirstTab("home", {});

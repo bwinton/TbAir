@@ -48,8 +48,12 @@ var gCopyService = Cc["@mozilla.org/messenger/messagecopyservice;1"]
                      .getService(Ci.nsIMsgCopyService);
 
 var log = Application.console.log;
+var hometab;
 
 function setupHome() {
+  Cu.import("chrome://hometab/content/tabs/source-browser.js");
+  source.init($, hometab);
+
   let pref = Cc["@mozilla.org/preferences-service;1"]
                .getService(Ci.nsIPrefBranch);
   let pref_name = "geo.wifi.protocol";
@@ -362,8 +366,6 @@ function thumbnailAttachments(aMessageKey, aAttachments) {
  *  differ.  Anywho, this works for now and is a delightful reference to boot.
  */
 
-var hometab;
-
 function reachOutAndTouchFrame(aMode) {
   let us = window.QueryInterface(Ci.nsIInterfaceRequestor)
                  .getInterface(Ci.nsIWebNavigation)
@@ -437,13 +439,6 @@ function showAttachments(event) {
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
   hometab.tabmail.openTab("attachments", { background: background });
-}
-
-function showSource(event) {
-  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
-  // XXX: The middle button is not being detected correctly right now
-  let background = event.metaKey || (event.button == 1);
-  hometab.tabmail.openTab("source", { background: background });
 }
 
 var specialFilters = [
@@ -565,30 +560,6 @@ function filterAttachments(event) {
       else
         $(this).show();
     });
-  } catch (e) {
-    logException(e);
-  }
-}
-
-function filterSource(event) {
-  try {
-    let filterNode = $(event.target);
-    var filter = filterNode.val(), count = 0;
-    $(".column.left").each(function () {
-      let matchString = $(this).children(".from").text() +
-                        $(this).next().find(".body").text();
-      if ((filter.length == 0) ||
-          (matchString.search(new RegExp(filter, "i")) < 0))
-        $(this).closest(".conversation").hide();
-      else
-        $(this).closest(".conversation").show();
-    });
-    if (event.keyCode == event.DOM_VK_RETURN) {
-      let items = $(".column .topic:visible");
-      if (items.length == 1) {
-        items.find(".body").trigger("click");
-      }
-    }
   } catch (e) {
     logException(e);
   }
