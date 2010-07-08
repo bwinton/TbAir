@@ -323,8 +323,10 @@ function populateAttachment(aMessageKey, aAttachments) {
 }
 
 function openAttachment(element) {
-  //document.location = element.attr("url");
-  hometab.openAttachment(element);
+  openSubTab("contentTab", {
+    contentPage : element.attr("url"),
+    title : element.attr("name"),
+  });
 }
 
 function addContacts(me, contacts) {
@@ -418,28 +420,30 @@ function showContacts(event) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showContacts(background);
+  hometab.tabmail.openTab("contacts", {
+    background: background
+  });
 }
 
 function showDocuments(event) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showDocuments(background);
+  hometab.tabmail.openTab("documents", { background: background });
 }
 
 function showAttachments(event) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showAttachments(background);
+  hometab.tabmail.openTab("attachments", { background: background });
 }
 
 function showSource(event) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
   let background = event.metaKey || (event.button == 1);
-  hometab.showSource(background);
+  hometab.tabmail.openTab("source", { background: background });
 }
 
 var specialFilters = [

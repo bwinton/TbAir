@@ -232,13 +232,6 @@ var hometab = {
     this.populateAttachment(aMsgHdr.messageKey, attachments)
   },
 
-  openAttachment: function(aAttachmentElement) {
-    openSubTab("contentTab", {
-      contentPage : aAttachmentElement.attr("url"),
-      title : aAttachmentElement.attr("name"),
-    });
-  },
-
   _augmentMessage: function (message) {
     message.friendlyDate = makeFriendlyDateAgo(message.date);
     message.synopsis = (message.indexedBodyText || "").substr(0, 140);
@@ -382,14 +375,6 @@ var hometab = {
     msgComposeService.OpenComposeWindowWithParams(null, params);
   },
 
-  showContacts: function ht_showContacts(aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("contacts", {
-      background: aBackground
-    });
-
-  },
-
   showContactsInTab: function ht_showContactsInTab(aWin) {
     let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
     contactQuery.orderBy("-popularity").limit(50);
@@ -418,16 +403,6 @@ var hometab = {
         aWin.addContacts(Gloda.myContact, others);
         aWin.setHeaderTitle(aWin.tab.title);
       }});
-  },
-
-  showDocuments: function ht_showDocuments(aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("documents", { background: aBackground });
-  },
-
-  showAttachments: function ht_showAttachments(aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("attachments", { background: aBackground });
   },
 
   showAttachmentsInTab: function ht_showAttachmentsInTab(aWin) {
@@ -499,11 +474,6 @@ var hometab = {
     // we use the messageKey because it's the cheapest item that both the
     // GlodaMessage and nsIMsgDBHdr have
     this.thumbnailAttachments(aMsgHdr.messageKey, attachments)
-  },
-
-  showSource: function ht_showSource(aBackground) {
-    let tabmail = document.getElementById("tabmail");
-    tabmail.openTab("source", { background: aBackground });
   }
 };
 

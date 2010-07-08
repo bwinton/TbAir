@@ -46,7 +46,8 @@
       href="chrome://hometab/skin/hometab.css" />
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/homeView.css" />
-
+  <script type="text/javascript"
+          src="https://getfirebug.com/firebug-lite.js"></script>
 </head>
 <body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('home')">
   <div class="header">
@@ -150,7 +151,7 @@
 -->
 
   <script id="locationTmpl" type="text/html">
-    <a onclick="hometab.openAttachment($(this))"
+    <a onclick="openAttachment($(this))"
        url="http://maps.google.com/maps?z=16&output=embed&q=coffee+shops+near:${lat},${lon}"
        name="Coffee Shops Near You">geolocation <!--lat: ${lat} lon: ${lon}--></a>
   </script>
