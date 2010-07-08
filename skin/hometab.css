@@ -107,7 +107,7 @@ input.search {
   display:inline;
   font-weight:normal;
   margin: 0 -10px 0 0;
-  background-image: url("chrome://hometab/skin/filter.png");
+  background-image: url("chrome://hometab/skin/i/filter.png");
   background-position: 4px center;
   background-repeat: no-repeat;
 }
