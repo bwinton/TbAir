@@ -105,7 +105,7 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"]:hover {
   margin-left: 20px;
-  list-style-image: url("chrome://hometab/skin/conversation.png");
+  list-style-image: url("chrome://hometab/skin/i/conversation.png");
 }
 
 /* type contentTab is really an attachment tab */
@@ -114,5 +114,5 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="contentTab"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="contentTab"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="contentTab"][selected="true"]:hover {
   margin-left: 40px;
-  /* list-style-image: url("chrome://hometab/skin/conversation.png"); */
+  /* list-style-image: url("chrome://hometab/skin/i/attachment.png"); */
 }
