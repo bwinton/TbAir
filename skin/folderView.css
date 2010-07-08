@@ -202,11 +202,11 @@ li.conversation {
 }
 
 .conversation .starred[is=true] {
-  background-image: url("chrome://hometab/skin/starred.png");
+  background-image: url("chrome://hometab/skin/i/starred.png");
 }
 
 .conversation .starred[is=false] {
-  background-image: url("chrome://hometab/skin/not-starred.png");
+  background-image: url("chrome://hometab/skin/i/not-starred.png");
 }
 
 .conversation .attachments[has=true] {
