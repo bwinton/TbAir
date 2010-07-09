@@ -49,13 +49,13 @@ var $;
 var source = {
   init: function initialize(jQuery, hometab) {
     $ = jQuery;
-    $(".features").append("<li class='menuSource'>recent commits</li>")
-                  .click( function showSource(event) {
-      // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
-      // XXX: The middle button is not being detected correctly right now
-      let background = event.metaKey || (event.button == 1);
-      hometab.tabmail.openTab("source", { background: background });
-    });
+    $("<li class='menuSource'>recent commits</li>").appendTo(".features")
+      .click( function showSource(event) {
+        // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
+        // XXX: The middle button is not being detected correctly right now
+        let background = event.metaKey || (event.button == 1);
+        hometab.tabmail.openTab("source", { background: background });
+      });
   },
 
   filterSource: function filterSource(event) {
