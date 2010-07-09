@@ -64,6 +64,7 @@ let msgWindow = Cc["@mozilla.org/messenger/msgwindow;1"].createInstance()
 let accountManager = Cc["@mozilla.org/messenger/account-manager;1"]
                         .getService(Ci.nsIMsgAccountManager)
 
+let log = Application.console.log;
 
 var hometab = {
 
@@ -925,24 +926,19 @@ var homeTabType = {
     contacts: {
       type: "contacts",
       isDefault: false,
-      contactsId : 0,
 
       openTab: function ct_openTab(aTab, aArgs) {
-        let contact = aArgs.contact;
-        aTab.contact = contact || null;
-        aTab.title = (contact && contact.name)? contact.name : "Contacts";
-        window.title = aTab.title;
+        window.title = aTab.title = "Contacts";
 
         // Clone the browser for our new tab.
         aTab.browser = document.getElementById("browser").cloneNode(true);
-        aTab.browser.setAttribute("id", "contacts"+this.contactsId);
+        aTab.browser.setAttribute("id", "contacts");
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
         aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/contacts.html");
-        this.contactsId++;
       },
 
       htmlLoadHandler: function ct_htmlLoadHandler(aContentWindow) {
@@ -953,14 +949,11 @@ var homeTabType = {
       showTab: function ct_showTab(aTab) {
         aTab.browser.setAttribute("type", "content-primary");
       },
-      shouldSwitchTo: function ct_onSwitchTo({contact: aContact}) {
+      shouldSwitchTo: function ct_onSwitchTo() {
         let tabInfo = document.getElementById("tabmail").tabInfo;
-
         for (let selectedIndex = 0; selectedIndex < tabInfo.length;
              ++selectedIndex) {
-          if (tabInfo[selectedIndex].mode.name == this.modes.contacts.type &&
-              tabInfo[selectedIndex].contact &&
-              tabInfo[selectedIndex].contact == aContact) {
+          if (tabInfo[selectedIndex].mode.name == this.modes.contacts.type) {
             return selectedIndex;
           }
         }
@@ -976,12 +969,10 @@ var homeTabType = {
         aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function ct_persistTab(aTab) {
-        return { contactId: (aTab.contact)? aTab.contact.id : null };
+        return {};
       },
       restoreTab: function ct_restoreTab(aTabmail, aPersistedState) {
-        let contact = aPersistedState.contactId;
-        aTabmail.openTab("contacts", { contact : contact,
-                                          background: true });
+        aTabmail.openTab("contacts", { background: true });
       },
       supportsCommand: function ct_supportsCommand(aCommand, aTab) {
         return false;
