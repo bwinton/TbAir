@@ -296,23 +296,26 @@ li.message .attachments .attachment {
   width: 25%;
   border: 1px solid #ddd;
   background-color: #fff;
-  display: inline-block;
   cursor: pointer;
   margin: 5px;
   padding: 5px;
 }
 
-li.message .attachments .attachment span.name {
+li.message .attachments .attachment img.icon {
+  width: 32px;
+}
+
+li.message .attachments .attachment .name {
   text-decoration: underline;
   color: #5180D0;
-  display: inline-block;
-  text-overflow: ellipsis;
+  -moz-binding: url('ellipsis.xml#ellipsis');
+  overflow: hidden;
   white-space: nowrap;
 }
 
-li.message .attachments .attachment img.icon {
-  float: right;
-  display: inline-block;
+li.message .attachments .attachment .type {
+  color: #999;
+  font-size: smaller;
 }
 
 /* </CONVERSATION VIEW STYLES> */
