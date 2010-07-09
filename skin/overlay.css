@@ -104,7 +104,7 @@ tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"]:hover,
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"],
 tabbrowser#tabmail .tabmail-tabs .tabmail-tab[type="messageList"][selected="true"]:hover {
-  margin-left: 20px;
+  margin-left: 20px !important;
   list-style-image: url("chrome://hometab/skin/i/conversation.png");
 }
 
