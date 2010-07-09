@@ -62,7 +62,6 @@
   vertical-align: baseline;
   list-style-type: none;
   -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   background-color: #fafafa;
   overflow-y: scroll;
 }
