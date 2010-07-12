@@ -42,44 +42,44 @@
   the hometab.css file which is included in every page.
 */
 
-li.folderList {
-  position: absolute;
-  top: 3px;
+.folderNav {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  font-size: 12px;
+  color: #888;
+  height: 40px;
+}
+
+.folderList {
   display: inline-block;
   border: 1px solid transparent;
   -moz-border-radius: 5px 5px 0 0;
+  position: relative;
   z-index: 1;
 }
 
-li.folderList .search {
+.folderList span.search {
   display: none;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  width: 150px;
 }
 
 .folderTitle {
-  line-height: 32px;
-  padding-left: 10px;
+  padding: 10px;
   display: block;
+  cursor: pointer;
 }
 
-li.folderList:hover {
+.folderList.open {
   background: #f2f2f2;
   border: 1px solid #aaa;
   color: #333;
   -moz-box-shadow: 0 3px 5px #ddd;
 }
 
-li.folderList:hover .search {
-  display: block;
-  position: absolute;
-  top: 4px;
-  right: 9px;
-}
-
-li.folderList:hover ul.column {
-  display: block;
-}
-
-ul.column {
+ul.folders {
   display: none;
   width: 255px;
   padding: 0;
@@ -88,33 +88,45 @@ ul.column {
   overflow-y: auto;
   overflow-x: hidden;
   border-top: 1px solid #ddd;
-}
-
-.portlet {
-  padding: 5px 10px;
-  display: block;
-  border-top: 1px solid #ddd;
   background-color: #fff;
 }
 
-.portlet:first-child {
-  border-top: none;
-}
-
-.portlet:hover {
+ul.folders .folder {
+  padding: 5px 10px;
+  border-top: 1px solid #ddd;
   background-color: #f2f2f2;
 }
 
-.folderNav {
-  width: 100%;
-  display: block;
-  padding: 10px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
+ul.folders .folder:first-child {
+  border-top: none;
+}
+
+ul.folders .folder:hover {
+  background-color: #f2f2f2;
+}
+
+ul.folders .folder[read="false"] .header > .name,
+ul.folders .folder[read="false"] .header > .count {
+  font-weight: bold;
+  color: #000;
+}
+
+ul.folders .folder[dupe="false"] .header > .account { display: none; }
+ul.folders .folder[dupe="true"] .header > .account { display: inline; }
+
+ul.folders .folder .header > .account {
+  color: #666;
   font-size: 12px;
-  color: #888;
-  height: 40px;
-  position: relative;
+}
+
+ul.folders .folder .header { cursor: pointer; }
+ul.folders .folder .header:hover {
+  text-decoration: underline;
+}
+
+ul.folders .folder .header.special {
+  font-weight: bold;
+  color: #5180D0;
 }
 
 button.action.folder {
@@ -228,45 +240,5 @@ button.action.folder {
     background-image: url("i/sm-commits.png");
 }
 
-.portletContainer {
-  width: 511px;
-  background-color: red;
-  border-right: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 40px;
-}
-
-.portlet[read="false"] .portlet-header > .name,
-.portlet[read="false"] .portlet-header > .count {
-  font-weight: bold;
-  color: #000;
-}
-
-.portlet[dupe="false"] .portlet-header > .account { display: none; }
-.portlet[dupe="true"] .portlet-header > .account { display: inline; }
-
-.portlet .portlet-header > .account {
-  color: #666;
-  font-size: 12px;
-}
-
-.portlet-header { cursor: pointer; }
-.portlet-header:hover {
-  text-decoration: underline;
-}
-.portlet-content { padding: 0px; }
-
-.ui-sortable-placeholder {
-  border: 1px dotted black;
-  visibility: visible !important;
-  height: 50px !important;
-  background-color: inherit;
-}
-
-.ui-sortable-placeholder * { visibility: hidden; }
-
-.portlet-header.special {
-  font-weight: bold;color: #5180D0;
-}
 
 /* </HOME VIEW STYLES> */

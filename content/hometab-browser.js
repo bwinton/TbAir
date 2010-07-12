@@ -59,7 +59,7 @@ function setupHome() {
   let pref_name = "geo.wifi.protocol";
   if (!pref.prefHasUserValue(pref_name))
     pref.setIntPref(pref_name, 0);
-  let pref_name = "geo.wifi.uri";
+  pref_name = "geo.wifi.uri";
   if (!pref.prefHasUserValue(pref_name))
     pref.setCharPref(pref_name, "https://www.google.com/loc/json");
 
@@ -79,12 +79,8 @@ function setupHome() {
 var folderMgr = {
 
   setFolders: function(folders) {
-    let even = (folders.length / $(".column").length) + 1;
-    // And render the template.
-    $(".column").each(function() {
-      $("#folderPortletTmpl").render(folders.splice(0, even)).appendTo($(this))
-    })
-    ;
+    $("#folderItemTmpl").render(folders).appendTo($("ul.folders"));
+
     let observerService = Components.classes["@mozilla.org/observer-service;1"]
                           .getService(Components.interfaces.nsIObserverService);
     observerService.addObserver(this, "favorite-folder-removed", false);

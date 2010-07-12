@@ -59,11 +59,11 @@
   </div>
 
   <div class="folderNav">
-    <li class="folderList"><span class="folderTitle">folders &#x25BE</span>
-      <div class="search"><input type="text" class="search" onkeyup="filterFolders(event)" placeholder="search"/></div>
-      <ul class="column">
-      </ul>
-    </li>
+    <div class="folderList">
+      <span class="folderTitle" onclick="$(this).siblings().toggle().parent().toggleClass('open')">folders &#x25BE</span>
+      <span class="search"><input type="text" class="search" onkeyup="filterFolders(event)" placeholder="search"/></span>
+      <ul class="folders"></ul>
+    </div>
   </div>
   
   <div class="homeWrapper hbox">
@@ -112,10 +112,6 @@
       src="chrome://hometab/content/hometab-browser.js"></script>
 
   <!-- Templates!  Woo! -->
-  <script id="categorytmpl" type="text/html">
-    <li class="category" id="${id}">${folder}</li>
-  </script>
-
   <script id="foldertmpl" type="text/html">
     <li class="favorite" read="${read}" id="${id}"
         onclick="showConversations(event, $(this))">
@@ -123,31 +119,16 @@
     </li>
   </script>
 
-  <script id="folderPortletTmpl" type="text/html">
-    <div class="portlet" read="${read}" dupe="${dupe}">
-      <div class="portlet-header" id="${id}"
+  <script id="folderItemTmpl" type="text/html">
+    <div class="folder" read="${read}" dupe="${dupe}">
+      <div class="header" id="${id}"
            onclick="showConversations(event, $(this))">
         <span class="name">${name}</span>
         <span class="count">${unread}</span>
         <span class="account">${serverName}</span>
       </div>
-      <div class="portlet-content"></div>
     </div>
   </script>
-
-<!--
-        <ol class="conversations">
-          <li class="conversation" read="${read}" id="${id}"
-              subject="${subject}">
-            <span class="from"
-                  onclick="showMessages($(this));"
-              >${message.from.contact.name}</span>
-            <span class="subject"
-                  onclick="showMessages($(this));"
-              >${message.conversation.subject}</span>
-          </li>
-        </ol>
--->
 
   <script id="locationTmpl" type="text/html">
     <a onclick="openAttachment($(this))"
