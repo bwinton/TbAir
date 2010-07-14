@@ -758,14 +758,19 @@ var homeTabType = {
       type: "folderList",
       isDefault: false,
       listeners : {},
+      conversations : {},
 
       openTab: function fl_openTab(aTab, aArgs) {
         aTab.id = aArgs.id;
         let folders = getFoldersForURI(aArgs.id);
-        let unread = 0;
-        for each (folder in folders)
-          unread += folder.getNumUnread(false);
-        aTab.tabNode.setAttribute("read", unread <= 0);
+        let unread = false;
+        for each (folder in folders) {
+          aTab.folderURI = folder.URI;
+          unread = (folder.getNumUnread(false) > 0);
+          if (unread)
+            break;
+        }
+        aTab.tabNode.setAttribute("read", !unread);
         aTab.title = "Unknown";
         if (folders.length)
           aTab.title = folders[0].QueryInterface(Ci.nsIMsgFolder).prettyName;
@@ -796,7 +801,19 @@ var homeTabType = {
         query.getCollection(homeTabType.modes.folderList
                                        .listeners[aContentWindow.tab.id]);
       },
-
+      addConversation: function fl_addConversation(aTab) {
+        let folderURI = aTab.tabNode.folderURI;
+        try {
+          if (typeof this.conversations[folderURI] == "undefined") {
+            this.conversations[folderURI] = {};
+          }
+          this.conversations[folderURI][aTab.id] = aTab;
+        } catch (e) { Application.console.log("addConversation.e: " + e); }
+      },
+      removeConversation: function fl_removeConversation(aTab) {
+        let folderURI = aTab.tabNode.folderURI;
+        delete this.conversations[folderURI][aTab.id];
+      },
       showTab: function fl_showTab(aTab) {
         window.title = aTab.title;
         aTab.browser.setAttribute("type", "content-primary");
@@ -820,6 +837,14 @@ var homeTabType = {
       },
       closeTab: function fl_closeTab(aTab) {
         delete homeTabType.modes.folderList.listeners[aTab.id];
+        try {
+          let tabmail = document.getElementById("tabmail");
+          for each(let [i,conversation] in Iterator(this.modes.folderList.conversations[aTab.folderURI])) {
+            tabmail.closeTab(conversation);
+          }
+        } catch(e) { Application.console.log("closeTab.e: " + e); }
+
+        delete this.modes.folderList.conversations[aTab.folderURI];
         aTab.browser.destroy();
       },
       saveTabState: function fl_saveTabState(aTab) {
@@ -855,8 +880,11 @@ var homeTabType = {
       openTab: function ml_openTab(aTab, aArgs) {
         aTab.title = aArgs.title;
         aTab.id = aArgs.id;
+        aTab.tabNode.folderURI = aArgs.folderURI;
         window.title = aTab.title;
-
+        try {
+          this.modes.messageList.registerWithFolder(aTab);
+        } catch (e) { Application.console.log("openTab.e: " + e); }
         // Clone the browser for our new tab.
         aTab.browser = document.getElementById("browser").cloneNode(true);
         aTab.browser.setAttribute("id", "messageList"+aTab.id);
@@ -873,6 +901,32 @@ var homeTabType = {
         hometab.showMessagesInConversation(aContentWindow);
       },
 
+      registerWithFolder: function ml_registerWithFolder(aTab) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+        let folderURI = aTab.tabNode.folderURI;
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].mode.name == "folderList" &&
+              tabInfo[selectedIndex].folderURI &&
+              tabInfo[selectedIndex].folderURI == folderURI) {
+            tabInfo[selectedIndex].mode.addConversation(aTab);
+            break;
+          }
+        }
+      },
+      unRegisterWithFolder: function ml_unRegisterWithFolder(aTab) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+        let folderURI = aTab.tabNode.folderURI;
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].mode.name == "folderList" &&
+              tabInfo[selectedIndex].folderURI &&
+              tabInfo[selectedIndex].folderURI == folderURI) {
+            tabInfo[selectedIndex].mode.removeConversation(aTab)
+            break;
+          }
+        }
+      },
       showTab: function ml_showTab(aTab) {
         window.title = aTab.title;
         aTab.browser.setAttribute("type", "content-primary");
@@ -894,17 +948,23 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function ml_closeTab(aTab) {
+        try {
+          this.modes.messageList.unRegisterWithFolder(aTab);
+        } catch (e) { Application.console.log("closeTab.e: " + e); }
+
         aTab.browser.destroy();
       },
       saveTabState: function ml_saveTabState(aTab) {
         aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function ml_persistTab(aTab) {
-        return { conversationId: aTab.id, title : aTab.title };
+        return { conversationId: aTab.id, title : aTab.title,
+                 folderURI: aTab.tabNode.folderURI };
       },
       restoreTab: function ml_restoreTab(aTabmail, aPersistedState) {
         aTabmail.openTab("messageList", { id : aPersistedState.conversationId,
                                           title : aPersistedState.title,
+                                          folderURI: aPersistedState.folderURI,
                                           background: true });
       },
       supportsCommand: function ml_supportsCommand(aCommand, aTab) {

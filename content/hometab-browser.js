@@ -409,6 +409,7 @@ function showMessages(event, element) {
   let background = event.metaKey || (event.button == 1);
   openSubTab("messageList", {
     id: el.attr("id"),
+    folderURI: el.attr("folderURI"),
     title: el.attr("subject"),
     background : background
   });

@@ -65,17 +65,20 @@
       src="chrome://messenger/content/jquery.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/jquery/jquery.tmpl.js"></script>
-  <script type="application/javascript;version=1.8"
-      src="chrome://messenger/content/protovis-r2.6-modded.js"></script>
+
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/utils.js"></script>
 
+  <script type="text/javascript"
+          src="https://getfirebug.com/firebug-lite.js"></script>
+
   <!-- Templates!  Woo! -->
   <script id="conversationtmpl" type="text/html">
     <li class="conversation" read="${read}" id="${id}"
         subject="${subject}"
+        folderURI="${topic.folderURI}"
         timestamp="${last.date.getTime()}">
 
       <div class="columns">
