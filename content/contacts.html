@@ -54,7 +54,7 @@
     <div class="search"><input id="filter" type="text" class="search" onkeyup="filterContacts(event)"/></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
-  <ol class="contacts"/>
+  <ol class="contacts"></ol>
 </body>
   <!-- Libs -->
   <script type="application/javascript;version=1.8"
@@ -72,6 +72,11 @@
       <div class="column left"><img class="avatar" src="${avatar}"/></div>
       <div class="column right">
         <div class="name">${name}</div>
+        <ul class="tags">
+          {{each(i,freetag) freeTags}}
+          <li class="freetag">${freetag.name}</li>
+          {{/each}}
+        </ul>
         <ol class="identities">
           {{each(i,identity) identities}}
           <li class="identity" kind="${identity.kind}" onclick="composeMessage($(this));">${identity.value}</li>

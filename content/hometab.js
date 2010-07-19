@@ -50,6 +50,8 @@ Cu.import("resource://app/modules/MailUtils.js");
 Cu.import("resource://app/modules/errUtils.js");
 Cu.import("resource:///modules/iteratorUtils.jsm");
 
+Cu.import("resource:///modules/gloda/noun_freetag.js");
+
 Cu.import("resource://hometab/modules/hometabSessionManager.js");
 
 let msgComposeService = Cc["@mozilla.org/messengercompose;1"].getService()
@@ -378,7 +380,7 @@ var hometab = {
 
   showContactsInTab: function ht_showContactsInTab(aWin) {
     let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
-    contactQuery.orderBy("-popularity").limit(50);
+    contactQuery.orderBy("frecency").limit(50);
     contactQuery.getCollection({
       onItemsAdded: function _onItemsAdded(aItems, aCollection) {
       },
@@ -389,6 +391,9 @@ var hometab = {
       onQueryCompleted: function _onQueryCompleted(contacts) {
         let others = [];
         for each(let [,contact] in Iterator(contacts.items)) {
+          contact.freeTags = (contact.freeTags)? contact.freeTags :
+                                                 [ FreeTagNoun.getFreeTag("thunderbird"),
+                                                   FreeTagNoun.getFreeTag("work") ];
           if (Gloda.myContact != contact) {
             for each(let [,identity] in Iterator(contact.identities)) {
               if ("email" == identity.kind) {

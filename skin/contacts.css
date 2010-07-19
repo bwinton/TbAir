@@ -98,10 +98,19 @@ li.contact .name {
   font-weight: bold;
 }
 
+ul.tags,
 ol.identities {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+li.freetag {
+  display: inline;
+}
+
+li.freetag:not(:last-child):after {
+  content: ",";
 }
 
 li.identity {
