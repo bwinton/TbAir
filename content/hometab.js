@@ -1787,10 +1787,14 @@ function saveSession() {
 
 //This restores the session and starts a new session manager service
 function restoreSession() {
-  let tabsState = hometabSessionManager.loadingWindow();
-  let dontRestoreFirstTab = false;
-  if (tabsState)
-    document.getElementById("tabmail").restoreTabs(tabsState.tabs, dontRestoreFirstTab);
+  try {
+    let tabsState = hometabSessionManager.loadingWindow();
+    let dontRestoreFirstTab = false;
+    if (tabsState)
+      document.getElementById("tabmail").restoreTabs(tabsState.tabs, dontRestoreFirstTab);
+  } catch (e) {
+    logException(e);
+  }
 }
 
 function openSubTab(aType, aArgs) {
