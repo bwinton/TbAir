@@ -1673,7 +1673,7 @@ var gStatusBar = document.getElementById("statusbar-icon");
 var tabmail = document.getElementById("tabmail");
 
 // Add in the other tab types.
-Cu.import("chrome://hometab/content/tabs/source-tab.js");
+Cu.import("resource://hometab/content/tabs/source-tab.js");
 source.init(homeTabType, window);
 
 tabmail.registerTabType(homeTabType);
