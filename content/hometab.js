@@ -378,6 +378,36 @@ var hometab = {
     msgComposeService.OpenComposeWindowWithParams(null, params);
   },
 
+  sendMessage: function ht_sendMessage(email) {
+    let fields = Cc["@mozilla.org/messengercompose/composefields;1"]
+                    .createInstance(Ci.nsIMsgCompFields);
+    fields.to = email.to;
+    fields.subject = email.subject;
+    fields.body = email.body;
+
+    // we'll get this from the UI eventually
+    fields.from = msgComposeService.defaultIdentity.email;
+
+    fields.forcePlainText = true;
+    fields.useMultipartAlternative = true;
+
+    let params = Cc["@mozilla.org/messengercompose/composeparams;1"]
+                    .createInstance(Ci.nsIMsgComposeParams);
+    params.composeFields = fields;
+    params.identity = msgComposeService.defaultIdentity;
+    params.type = Ci.nsIMsgCompType.New;
+    params.format = Ci.nsIMsgCompFormat.Default;
+
+    let msgAccountManager = Cc["@mozilla.org/messenger/account-manager;1"]
+                              .getService (Ci.nsIMsgAccountManager);
+
+    let compose = msgComposeService.InitCompose (null, params);
+    compose.SendMsg (Ci.nsIMsgCompDeliverMode.Now,
+                     msgAccountManager.defaultAccount.defaultIdentity,
+                     "", null, null);
+    return true;
+  },
+
   showContactsInTab: function ht_showContactsInTab(aWin) {
     let contactQuery = Gloda.newQuery(Gloda.NOUN_CONTACT);
     contactQuery.orderBy("frecency").limit(50);
@@ -1050,6 +1080,78 @@ var homeTabType = {
       onEvent: function ct_onEvent(aEvent, aTab) {
       },
       getBrowser: function ct_getBrowser(aCommand, aTab) {
+        return aTab.browser;
+      },
+    },
+
+    // A tab for displaying your Gloda Contacts
+    compose: {
+      type: "compose",
+      isDefault: false,
+      composeId : 0,
+
+      openTab: function cp_openTab(aTab, aArgs) {
+        window.title = aTab.title = "Write";
+        aTab.id = this.modes.compose.composeId;
+
+        // Clone the browser for our new tab.
+        aTab.browser = document.getElementById("browser").cloneNode(true);
+        aTab.browser.setAttribute("id", "compose-" + this.modes.compose.composeId);
+        aTab.panel.appendChild(aTab.browser);
+        aTab.browser.contentWindow.tab = aTab;
+        aTab.browser.contentWindow.title = aArgs.title;
+        aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
+                                                             "content-primary");
+        aTab.browser.loadURI("chrome://hometab/content/compose.html");
+        this.modes.compose.composeId++;
+      },
+
+      htmlLoadHandler: function cp_htmlLoadHandler(aContentWindow) {
+        aContentWindow.tab.tabNode.setAttribute("loaded", true);
+        aContentWindow.setHeaderTitle("Write")
+      },
+
+      showTab: function cp_showTab(aTab) {
+        aTab.browser.setAttribute("type", "content-primary");
+      },
+      shouldSwitchTo: function cp_onSwitchTo({ id : composeId }) {
+        let tabInfo = document.getElementById("tabmail").tabInfo;
+        for (let selectedIndex = 0; selectedIndex < tabInfo.length;
+             ++selectedIndex) {
+          if (tabInfo[selectedIndex].mode.name == this.modes.compose.type &&
+              tabInfo[selectedIndex].id &&
+              tabInfo[selectedIndex].id == composeId) {
+            return selectedIndex;
+          }
+        }
+        return -1;
+      },
+      onTitleChanged: function cp_onTitleChanged(aTab) {
+        window.title = aTab.title;
+      },
+      closeTab: function cp_closeTab(aTab) {
+        aTab.browser.destroy();
+      },
+      saveTabState: function cp_saveTabState(aTab) {
+        aTab.browser.setAttribute("type", "content-targetable");
+      },
+      persistTab: function cp_persistTab(aTab) {
+        return {};
+      },
+      restoreTab: function cp_restoreTab(aTabmail, aPersistedState) {
+        aTabmail.openTab("compose", { background: true });
+      },
+      supportsCommand: function cp_supportsCommand(aCommand, aTab) {
+        return false;
+      },
+      isCommandEnabled: function cp_isCommandEnabled(aCommand, aTab) {
+        return false;
+      },
+      doCommand: function cp_doCommand(aCommand, aTab) {
+      },
+      onEvent: function cp_onEvent(aEvent, aTab) {
+      },
+      getBrowser: function cp_getBrowser(aCommand, aTab) {
         return aTab.browser;
       },
     },

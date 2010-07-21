@@ -415,27 +415,13 @@ function showMessages(event, element) {
   });
 }
 
-function showContacts(event) {
+function openTabType(aEvent, aType, aOptions) {
   // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
   // XXX: The middle button is not being detected correctly right now
-  let background = event.metaKey || (event.button == 1);
-  hometab.tabmail.openTab("contacts", {
-    background: background
-  });
-}
-
-function showDocuments(event) {
-  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
-  // XXX: The middle button is not being detected correctly right now
-  let background = event.metaKey || (event.button == 1);
-  hometab.tabmail.openTab("documents", { background: background });
-}
-
-function showAttachments(event) {
-  // XXX: The metaKey is mac only we need an if (!mac) event.ctrlKey case
-  // XXX: The middle button is not being detected correctly right now
-  let background = event.metaKey || (event.button == 1);
-  hometab.tabmail.openTab("attachments", { background: background });
+  let background = aEvent.metaKey || (aEvent.button == 1);
+  let options = aOptions || {};
+  options.background = background;
+  hometab.tabmail.openTab(aType, options);
 }
 
 var specialFilters = [
@@ -658,4 +644,20 @@ function composeMessage(element) {
   if ("email" != element.attr("kind"))
     return;
   hometab.composeMessage(element.text())
+}
+
+//--- actions on compose
+
+function sendMessage() {
+  Application.console.log("to: " + $("#to").val());
+  Application.console.log("subject: " + $("#subject").val());
+  Application.console.log("body: " + $("#text").val());
+
+  // For now just check that we have an address to send to
+  if ($("#to").val().length > 0)
+    hometab.sendMessage({ to: $("#to").val(),
+                          subject: $("#subject").val(),
+                          body: $("#text").val()});
+
+  return false; /* do not continue to submit the form */
 }
