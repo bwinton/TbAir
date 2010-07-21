@@ -51,7 +51,7 @@ var log = Application.console.log;
 var hometab;
 
 function setupHome() {
-  Cu.import("chrome://hometab/content/tabs/source-browser.js");
+  Cu.import("resource://hometab/content/tabs/source-browser.js");
   source.init($, hometab);
 
   let pref = Cc["@mozilla.org/preferences-service;1"]
