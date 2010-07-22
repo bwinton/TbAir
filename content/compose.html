@@ -77,26 +77,6 @@
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
 
-  <!-- Templates!  Woo! -->
-  <script id="contacttmpl" type="text/html">
-    <li class="contact" id="${id}">
-      <div class="column left"><img class="avatar" src="${avatar}"/></div>
-      <div class="column right">
-        <div class="name">${name}</div>
-        <ul class="tags">
-          {{each(i,freetag) freeTags}}
-          <li class="freetag">${freetag.name}</li>
-          {{/each}}
-        </ul>
-        <ol class="identities">
-          {{each(i,identity) identities}}
-          <li class="identity" kind="${identity.kind}" onclick="composeMessage($(this));">${identity.value}</li>
-          {{/each}}
-        </ol>
-      </div>
-    </li>
-  </script>
-
   <script type="text/javascript">
     $(document).ready(function() {
       $("#to").focus();
