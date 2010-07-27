@@ -648,6 +648,69 @@ function composeMessage(element) {
 
 //--- actions on compose
 
+/**
+ * Cribbed from
+ *   mozilla/dom/tests/mochitest/localstorage/test_localStorageFromChrome.xhtml
+ */
+function getLocalStorage(page) {
+  var url = "http://example.com/" + page;
+  var ios = Components.classes["@mozilla.org/network/io-service;1"]
+    .getService(Components.interfaces.nsIIOService);
+  var ssm = Components.classes["@mozilla.org/scriptsecuritymanager;1"]
+    .getService(Components.interfaces.nsIScriptSecurityManager);
+  var dsm = Components.classes["@mozilla.org/dom/storagemanager;1"]
+    .getService(Components.interfaces.nsIDOMStorageManager);
+
+  var uri = ios.newURI(url, "", null);
+  var principal = ssm.getCodebasePrincipal(uri);
+  return dsm.getLocalStorageForPrincipal(principal);
+}
+
+/**
+ * Do all the various things we need to do when we load the compose page.
+ */
+function loadComposePage() {
+  // Notify our parent that we're here.
+  reachOutAndTouchFrame('compose');
+  window.storage = getLocalStorage("hometab-compose");
+
+  // Populate the compose fields if we have them.
+  let baseKey = "ca.latte.hometab." + tab.id + "-";
+  let fields = $("#message_form input[type='text']")
+                 .add("#message_form textarea");
+  fields.each(function(i, e) {
+    $(e).val(storage.getItem(baseKey + $(e).attr("id")));
+  });
+  $(".title").after("<div id='autosave'/>");
+  let timestamp = storage.getItem(baseKey + "time");
+  if (timestamp)
+    $("#autosave").text("Restored from "+timestamp+"\n");
+
+  // Start the auto-save timer.
+  setInterval(function() {
+    // Auto-save the compose fields.
+    fields.each(function(i, e) {
+      storage.setItem(baseKey + $(e).attr("id"), $(e).val());
+    });
+    storage.setItem(baseKey + "time", new Date().toLocaleString());
+    $("#autosave").text("Auto-saved at "+ new Date().toLocaleTimeString());
+    return;
+  }, 10000);
+}
+
+/**
+ * We're closing the tab, so let's remove the fields so that we don't get
+ * them next time.
+ */
+function closeCompose() {
+  let fields = $("#message_form input[type='text']")
+                 .add("#message_form textarea");
+  let baseKey = "ca.latte.hometab." + tab.id + "-";
+  fields.each(function(i, e) {
+    storage.removeItem(baseKey + $(e).attr("id"));
+  });
+}
+
 function sendMessage() {
   Application.console.log("to: " + $("#to").val());
   Application.console.log("subject: " + $("#subject").val());
@@ -659,5 +722,7 @@ function sendMessage() {
                           subject: $("#subject").val(),
                           body: $("#text").val()});
 
+  // Close the tab.
+  hometab.tabmail.closeTab(tab);
   return false; /* do not continue to submit the form */
 }

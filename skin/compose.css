@@ -81,10 +81,20 @@ label {
   background-color: #fff;
 }
 
+#autosave {
+  margin: 10px;
+  -moz-box-flex: 1;
+  -moz-box-pack: center;
+  -moz-box-align: left;
+  font-weight: light;
+  font-size: 10px;
+  text-shadow: 0 1px 0 #fff;
+}
+
 .actions {
   margin-top: 10px;
   margin-left: 77px;
-  width: 500px;
+  width: 100px;
   text-align: right;
 }
 

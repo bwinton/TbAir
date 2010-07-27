@@ -47,12 +47,12 @@
   <link rel="stylesheet" type="text/css"
       href="chrome://hometab/skin/compose.css" />
 </head>
-<body id="body" dir="&locale.dir;" onload="reachOutAndTouchFrame('compose')">
+<body id="body" dir="&locale.dir;" onload="loadComposePage();">
   <div class="header">
     <div class="title"></div>
     <div class="actions"><button class="action options">&#x25BE</button></div>
   </div>
-  <form onsubmit="return sendMessage($(this))">
+  <form id="message_form" onsubmit="return sendMessage($(this))">
     <div class="addressing">
       <label for="subject">To: </label>
       <input type="text" id="to"/>

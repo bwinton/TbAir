@@ -1130,6 +1130,7 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function cp_closeTab(aTab) {
+        aTab.browser.contentWindow.closeCompose();
         aTab.browser.destroy();
       },
       saveTabState: function cp_saveTabState(aTab) {
