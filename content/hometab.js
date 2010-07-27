@@ -1088,22 +1088,38 @@ var homeTabType = {
     compose: {
       type: "compose",
       isDefault: false,
-      composeId : 0,
+      previousComposeIds : [],
+      composeIds : [0],
+
+      /**
+       * Get the next compose id in the stack, or use the passed in one.
+       */
+      getNextComposeId: function cp_getNextComposeId(aId) {
+        let id = aId;
+        if (!id) {
+          if (this.previousComposeIds.length)
+            id = this.previousComposeIds.pop();
+          else
+            id = this.composeIds[this.composeIds.length - 1] + 1;
+        }
+        this.composeIds.push(id);
+        this.composeIds.sort();
+        return id;
+      },
 
       openTab: function cp_openTab(aTab, aArgs) {
         window.title = aTab.title = "Write";
-        aTab.id = this.modes.compose.composeId;
+        aTab.id = this.modes.compose.getNextComposeId(aArgs.id);
 
         // Clone the browser for our new tab.
         aTab.browser = document.getElementById("browser").cloneNode(true);
-        aTab.browser.setAttribute("id", "compose-" + this.modes.compose.composeId);
+        aTab.browser.setAttribute("id", "compose-" + aTab.id);
         aTab.panel.appendChild(aTab.browser);
         aTab.browser.contentWindow.tab = aTab;
         aTab.browser.contentWindow.title = aArgs.title;
         aTab.browser.setAttribute("type", aArgs.background ? "content-targetable" :
                                                              "content-primary");
         aTab.browser.loadURI("chrome://hometab/content/compose.html");
-        this.modes.compose.composeId++;
       },
 
       htmlLoadHandler: function cp_htmlLoadHandler(aContentWindow) {
@@ -1130,17 +1146,19 @@ var homeTabType = {
         window.title = aTab.title;
       },
       closeTab: function cp_closeTab(aTab) {
-        aTab.browser.contentWindow.closeCompose();
         aTab.browser.destroy();
+        let composeIds = this.modes.compose.composeIds;
+        composeIds.splice(composeIds.indexOf(aTab.id),1);
+        this.modes.compose.previousComposeIds.push(aTab.id);
       },
       saveTabState: function cp_saveTabState(aTab) {
         aTab.browser.setAttribute("type", "content-targetable");
       },
       persistTab: function cp_persistTab(aTab) {
-        return {};
+        return {id:aTab.id};
       },
       restoreTab: function cp_restoreTab(aTabmail, aPersistedState) {
-        aTabmail.openTab("compose", { background: true });
+        aTabmail.openTab("compose", {id: aPersistedState.id, background: true });
       },
       supportsCommand: function cp_supportsCommand(aCommand, aTab) {
         return false;

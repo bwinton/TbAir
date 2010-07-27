@@ -723,6 +723,7 @@ function sendMessage() {
                           body: $("#text").val()});
 
   // Close the tab.
+  closeCompose();
   hometab.tabmail.closeTab(tab);
   return false; /* do not continue to submit the form */
 }
