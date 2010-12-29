@@ -86,7 +86,7 @@
   $(document).ready(function() {
     setHeaderTitle("Home Tab Source Control");
     $.ajax({
-      url: 'http://hg.mozilla.org/users/bwinton_latte.ca/hometab/atom-log',
+      url: 'https://github.com/bwinton/TbAir/commits/master.atom',
       success: function(data) {
         var TITLE_NODE = 1;
         var ID_NODE = 3;
@@ -94,17 +94,27 @@
         var entries = data.getElementsByTagName("entry");
         var commits = [];
         for (var i = 0; i < entries.length; i++) {
-          commits.push(
-            {
-              id : entries[i].getElementsByTagName("id").item(0).textContent,
-              url : entries[i].getElementsByTagName("link").item(0).getAttribute("href"),
-              name : entries[i].getElementsByTagName("name").item(0).textContent,
-              avatar : getAvatar(entries[i].getElementsByTagName("email").item(0).textContent),
-              date : new Date(Date.parse(entries[i].getElementsByTagName("published").item(0).textContent)).toLocaleString(),
-              synopsis : entries[i].getElementsByTagName("content").item(0).textContent,
-              read : false
-            }
-          );
+          try{
+            commits.push({
+              id: entries[i].getElementsByTagName("id").item(0).textContent,
+              url: entries[i].getElementsByTagName("link")
+                             .item(0).getAttribute("href"),
+              name: entries[i].getElementsByTagName("name")
+                              .item(0).textContent,
+              title: entries[i].getElementsByTagName("title")
+                               .item(0).textContent,
+              avatar: entries[i].getElementsByTagName("media:thumbnail")
+                                .item(0).getAttribute("url"),
+              date: new Date(Date.parse(
+                      entries[i].getElementsByTagName("updated")
+                                .item(0).textContent)).toLocaleString(),
+              synopsis: entries[i].getElementsByTagName("content")
+                                  .item(0).textContent,
+              read: false
+            });
+          } catch(e) {
+            Application.console.log("commit "+i+" failed!  "+e);
+          }
         }
         $("#commitstmpl").render(commits).appendTo($("ol.commits"));
       }
@@ -127,7 +137,7 @@
         <div class="column right">
           <div class="topic" read="${read}">
             <div class="date">${date}</div>
-            <div url="${url}" name="${synopsis}"
+            <div url="${url}" name="${title}"
                  onclick="openAttachment($(this))"
                  class="body">${synopsis}</a>
           </div>
