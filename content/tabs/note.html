@@ -53,6 +53,18 @@
     padding: 0;
     margin: 0;
   }
+
+  li.note {
+    border:1px solid #ddd;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 4px;
+  }
+
+  .content .line0 {
+    font-weight: bold;
+  }
+
   .nouser label,
   .nouser .button {
     width: 75px;
@@ -60,6 +72,7 @@
     display: block;
     float: left;
   }
+
   .nouser input {
     border-radius: 4px;
   }
@@ -94,38 +107,42 @@
   <script type="application/javascript;version=1.8"
       src="chrome://hometab/content/hometab-browser.js"></script>
 
-  <script type="text/javascript">
+  <script type="text/javascript;version=1.8">
   Components.utils.import("resource:///modules/gloda/utils.js");
 
   var log = Application.console.log;
   var email = null;
   var auth = null;
 
+  function ajaxError(request, status, error) {
+    log("Got status of '"+status+"'!!!");
+    log("request="+request.status+"!!!");
+    log("error="+error+"!!!");
+    log("response="+request.responseText+"!!!");
+  };
+
+  $.ajaxSetup({
+    type: "GET",
+    processData: false,
+    error: ajaxError
+  });
+
   function login() {
     email = $("#email").val();
-    var password = $("#password").val();
-    var data = "email=" + email + "&password=" + password;
-    log("data="+data);
+    let password = $("#password").val();
+    let data = "email=" + email + "&password=" + password;
     data = $.base64Encode(data);
-    log("data="+data);
     $.ajax({
       url: "https://simple-note.appspot.com/api/login",
       type: "POST",
-      processData: false,
       data: data,
       success: function(data) {
-        log("Got data of '"+data+"'!!!");
         auth = data;
         postLogin();
-      },
-      error: function(request, status, error) {
-        log("Got status of '"+status+"'!!!");
-        log("request="+request.status+"!!!");
-        log("error="+error+"!!!");
       }
     });
     return;
-  }
+  };
 
   function postLogin() {
     if (!auth)
@@ -135,83 +152,62 @@
     url = "https://simple-note.appspot.com/api2/index" +
           "?auth=" + auth +
           "&email=" + email;
-    log("Calling "+url);
     $.ajax({
       url: url,
-      type: "GET",
       success: function(data) {
-        log("Got data of '"+data+"'!!!");
-      },
-      error: function(request, status, error) {
-        log("Got status of '"+status+"'!!!");
-        log("request="+request.status+"!!!");
-        log("error="+error+"!!!");
+        data = JSON.parse(data);
+        notes = [];
+        for (let i = 0; i < data.count; i++) {
+          let note = data.data[i];
+          if (!note.deleted)
+            notes.push({id: note.key});
+        };
+        $("#notetmpl").render(notes).appendTo($("ol.notes"));
+        populateNotes();
       }
     });
-  }
+  };
+
+  function populateNotes() {
+    $("li.note").each(function(i, note) {
+      url = "https://simple-note.appspot.com/api2/data/" +
+          $(note).attr("id") +
+          "?auth=" + auth +
+          "&email=" + email;
+      $.ajax({
+        url: url,
+        success: function(data) {
+          data = JSON.parse(data);
+          let content = data.content;
+          content = content.split("\n");
+          $.each(content, function(i, e) {
+            content[i] = "<span class='line"+i+"'>" +
+                         e + "</span>";
+          });
+          content = content.join("<br/>")
+          content = $("#notebodytmpl").render({content:content})
+          $(note).html(content);
+        }
+      });
+    });
+  };
 
   $(document).ready(function() {
     $("#login").click(login);
     postLogin();
     setHeaderTitle("Notes");
-    $.ajax({
-      url: 'https://github.com/bwinton/TbAir/commits/master.atom',
-      success: function(data) {
-        return;
-        var entries = data.getElementsByTagName("entry");
-        var commits = [];
-        for (var i = 0; i < entries.length; i++) {
-          try{
-            commits.push({
-              id: entries[i].getElementsByTagName("id").item(0).textContent,
-              url: entries[i].getElementsByTagName("link")
-                             .item(0).getAttribute("href"),
-              name: entries[i].getElementsByTagName("name")
-                              .item(0).textContent,
-              title: entries[i].getElementsByTagName("title")
-                               .item(0).textContent,
-              avatar: entries[i].getElementsByTagName("media:thumbnail")
-                                .item(0).getAttribute("url"),
-              date: new Date(Date.parse(
-                      entries[i].getElementsByTagName("updated")
-                                .item(0).textContent)).toLocaleString(),
-              synopsis: entries[i].getElementsByTagName("content")
-                                  .item(0).textContent,
-              read: false
-            });
-          } catch(e) {
-            log("commit "+i+" failed!  "+e);
-          }
-        }
-        $("#notetmpl").render(commits).appendTo($("ol.notes"));
-      }
-    });
-  })
+  });
   </script>
 
   <!-- Templates!  Woo! -->
   <script id="notetmpl" type="text/html">
-    <li class="conversation" read="${read}" id="${id}" style="border-right:1px solid #ddd;">
+    <li class="note" id="${id}"></li>
+  </script>
 
-      <div class="columns">
-
-        <div class="column left">
-          <div class="date" style="visibility:hidden;line-height:21px;">spacer</div>
-          <div class="avatar"><img src="${avatar}"/></div>
-          <div class="from">${name}</div>
-        </div>
-
-        <div class="column right">
-          <div class="topic" read="${read}">
-            <div class="date">${date}</div>
-            <div url="${url}" name="${title}"
-                 onclick="openAttachment($(this))"
-                 class="body">${synopsis}</a>
-          </div>
-        </div>
-
-      </div>
-    </li>
+  <script id="notebodytmpl" type="text/html">
+    <span class="content">
+      ${content}
+    </span>
   </script>
 
 </html>
