@@ -53,6 +53,9 @@ var hometab;
 function setupHome() {
   Cu.import("resource://hometab/content/tabs/source-browser.js");
   source.init($, hometab);
+  Cu.import("resource://hometab/content/tabs/note-browser.js");
+  note.init($, hometab);
+
 
   let pref = Cc["@mozilla.org/preferences-service;1"]
                .getService(Ci.nsIPrefBranch);

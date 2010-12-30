@@ -1695,6 +1695,9 @@ var tabmail = document.getElementById("tabmail");
 Cu.import("resource://hometab/content/tabs/source-tab.js");
 source.init(homeTabType, window);
 
+Cu.import("resource://hometab/content/tabs/note-tab.js");
+note.init(homeTabType, window);
+
 tabmail.registerTabType(homeTabType);
 tabmail.registerTabType(contentTabType);
 tabmail.openFirstTab("home", {});
