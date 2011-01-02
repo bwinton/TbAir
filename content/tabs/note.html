@@ -180,6 +180,9 @@
           data = JSON.parse(data);
           let content = data.content;
           content = content.split("\n");
+          // Strip blank lines from the start.
+          while (!content[0])
+            content.shift();
           $.each(content, function(i, e) {
             content[i] = "<span class='line"+i+"'>" +
                          e + "</span>";
